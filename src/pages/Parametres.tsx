@@ -12,9 +12,9 @@ const Parametres = () => {
   });
 
   const [darkMode, setDarkMode] = useState(false);
-  const [volume, setVolume] = useState(75);
+  const [volume, setVolume] = useState<number>(75);
 
-  const handleNotificationChange = (type) => {
+  const handleNotificationChange = (type: keyof typeof notifications) => {
     setNotifications(prev => ({
       ...prev,
       [type]: !prev[type]
@@ -76,7 +76,7 @@ const Parametres = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
                 <textarea 
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  rows="3"
+                  rows={3}
                   defaultValue="Créateur de contenu passionné"
                 />
               </div>
@@ -99,7 +99,7 @@ const Parametres = () => {
                     {key === 'likes' && 'Nouveaux likes'}
                   </span>
                   <button
-                    onClick={() => handleNotificationChange(key)}
+                    onClick={() => handleNotificationChange(key as keyof typeof notifications)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                       value ? 'bg-purple-500' : 'bg-gray-300'
                     }`}
@@ -154,7 +154,7 @@ const Parametres = () => {
                   min="0"
                   max="100"
                   value={volume}
-                  onChange={(e) => setVolume(e.target.value)}
+                  onChange={(e) => setVolume(Number(e.target.value))}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                 />
               </div>

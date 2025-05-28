@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUp, Fire, Clock, Eye } from 'lucide-react';
+import { TrendingUp, Flame, Clock, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Tendances = () => {
@@ -62,7 +62,7 @@ const Tendances = () => {
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-3 right-3 bg-gradient-to-r from-green-400 to-blue-500 text-white text-xs px-2 py-1 rounded-full flex items-center">
-                  <Fire className="h-3 w-3 mr-1" />
+                  <Flame className="h-3 w-3 mr-1" />
                   Hot
                 </div>
               </div>
