@@ -22,11 +22,11 @@ const Parametres = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
               <Settings className="h-8 w-8 mr-3 text-purple-500" />
               Settings
             </h1>
@@ -34,7 +34,7 @@ const Parametres = () => {
           </div>
           <Link 
             to="/"
-            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200"
           >
             Back
           </Link>
@@ -42,40 +42,40 @@ const Parametres = () => {
 
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Profile */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
               <User className="h-5 w-5 mr-2" />
               Profile
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Username</label>
                 <input 
                   type="text" 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   defaultValue="user123"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
                 <input 
                   type="email" 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   defaultValue="user@example.com"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
                 <input 
                   type="text" 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   defaultValue="XDose User"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
                 <textarea 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   rows={3}
                   defaultValue="Passionate content creator"
                 />
@@ -84,15 +84,15 @@ const Parametres = () => {
           </div>
 
           {/* Notifications */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
               <Bell className="h-5 w-5 mr-2" />
               Notifications
             </h3>
             <div className="space-y-4">
               {Object.entries(notifications).map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between">
-                  <span className="text-gray-700 capitalize">
+                  <span className="text-gray-700 font-medium capitalize">
                     {key === 'email' && 'Email notifications'}
                     {key === 'push' && 'Push notifications'}
                     {key === 'comments' && 'New comments'}
@@ -116,8 +116,8 @@ const Parametres = () => {
           </div>
 
           {/* Appearance */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
               <Palette className="h-5 w-5 mr-2" />
               Appearance
             </h3>
@@ -125,7 +125,7 @@ const Parametres = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   {darkMode ? <Moon className="h-5 w-5 mr-2" /> : <Sun className="h-5 w-5 mr-2" />}
-                  <span className="text-gray-700">Dark mode</span>
+                  <span className="text-gray-700 font-medium">Dark mode</span>
                 </div>
                 <button
                   onClick={() => setDarkMode(!darkMode)}
@@ -145,9 +145,9 @@ const Parametres = () => {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center">
                     <Volume2 className="h-5 w-5 mr-2" />
-                    <span className="text-gray-700">Volume</span>
+                    <span className="text-gray-700 font-medium">Volume</span>
                   </div>
-                  <span className="text-sm text-gray-500">{volume}%</span>
+                  <span className="text-sm text-gray-500 font-medium">{volume}%</span>
                 </div>
                 <input
                   type="range"
@@ -162,22 +162,22 @@ const Parametres = () => {
           </div>
 
           {/* Security */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
               <Shield className="h-5 w-5 mr-2" />
               Security & Privacy
             </h3>
             <div className="space-y-4">
-              <button className="w-full text-left p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="font-medium text-gray-800">Change password</div>
+              <button className="w-full text-left p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <div className="font-semibold text-gray-900">Change password</div>
                 <div className="text-sm text-gray-600">Last changed 3 months ago</div>
               </button>
-              <button className="w-full text-left p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="font-medium text-gray-800">Two-factor authentication</div>
+              <button className="w-full text-left p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <div className="font-semibold text-gray-900">Two-factor authentication</div>
                 <div className="text-sm text-gray-600">Secure your account</div>
               </button>
-              <button className="w-full text-left p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="font-medium text-gray-800">Download my data</div>
+              <button className="w-full text-left p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <div className="font-semibold text-gray-900">Download my data</div>
                 <div className="text-sm text-gray-600">Export your information</div>
               </button>
             </div>

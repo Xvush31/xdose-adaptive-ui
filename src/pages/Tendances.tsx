@@ -15,11 +15,11 @@ const Tendances = () => {
   const [selectedTimeframe, setSelectedTimeframe] = React.useState('24h');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
               <TrendingUp className="h-8 w-8 mr-3 text-purple-500" />
               Trending
             </h1>
@@ -27,23 +27,23 @@ const Tendances = () => {
           </div>
           <Link 
             to="/"
-            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200"
           >
             Back
           </Link>
         </div>
 
         {/* Time filters */}
-        <div className="flex items-center space-x-2 mb-8">
-          <span className="text-gray-600 font-medium">Period:</span>
+        <div className="flex items-center space-x-3 mb-8">
+          <span className="text-gray-700 font-semibold">Period:</span>
           {timeframes.map((timeframe) => (
             <button
               key={timeframe}
               onClick={() => setSelectedTimeframe(timeframe)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                 selectedTimeframe === timeframe
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                  : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200'
               }`}
             >
               {timeframe}
@@ -54,24 +54,24 @@ const Tendances = () => {
         {/* Trending grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {trendingTopics.map((topic) => (
-            <div key={topic.id} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
+            <div key={topic.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group">
               <div className="relative">
                 <img 
                   src={topic.image} 
                   alt={topic.title}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute top-3 right-3 bg-gradient-to-r from-green-400 to-blue-500 text-white text-xs px-2 py-1 rounded-full flex items-center">
+                <div className="absolute top-3 right-3 bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs px-3 py-1 rounded-full flex items-center shadow-lg">
                   <Flame className="h-3 w-3 mr-1" />
                   Hot
                 </div>
               </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-2">{topic.title}</h3>
+              <div className="p-5">
+                <h3 className="font-semibold text-gray-900 mb-3">{topic.title}</h3>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center">
                     <TrendingUp className="h-4 w-4 mr-1 text-green-500" />
-                    <span className="text-green-500 font-medium">{topic.growth}</span>
+                    <span className="text-green-500 font-semibold">{topic.growth}</span>
                   </div>
                   <div className="flex items-center">
                     <Eye className="h-4 w-4 mr-1" />
