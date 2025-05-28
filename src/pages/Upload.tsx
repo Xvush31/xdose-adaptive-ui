@@ -47,8 +47,17 @@ const Upload = () => {
     setUploadError(null);
     setUploadSuccess(null);
     try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user || user.user_metadata.role !== 'createur') {
+        setUploadError('Seuls les créateurs peuvent uploader.');
+        setUploading(false);
+        return;
+      }
+      const userId = user.id;
       for (const file of files) {
-        const filePath = `videos/${Date.now()}_${file.name}`;
+        const filePath = `${userId}/${Date.now()}_${file.name}`;
         const { error } = await supabase.storage.from('videos').upload(filePath, file, {
           cacheControl: '3600',
           upsert: false,
