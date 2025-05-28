@@ -17,13 +17,13 @@
 
 ## 3. Tests & Robustesse
 
-- [ ] Installer Vitest + React Testing Library
-- [ ] Ajouter les scripts de test unitaire + coverage
-- [ ] Intégrer un exemple de test (ex : composant Button)
+- [x] Installer Vitest + React Testing Library
+- [x] Ajouter les scripts de test unitaire + coverage
+- [x] Intégrer un exemple de test (ex : composant Button)
 
 ## 4. Performance & Optimisation
 
-- [ ] Mettre en place le lazy loading des routes/pages
+- [x] Mettre en place le lazy loading des routes/pages
 - [ ] Installer et configurer vite-plugin-analyzer (ou rollup-plugin-visualizer)
 - [ ] Optimiser les images/assets (compression, formats modernes)
 

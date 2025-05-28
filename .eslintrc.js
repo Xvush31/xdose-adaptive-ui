@@ -20,6 +20,7 @@ module.exports = {
     },
   },
   rules: {
+    '@typescript-eslint/no-unused-expressions': 'off',
     // Ajoutez vos règles personnalisées ici
   },
 };
