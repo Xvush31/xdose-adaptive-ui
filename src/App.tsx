@@ -13,6 +13,9 @@ const Monetisation = lazy(() => import('./pages/Monetisation'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const Parametres = lazy(() => import('./pages/Parametres'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const Auth = lazy(() => import('./pages/Auth'));
+const AuthLogin = lazy(() => import('./pages/AuthLogin'));
+const AuthRegister = lazy(() => import('./pages/AuthRegister'));
 
 const queryClient = new QueryClient();
 
@@ -25,6 +28,9 @@ const App = () => (
         <Suspense fallback={<div>Chargement...</div>}>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/login" element={<AuthLogin />} />
+            <Route path="/auth/register" element={<AuthRegister />} />
             <Route path="/tendances" element={<Tendances />} />
             <Route path="/createurs" element={<Createurs />} />
             <Route path="/upload" element={<Upload />} />

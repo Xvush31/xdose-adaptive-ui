@@ -6,8 +6,8 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 
 ## Phase 1 – Authentification & Gestion des rôles
 
-- [ ] Page d’inscription/login avec choix du rôle (Spectateur par défaut, demande Créateur)
-- [ ] Stockage du rôle et du statut de demande dans Supabase (table users/role_requests)
+- [x] Page d’inscription/login avec choix du rôle (Spectateur par défaut, demande Créateur)
+- [x] Stockage du rôle et du statut de demande dans Supabase (table users/role_requests)
 - [ ] Redirection automatique selon le rôle après login
 - [ ] Interface “Devenir créateur” dans le profil
 - [ ] Backoffice admin pour valider/refuser les demandes créateur
