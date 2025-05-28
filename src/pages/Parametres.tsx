@@ -1,6 +1,25 @@
-import React, { useState } from 'react';
-import { Settings, User, Bell, Shield, Palette, Volume2, Moon, Sun } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import React, { useState, useEffect } from 'react';
+import {
+  Settings,
+  User as UserIcon,
+  Bell,
+  Shield,
+  Palette,
+  Volume2,
+  Moon,
+  Sun,
+} from 'lucide-react';
+import type { User } from '@supabase/supabase-js';
 import { Link } from 'react-router-dom';
+
+interface RoleRequest {
+  id: string;
+  user_id: string;
+  user_email: string;
+  status: string;
+  created_at: string;
+}
 
 const Parametres = () => {
   const [notifications, setNotifications] = useState({
@@ -12,6 +31,90 @@ const Parametres = () => {
 
   const [darkMode, setDarkMode] = useState(false);
   const [volume, setVolume] = useState<number>(75);
+
+  // Ajout : état pour la demande créateur
+  const [creatorRequestStatus, setCreatorRequestStatus] = useState<string | null>(null);
+  const [creatorRequestLoading, setCreatorRequestLoading] = useState(false);
+  const [creatorRequestError, setCreatorRequestError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // Ajout : récupération du statut de demande créateur au chargement
+  useEffect(() => {
+    const fetchCreatorRequest = async () => {
+      setCreatorRequestLoading(true);
+      setCreatorRequestError(null);
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        setCurrentUser(user);
+        if (user) {
+          const { data, error } = await supabase
+            .from('role_requests')
+            .select('status')
+            .eq('user_id', user.id)
+            .single();
+          if (error && error.code !== 'PGRST116') setCreatorRequestError(error.message);
+          setCreatorRequestStatus(data?.status || null);
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          setCreatorRequestError(e.message);
+        } else {
+          setCreatorRequestError('Erreur inconnue');
+        }
+      } finally {
+        setCreatorRequestLoading(false);
+      }
+    };
+    fetchCreatorRequest();
+  }, []);
+
+  // Ajout : handler pour demander à devenir créateur
+  const handleBecomeCreator = async () => {
+    setCreatorRequestLoading(true);
+    setCreatorRequestError(null);
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setCurrentUser(user);
+      if (!user) {
+        setCreatorRequestError('Vous devez être connecté.');
+        setCreatorRequestLoading(false);
+        return;
+      }
+      // Vérifier s'il y a déjà une demande
+      const { data: existing } = await supabase
+        .from('role_requests')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (existing) {
+        setCreatorRequestError('Demande déjà envoyée.');
+        setCreatorRequestLoading(false);
+        return;
+      }
+      const { error } = await supabase.from('role_requests').insert({
+        user_id: user.id,
+        user_email: user.email,
+        status: 'pending',
+      });
+      if (error) {
+        setCreatorRequestError(error.message);
+      } else {
+        setCreatorRequestStatus('pending');
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        setCreatorRequestError(e.message);
+      } else {
+        setCreatorRequestError('Erreur inconnue');
+      }
+    } finally {
+      setCreatorRequestLoading(false);
+    }
+  };
 
   const handleNotificationChange = (type: keyof typeof notifications) => {
     setNotifications((prev) => ({
@@ -43,7 +146,7 @@ const Parametres = () => {
           {/* Profile */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-              <User className="h-5 w-5 mr-2" />
+              <UserIcon className="h-5 w-5 mr-2" />
               Profile
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -79,6 +182,30 @@ const Parametres = () => {
                   defaultValue="Passionate content creator"
                 />
               </div>
+            </div>
+            {/* Interface Devenir créateur */}
+            <div className="mt-8">
+              <h4 className="text-lg font-semibold mb-2">Devenir créateur</h4>
+              {creatorRequestStatus === 'pending' ? (
+                <div className="text-yellow-600 font-medium">
+                  Votre demande est en attente de validation.
+                </div>
+              ) : creatorRequestStatus === 'accepted' ? (
+                <div className="text-green-600 font-medium">Vous êtes créateur !</div>
+              ) : creatorRequestStatus === 'refused' ? (
+                <div className="text-red-600 font-medium">Votre demande a été refusée.</div>
+              ) : (
+                <button
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200"
+                  onClick={handleBecomeCreator}
+                  disabled={creatorRequestLoading}
+                >
+                  {creatorRequestLoading ? 'Envoi...' : 'Demander à devenir créateur'}
+                </button>
+              )}
+              {creatorRequestError && (
+                <div className="text-red-600 text-sm mt-2">{creatorRequestError}</div>
+              )}
             </div>
           </div>
 

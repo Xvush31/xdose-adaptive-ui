@@ -8,10 +8,10 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 
 - [x] Page d’inscription/login avec choix du rôle (Spectateur par défaut, demande Créateur)
 - [x] Stockage du rôle et du statut de demande dans Supabase (table users/role_requests)
-- [ ] Redirection automatique selon le rôle après login
-- [ ] Interface “Devenir créateur” dans le profil
-- [ ] Backoffice admin pour valider/refuser les demandes créateur
-- [ ] Notification email lors de la validation/refus
+- [x] Redirection automatique selon le rôle après login
+- [x] Interface “Devenir créateur” dans le profil
+- [x] Backoffice admin pour valider/refuser les demandes créateur
+- [x] Notification email lors de la validation/refus
 
 ## Phase 2 – Upload & Gestion de vidéos
 

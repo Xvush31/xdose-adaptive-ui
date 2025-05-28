@@ -25,7 +25,8 @@ import {
   Sun,
   Moon,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 // Hook neuro-esthétique (version simplifiée intégrée)
 const useNeuroAesthetics = (initialProfile = 'balanced') => {
@@ -116,6 +117,26 @@ const XDoseApp = () => {
   const [user, setUser] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showNeuroSettings, setShowNeuroSettings] = useState(false);
+  const navigate = useNavigate();
+
+  // Hydrate user from Supabase session on mount and listen to auth state changes
+  useEffect(() => {
+    let mounted = true;
+    // Get current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (mounted) {
+        setUser(session?.user || null);
+      }
+    });
+    // Listen to auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+    return () => {
+      mounted = false;
+      listener?.subscription.unsubscribe();
+    };
+  }, []);
 
   const trendingVideos = [
     {
@@ -464,8 +485,7 @@ const XDoseApp = () => {
               <div className="space-y-6">
                 <button
                   onClick={() => {
-                    setUser({ name: 'User', avatar: null });
-                    neuro.triggerMicroReward('achievement');
+                    navigate('/auth/login');
                   }}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center mx-auto min-w-[250px]"
                 >
@@ -473,7 +493,12 @@ const XDoseApp = () => {
                   Sign in
                 </button>
 
-                <button className="text-gray-600 px-6 py-2 rounded-xl border-0 hover:text-gray-800 transition-colors flex items-center justify-center mx-auto">
+                <button
+                  onClick={() => {
+                    navigate('/auth/register');
+                  }}
+                  className="text-gray-600 px-6 py-2 rounded-xl border-0 hover:text-gray-800 transition-colors flex items-center justify-center mx-auto"
+                >
                   <User className="h-4 w-4 mr-2" />
                   Create account
                 </button>
