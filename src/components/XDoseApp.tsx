@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { Play, Search, User, Heart, MessageCircle, Share2, Upload, Settings, Home, TrendingUp, Users, DollarSign, BarChart3, Bell, Menu, X, Filter, Clock, Eye, Volume2, Brain, Palette, Sun, Moon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Hook neuro-esthétique (version simplifiée intégrée)
 const useNeuroAesthetics = (initialProfile = 'équilibré') => {
@@ -466,13 +466,13 @@ const XDoseApp = () => {
   };
 
   const sidebarItems = [
-    { id: 'home', name: 'Accueil', icon: Home },
-    { id: 'trending', name: 'Tendances', icon: TrendingUp },
-    { id: 'creators', name: 'Créateurs', icon: Users },
-    { id: 'upload', name: 'Upload', icon: Upload },
-    { id: 'monetization', name: 'Monétisation', icon: DollarSign },
-    { id: 'analytics', name: 'Analytics', icon: BarChart3 },
-    { id: 'settings', name: 'Paramètres', icon: Settings }
+    { id: 'home', name: 'Accueil', icon: Home, path: '/' },
+    { id: 'trending', name: 'Tendances', icon: TrendingUp, path: '/tendances' },
+    { id: 'creators', name: 'Créateurs', icon: Users, path: '/createurs' },
+    { id: 'upload', name: 'Upload', icon: Upload, path: '/upload' },
+    { id: 'monetization', name: 'Monétisation', icon: DollarSign, path: '/monetisation' },
+    { id: 'analytics', name: 'Analytics', icon: BarChart3, path: '/analytics' },
+    { id: 'settings', name: 'Paramètres', icon: Settings, path: '/parametres' }
   ];
 
   return (
@@ -548,22 +548,22 @@ const XDoseApp = () => {
               {sidebarItems.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <button
+                  <Link
                     key={item.id}
+                    to={item.path}
                     onClick={() => {
-                      setActiveTab(item.id);
                       setSidebarOpen(false);
                       neuro.triggerMicroReward('discover');
                     }}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                      activeTab === item.id
+                      window.location.pathname === item.path
                         ? `bg-gradient-to-r ${adaptiveStyles.colors.primary} text-white shadow-lg`
                         : 'hover:bg-gray-100'
                     }`}
                   >
                     <Icon className="h-5 w-5" />
                     <span className="font-medium">{item.name}</span>
-                  </button>
+                  </Link>
                 );
               })}
             </nav>
@@ -605,7 +605,33 @@ const XDoseApp = () => {
             <TrendingContent />
           </div>
         ) : (
-          renderContent()
+          <div className="space-y-6">
+            <CategoryFilter />
+            <TrendingContent />
+            
+            {/* Indicateur de bien-être neuro-esthétique */}
+            <div className="px-6">
+              <div className="bg-white/80 backdrop-blur-md rounded-2xl p-4 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Brain className="h-6 w-6 text-purple-500" />
+                    <div>
+                      <h3 className="font-semibold text-gray-800">Expérience Optimisée</h3>
+                      <p className="text-sm text-gray-600">
+                        Profil: {neuro.cognitiveProfile} • {neuro.circadianPeriod}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowNeuroSettings(true)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <Settings className="h-5 w-5 text-gray-500" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </main>
 
@@ -613,27 +639,25 @@ const XDoseApp = () => {
       <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 px-4 py-2">
         <div className="flex items-center justify-around max-w-md mx-auto">
           {[
-            { id: 'home', icon: Home, label: 'Accueil' },
-            { id: 'trending', icon: TrendingUp, label: 'Tendances' },
-            { id: 'creators', icon: Users, label: 'Créateurs' }
+            { id: 'home', icon: Home, label: 'Accueil', path: '/' },
+            { id: 'trending', icon: TrendingUp, label: 'Tendances', path: '/tendances' },
+            { id: 'creators', icon: Users, label: 'Créateurs', path: '/createurs' }
           ].map(item => {
             const Icon = item.icon;
             return (
-              <button 
+              <Link 
                 key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  neuro.triggerMicroReward('discover');
-                }}
+                to={item.path}
+                onClick={() => neuro.triggerMicroReward('discover')}
                 className={`flex flex-col items-center py-2 px-4 transition-all duration-200 ${
-                  activeTab === item.id 
+                  window.location.pathname === item.path 
                     ? `text-purple-500 scale-110` 
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
                 <Icon className="h-6 w-6 mb-1" />
                 <span className="text-xs font-medium">{item.label}</span>
-              </button>
+              </Link>
             );
           })}
         </div>
