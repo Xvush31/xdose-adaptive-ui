@@ -71,3 +71,61 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+# XDose Adaptive UI
+
+Projet React + Vite pour l’interface utilisateur adaptative XDose.
+
+## Table des matières
+- [Démarrage rapide](#démarrage-rapide)
+- [Structure du projet](#structure-du-projet)
+- [Scripts disponibles](#scripts-disponibles)
+- [Qualité & Standards](#qualité--standards)
+- [Tests](#tests)
+- [Déploiement](#déploiement)
+- [Technologies](#technologies)
+
+## Démarrage rapide
+
+```bash
+# Installer les dépendances
+npm install
+
+# Lancer le serveur de développement
+npm run dev
+```
+
+## Structure du projet
+
+- `src/components/` : composants UI réutilisables
+- `src/components/ui/` : primitives UI (boutons, inputs, etc.)
+- `src/pages/` : pages principales de l’application
+- `src/hooks/` : hooks personnalisés
+- `src/lib/` : utilitaires JS/TS
+- `src/integrations/` : intégrations externes (ex : supabase)
+- `public/` : assets statiques (images, favicon, etc.)
+
+## Scripts disponibles
+
+- `npm run dev` : démarre le serveur de développement
+- `npm run build` : build de production
+- `npm run preview` : prévisualisation du build
+- `npm run lint` : analyse statique du code
+- `npm run test` : lance les tests unitaires (à configurer)
+
+## Qualité & Standards
+- ESLint, Prettier, Husky, commitlint (voir roadmap pour installation)
+
+## Tests
+- Vitest + React Testing Library (voir roadmap pour installation)
+
+## Déploiement
+- Compatible Vercel, Netlify, Lovable, etc.
+- Voir la documentation de la cible choisie
+
+## Technologies
+- React, Vite, TypeScript, Tailwind CSS, shadcn-ui
+
+---
+
+Pour plus de détails, voir le fichier `ROADMAP_CHECKLIST.md`.
