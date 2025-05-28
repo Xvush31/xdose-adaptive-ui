@@ -1,14 +1,37 @@
-
 import React from 'react';
 import { TrendingUp, Flame, Clock, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Tendances = () => {
   const trendingTopics = [
-    { id: 1, title: "AI & Technology", growth: "+45%", posts: "2.3K", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=200&fit=crop" },
-    { id: 2, title: "Sustainable Living", growth: "+32%", posts: "1.8K", image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=300&h=200&fit=crop" },
-    { id: 3, title: "Digital Art", growth: "+28%", posts: "1.5K", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=200&fit=crop" },
-    { id: 4, title: "Fashion Trends", growth: "+25%", posts: "1.2K", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=300&h=200&fit=crop" }
+    {
+      id: 1,
+      title: 'AI & Technology',
+      growth: '+45%',
+      posts: '2.3K',
+      image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=200&fit=crop',
+    },
+    {
+      id: 2,
+      title: 'Sustainable Living',
+      growth: '+32%',
+      posts: '1.8K',
+      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=300&h=200&fit=crop',
+    },
+    {
+      id: 3,
+      title: 'Digital Art',
+      growth: '+28%',
+      posts: '1.5K',
+      image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=200&fit=crop',
+    },
+    {
+      id: 4,
+      title: 'Fashion Trends',
+      growth: '+25%',
+      posts: '1.2K',
+      image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=300&h=200&fit=crop',
+    },
   ];
 
   const timeframes = ['24h', '7d', '30d', '3m'];
@@ -25,7 +48,7 @@ const Tendances = () => {
             </h1>
             <p className="text-gray-600 mt-2">Discover what's popular right now</p>
           </div>
-          <Link 
+          <Link
             to="/"
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200"
           >
@@ -54,10 +77,13 @@ const Tendances = () => {
         {/* Trending grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {trendingTopics.map((topic) => (
-            <div key={topic.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group">
+            <div
+              key={topic.id}
+              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group"
+            >
               <div className="relative">
-                <img 
-                  src={topic.image} 
+                <img
+                  src={topic.image}
                   alt={topic.title}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />

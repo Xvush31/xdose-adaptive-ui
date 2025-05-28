@@ -1,4 +1,3 @@
-
 import XDoseApp from '../components/XDoseApp';
 
 const Index = () => {

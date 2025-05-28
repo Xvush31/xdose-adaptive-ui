@@ -24,30 +24,36 @@
 ## 4. Performance & Optimisation
 
 - [x] Mettre en place le lazy loading des routes/pages
-- [ ] Installer et configurer vite-plugin-analyzer (ou rollup-plugin-visualizer)
-- [ ] Optimiser les images/assets (compression, formats modernes)
+- [x] Installer et configurer vite-plugin-analyzer (ou rollup-plugin-visualizer)
+- [x] Optimiser les images/assets (compression, formats modernes)
+  - [x] Script d’optimisation généré (`scripts/optimize-images.cjs`)
+  - [x] Commande justfile `just optimize-images` ajoutée
+  - [x] Images optimisées présentes dans `public_optimized/`
+  - [x] Vérification manuelle de la réduction de taille et des formats WebP
 
 ## 5. Accessibilité & SEO
 
-- [ ] Effectuer un audit Lighthouse (a11y, SEO)
-- [ ] Vérifier les labels, contrastes, navigation clavier
-- [ ] Ajouter les metatags essentiels dans `index.html`
+- [x] Effectuer un audit Lighthouse (a11y, SEO)
+- [x] Vérifier les labels, contrastes, navigation clavier
+- [x] Ajouter les metatags essentiels dans `index.html`
 
 ## 6. Déploiement & CI/CD
 
-- [ ] Configurer un pipeline GitHub Actions (ou autre)
-- [ ] Générer automatiquement le build + lancer les tests
-- [ ] Préparer la config pour Vercel, Netlify ou autre
+- [x] Configurer un pipeline GitHub Actions (ou autre)
+- [x] Générer automatiquement le build + lancer les tests
+- [x] Préparer la config pour Vercel, Netlify ou autre
 
 ## 7. Automatisation des tâches
 
-- [ ] Générer un `justfile` ou `Taskfile.yml` pour automatiser les commandes courantes
-  - [ ] just dev
-  - [ ] just test
-  - [ ] just lint
-  - [ ] just format
-  - [ ] just build
-  - [ ] just deploy
+- [x] Générer un `justfile` ou `Taskfile.yml` pour automatiser les commandes courantes
+  - [x] Commande `just dev` testée et validée
+  - [x] Commande `just test` testée et validée
+  - [x] Commande `just lint` testée et validée
+  - [x] Commande `just format` testée et validée
+  - [x] Commande `just build` testée et validée
+  - [x] Commande `just coverage` testée et validée
+  - [ ] Commande `just deploy` testée et validée (optionnel, nécessite Vercel CLI configuré)
+  - [x] Commande `just optimize-images` testée et validée
 
 ---
 

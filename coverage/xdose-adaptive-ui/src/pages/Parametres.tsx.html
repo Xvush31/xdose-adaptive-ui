@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/125</span>
+                <span class='fraction'>0/124</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/125</span>
+                <span class='fraction'>0/124</span>
             </div>
         
             
@@ -253,11 +253,9 @@
 <a name='L188'></a><a href='#L188'>188</a>
 <a name='L189'></a><a href='#L189'>189</a>
 <a name='L190'></a><a href='#L190'>190</a>
-<a name='L191'></a><a href='#L191'>191</a>
-<a name='L192'></a><a href='#L192'>192</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L191'></a><a href='#L191'>191</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -445,8 +443,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
-<span class="cstat-no" title="statement not covered" >import React, { useState } from 'react';</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import React, { useState } from 'react';</span></span></span>
 <span class="cstat-no" title="statement not covered" >import { Settings, User, Bell, Shield, Palette, Volume2, Moon, Sun } from 'lucide-react';</span>
 <span class="cstat-no" title="statement not covered" >import { Link } from 'react-router-dom';</span>
 &nbsp;
@@ -455,16 +452,16 @@
 <span class="cstat-no" title="statement not covered" >    email: true,</span>
 <span class="cstat-no" title="statement not covered" >    push: false,</span>
 <span class="cstat-no" title="statement not covered" >    comments: true,</span>
-<span class="cstat-no" title="statement not covered" >    likes: false</span>
+<span class="cstat-no" title="statement not covered" >    likes: false,</span>
 <span class="cstat-no" title="statement not covered" >  });</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  const [darkMode, setDarkMode] = useState(false);</span>
 <span class="cstat-no" title="statement not covered" >  const [volume, setVolume] = useState&lt;number&gt;(75);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  const handleNotificationChange = (type: keyof typeof notifications) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    setNotifications(prev =&gt; ({</span>
+<span class="cstat-no" title="statement not covered" >    setNotifications((prev) =&gt; ({</span>
 <span class="cstat-no" title="statement not covered" >      ...prev,</span>
-<span class="cstat-no" title="statement not covered" >      [type]: !prev[type]</span>
+<span class="cstat-no" title="statement not covered" >      [type]: !prev[type],</span>
 <span class="cstat-no" title="statement not covered" >    }));</span>
 <span class="cstat-no" title="statement not covered" >  };</span>
 &nbsp;
@@ -479,7 +476,7 @@
             &lt;/h1&gt;
 <span class="cstat-no" title="statement not covered" >            &lt;p className="text-gray-600 mt-2"&gt;Customize your experience&lt;/p&gt;</span>
           &lt;/div&gt;
-<span class="cstat-no" title="statement not covered" >          &lt;Link </span>
+<span class="cstat-no" title="statement not covered" >          &lt;Link</span>
 <span class="cstat-no" title="statement not covered" >            to="/"</span>
 <span class="cstat-no" title="statement not covered" >            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200"</span>
 <span class="cstat-no" title="statement not covered" >          &gt;</span>
@@ -497,31 +494,31 @@
 <span class="cstat-no" title="statement not covered" >            &lt;div className="grid grid-cols-1 md:grid-cols-2 gap-6"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;label className="block text-sm font-semibold text-gray-700 mb-2"&gt;Username&lt;/label&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;input </span>
-<span class="cstat-no" title="statement not covered" >                  type="text" </span>
+<span class="cstat-no" title="statement not covered" >                &lt;input</span>
+<span class="cstat-no" title="statement not covered" >                  type="text"</span>
 <span class="cstat-no" title="statement not covered" >                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"</span>
 <span class="cstat-no" title="statement not covered" >                  defaultValue="user123"</span>
                 /&gt;
               &lt;/div&gt;
 <span class="cstat-no" title="statement not covered" >              &lt;div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;label className="block text-sm font-semibold text-gray-700 mb-2"&gt;Email&lt;/label&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;input </span>
-<span class="cstat-no" title="statement not covered" >                  type="email" </span>
+<span class="cstat-no" title="statement not covered" >                &lt;input</span>
+<span class="cstat-no" title="statement not covered" >                  type="email"</span>
 <span class="cstat-no" title="statement not covered" >                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"</span>
 <span class="cstat-no" title="statement not covered" >                  defaultValue="user@example.com"</span>
                 /&gt;
               &lt;/div&gt;
 <span class="cstat-no" title="statement not covered" >              &lt;div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;label className="block text-sm font-semibold text-gray-700 mb-2"&gt;Full Name&lt;/label&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;input </span>
-<span class="cstat-no" title="statement not covered" >                  type="text" </span>
+<span class="cstat-no" title="statement not covered" >                &lt;input</span>
+<span class="cstat-no" title="statement not covered" >                  type="text"</span>
 <span class="cstat-no" title="statement not covered" >                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"</span>
 <span class="cstat-no" title="statement not covered" >                  defaultValue="XDose User"</span>
                 /&gt;
               &lt;/div&gt;
 <span class="cstat-no" title="statement not covered" >              &lt;div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;label className="block text-sm font-semibold text-gray-700 mb-2"&gt;Bio&lt;/label&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;textarea </span>
+<span class="cstat-no" title="statement not covered" >                &lt;textarea</span>
 <span class="cstat-no" title="statement not covered" >                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"</span>
 <span class="cstat-no" title="statement not covered" >                  rows={3}</span>
 <span class="cstat-no" title="statement not covered" >                  defaultValue="Passionate content creator"</span>
@@ -643,7 +640,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-28T08:41:49.105Z
+                at 2025-05-28T09:32:59.845Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -77,6 +77,7 @@ Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-trick
 Projet React + Vite pour l’interface utilisateur adaptative XDose.
 
 ## Table des matières
+
 - [Démarrage rapide](#démarrage-rapide)
 - [Structure du projet](#structure-du-projet)
 - [Scripts disponibles](#scripts-disponibles)
@@ -114,16 +115,20 @@ npm run dev
 - `npm run test` : lance les tests unitaires (à configurer)
 
 ## Qualité & Standards
+
 - ESLint, Prettier, Husky, commitlint (voir roadmap pour installation)
 
 ## Tests
+
 - Vitest + React Testing Library (voir roadmap pour installation)
 
 ## Déploiement
+
 - Compatible Vercel, Netlify, Lovable, etc.
 - Voir la documentation de la cible choisie
 
 ## Technologies
+
 - React, Vite, TypeScript, Tailwind CSS, shadcn-ui
 
 ---

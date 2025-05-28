@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/27</span>
+                <span class='fraction'>0/25</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/27</span>
+                <span class='fraction'>0/25</span>
             </div>
         
             
@@ -107,9 +107,7 @@
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a>
-<a name='L46'></a><a href='#L46'>46</a>
-<a name='L47'></a><a href='#L47'>47</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L45'></a><a href='#L45'>45</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -144,8 +142,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -155,10 +151,10 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import * as React from "react"<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
-import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import * as React from 'react';<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
+import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 &nbsp;
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 &nbsp;
 <span class="cstat-no" title="statement not covered" >const ScrollArea = React.forwardRef&lt;</span>
   React.ElementRef&lt;typeof ScrollAreaPrimitive.Root&gt;,
@@ -166,7 +162,7 @@ import { cn } from "@/lib/utils"
 <span class="cstat-no" title="statement not covered" >&gt;(({ className, children, ...props }, ref) =&gt; (</span>
 <span class="cstat-no" title="statement not covered" >  &lt;ScrollAreaPrimitive.Root</span>
 <span class="cstat-no" title="statement not covered" >    ref={ref}</span>
-<span class="cstat-no" title="statement not covered" >    className={cn("relative overflow-hidden", className)}</span>
+<span class="cstat-no" title="statement not covered" >    className={cn('relative overflow-hidden', className)}</span>
 <span class="cstat-no" title="statement not covered" >    {...props}</span>
   &gt;
 <span class="cstat-no" title="statement not covered" >    &lt;ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]"&gt;</span>
@@ -175,32 +171,30 @@ import { cn } from "@/lib/utils"
 <span class="cstat-no" title="statement not covered" >    &lt;ScrollBar /&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;ScrollAreaPrimitive.Corner /&gt;</span>
   &lt;/ScrollAreaPrimitive.Root&gt;
-))
-<span class="cstat-no" title="statement not covered" >ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName</span>
+));
+<span class="cstat-no" title="statement not covered" >ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >const ScrollBar = React.forwardRef&lt;</span>
   React.ElementRef&lt;typeof ScrollAreaPrimitive.ScrollAreaScrollbar&gt;,
   React.ComponentPropsWithoutRef&lt;typeof ScrollAreaPrimitive.ScrollAreaScrollbar&gt;
-<span class="cstat-no" title="statement not covered" >&gt;(({ className, orientation = "vertical", ...props }, ref) =&gt; (</span>
+<span class="cstat-no" title="statement not covered" >&gt;(({ className, orientation = 'vertical', ...props }, ref) =&gt; (</span>
 <span class="cstat-no" title="statement not covered" >  &lt;ScrollAreaPrimitive.ScrollAreaScrollbar</span>
 <span class="cstat-no" title="statement not covered" >    ref={ref}</span>
 <span class="cstat-no" title="statement not covered" >    orientation={orientation}</span>
 <span class="cstat-no" title="statement not covered" >    className={cn(</span>
-<span class="cstat-no" title="statement not covered" >      "flex touch-none select-none transition-colors",</span>
-<span class="cstat-no" title="statement not covered" >      orientation === "vertical" &amp;&amp;</span>
-<span class="cstat-no" title="statement not covered" >        "h-full w-2.5 border-l border-l-transparent p-[1px]",</span>
-<span class="cstat-no" title="statement not covered" >      orientation === "horizontal" &amp;&amp;</span>
-<span class="cstat-no" title="statement not covered" >        "h-2.5 flex-col border-t border-t-transparent p-[1px]",</span>
-<span class="cstat-no" title="statement not covered" >      className</span>
+<span class="cstat-no" title="statement not covered" >      'flex touch-none select-none transition-colors',</span>
+<span class="cstat-no" title="statement not covered" >      orientation === 'vertical' &amp;&amp; 'h-full w-2.5 border-l border-l-transparent p-[1px]',</span>
+<span class="cstat-no" title="statement not covered" >      orientation === 'horizontal' &amp;&amp; 'h-2.5 flex-col border-t border-t-transparent p-[1px]',</span>
+<span class="cstat-no" title="statement not covered" >      className,</span>
     )}
 <span class="cstat-no" title="statement not covered" >    {...props}</span>
   &gt;
 <span class="cstat-no" title="statement not covered" >    &lt;ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" /&gt;</span>
   &lt;/ScrollAreaPrimitive.ScrollAreaScrollbar&gt;
-))
-<span class="cstat-no" title="statement not covered" >ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName</span>
+));
+<span class="cstat-no" title="statement not covered" >ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;</span>
 &nbsp;
-export { ScrollArea, ScrollBar }
+export { ScrollArea, ScrollBar };
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -208,7 +202,7 @@ export { ScrollArea, ScrollBar }
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-28T08:41:49.105Z
+                at 2025-05-28T09:32:59.845Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

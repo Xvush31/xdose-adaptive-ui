@@ -169,12 +169,12 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import * as React from "react"</span></span></span>
-import * as TabsPrimitive from "@radix-ui/react-tabs"
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import * as React from 'react';</span></span></span>
+import * as TabsPrimitive from '@radix-ui/react-tabs';
 &nbsp;
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 &nbsp;
-<span class="cstat-no" title="statement not covered" >const Tabs = TabsPrimitive.Root</span>
+<span class="cstat-no" title="statement not covered" >const Tabs = TabsPrimitive.Root;</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >const TabsList = React.forwardRef&lt;</span>
   React.ElementRef&lt;typeof TabsPrimitive.List&gt;,
@@ -183,13 +183,13 @@ import { cn } from "@/lib/utils"
 <span class="cstat-no" title="statement not covered" >  &lt;TabsPrimitive.List</span>
 <span class="cstat-no" title="statement not covered" >    ref={ref}</span>
 <span class="cstat-no" title="statement not covered" >    className={cn(</span>
-<span class="cstat-no" title="statement not covered" >      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",</span>
-<span class="cstat-no" title="statement not covered" >      className</span>
+<span class="cstat-no" title="statement not covered" >      'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground',</span>
+<span class="cstat-no" title="statement not covered" >      className,</span>
     )}
 <span class="cstat-no" title="statement not covered" >    {...props}</span>
   /&gt;
-))
-<span class="cstat-no" title="statement not covered" >TabsList.displayName = TabsPrimitive.List.displayName</span>
+));
+<span class="cstat-no" title="statement not covered" >TabsList.displayName = TabsPrimitive.List.displayName;</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >const TabsTrigger = React.forwardRef&lt;</span>
   React.ElementRef&lt;typeof TabsPrimitive.Trigger&gt;,
@@ -198,13 +198,13 @@ import { cn } from "@/lib/utils"
 <span class="cstat-no" title="statement not covered" >  &lt;TabsPrimitive.Trigger</span>
 <span class="cstat-no" title="statement not covered" >    ref={ref}</span>
 <span class="cstat-no" title="statement not covered" >    className={cn(</span>
-<span class="cstat-no" title="statement not covered" >      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",</span>
-<span class="cstat-no" title="statement not covered" >      className</span>
+<span class="cstat-no" title="statement not covered" >      'inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',</span>
+<span class="cstat-no" title="statement not covered" >      className,</span>
     )}
 <span class="cstat-no" title="statement not covered" >    {...props}</span>
   /&gt;
-))
-<span class="cstat-no" title="statement not covered" >TabsTrigger.displayName = TabsPrimitive.Trigger.displayName</span>
+));
+<span class="cstat-no" title="statement not covered" >TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >const TabsContent = React.forwardRef&lt;</span>
   React.ElementRef&lt;typeof TabsPrimitive.Content&gt;,
@@ -213,15 +213,15 @@ import { cn } from "@/lib/utils"
 <span class="cstat-no" title="statement not covered" >  &lt;TabsPrimitive.Content</span>
 <span class="cstat-no" title="statement not covered" >    ref={ref}</span>
 <span class="cstat-no" title="statement not covered" >    className={cn(</span>
-<span class="cstat-no" title="statement not covered" >      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",</span>
-<span class="cstat-no" title="statement not covered" >      className</span>
+<span class="cstat-no" title="statement not covered" >      'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',</span>
+<span class="cstat-no" title="statement not covered" >      className,</span>
     )}
 <span class="cstat-no" title="statement not covered" >    {...props}</span>
   /&gt;
-))
-<span class="cstat-no" title="statement not covered" >TabsContent.displayName = TabsPrimitive.Content.displayName</span>
+));
+<span class="cstat-no" title="statement not covered" >TabsContent.displayName = TabsPrimitive.Content.displayName;</span>
 &nbsp;
-export { Tabs, TabsList, TabsTrigger, TabsContent }
+export { Tabs, TabsList, TabsTrigger, TabsContent };
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -229,7 +229,7 @@ export { Tabs, TabsList, TabsTrigger, TabsContent }
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-28T08:41:49.105Z
+                at 2025-05-28T09:32:59.845Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

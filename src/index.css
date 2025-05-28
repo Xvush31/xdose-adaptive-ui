@@ -90,7 +90,8 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
   }
 }
 
@@ -99,7 +100,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
@@ -186,7 +187,8 @@
 }
 
 @keyframes color-shift {
-  0%, 100% {
+  0%,
+  100% {
     filter: hue-rotate(0deg);
   }
   25% {

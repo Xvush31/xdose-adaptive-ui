@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Settings, User, Bell, Shield, Palette, Volume2, Moon, Sun } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -8,16 +7,16 @@ const Parametres = () => {
     email: true,
     push: false,
     comments: true,
-    likes: false
+    likes: false,
   });
 
   const [darkMode, setDarkMode] = useState(false);
   const [volume, setVolume] = useState<number>(75);
 
   const handleNotificationChange = (type: keyof typeof notifications) => {
-    setNotifications(prev => ({
+    setNotifications((prev) => ({
       ...prev,
-      [type]: !prev[type]
+      [type]: !prev[type],
     }));
   };
 
@@ -32,7 +31,7 @@ const Parametres = () => {
             </h1>
             <p className="text-gray-600 mt-2">Customize your experience</p>
           </div>
-          <Link 
+          <Link
             to="/"
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200"
           >
@@ -50,31 +49,31 @@ const Parametres = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Username</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   defaultValue="user123"
                 />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   defaultValue="user@example.com"
                 />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   defaultValue="XDose User"
                 />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
-                <textarea 
+                <textarea
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   rows={3}
                   defaultValue="Passionate content creator"

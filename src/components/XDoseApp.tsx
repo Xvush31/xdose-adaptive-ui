@@ -1,5 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Search, User, Heart, MessageCircle, Share2, Upload, Settings, Home, TrendingUp, Users, DollarSign, BarChart3, Bell, Menu, X, Filter, Clock, Eye, Volume2, Brain, Palette, Sun, Moon } from 'lucide-react';
+import {
+  Play,
+  Search,
+  User,
+  Heart,
+  MessageCircle,
+  Share2,
+  Upload,
+  Settings,
+  Home,
+  TrendingUp,
+  Users,
+  DollarSign,
+  BarChart3,
+  Bell,
+  Menu,
+  X,
+  Filter,
+  Clock,
+  Eye,
+  Volume2,
+  Brain,
+  Palette,
+  Sun,
+  Moon,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Hook neuro-esthétique (version simplifiée intégrée)
@@ -19,14 +44,14 @@ const useNeuroAesthetics = (initialProfile = 'balanced') => {
     visual: { animationSpeed: 1.2, colorIntensity: 1.1 },
     analytical: { animationSpeed: 0.8, colorIntensity: 0.9 },
     balanced: { animationSpeed: 1.0, colorIntensity: 1.0 },
-    immersive: { animationSpeed: 1.4, colorIntensity: 1.3 }
+    immersive: { animationSpeed: 1.4, colorIntensity: 1.3 },
   };
 
   const themes = {
     morning: { primary: 'from-blue-500 to-purple-600', mood: 'energetic' },
     afternoon: { primary: 'from-blue-500 to-purple-600', mood: 'productive' },
     evening: { primary: 'from-blue-500 to-purple-600', mood: 'relaxed' },
-    night: { primary: 'from-blue-500 to-purple-600', mood: 'calm' }
+    night: { primary: 'from-blue-500 to-purple-600', mood: 'calm' },
   };
 
   const triggerMicroReward = (type = 'like') => {
@@ -37,7 +62,7 @@ const useNeuroAesthetics = (initialProfile = 'balanced') => {
   const getAdaptiveStyles = () => ({
     colors: themes[circadianPeriod],
     profile: profiles[cognitiveProfile],
-    focus: focusMode
+    focus: focusMode,
   });
 
   return {
@@ -50,7 +75,7 @@ const useNeuroAesthetics = (initialProfile = 'balanced') => {
     microRewardActive,
     getAdaptiveStyles,
     currentTheme: themes[circadianPeriod],
-    currentProfile: profiles[cognitiveProfile]
+    currentProfile: profiles[cognitiveProfile],
   };
 };
 
@@ -60,7 +85,7 @@ const XDoseLogo = ({ size = 'lg', className = '', animated = true, neuroStyles }
 
   const sizes = {
     sm: 'text-xl',
-    md: 'text-3xl', 
+    md: 'text-3xl',
     lg: 'text-5xl',
     xl: 'text-7xl',
   };
@@ -77,7 +102,7 @@ const XDoseLogo = ({ size = 'lg', className = '', animated = true, neuroStyles }
         </span>
         <span className="text-slate-700 font-medium">Dose</span>
       </div>
-      
+
       <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2 transition-all duration-500" />
     </div>
   );
@@ -95,38 +120,40 @@ const XDoseApp = () => {
   const trendingVideos = [
     {
       id: 1,
-      title: "Style & Basketball Court",
-      thumbnail: "/lovable-uploads/e2dcb0be-c9c2-42cd-8966-b5e79a7902d2.png",
-      duration: "5:45",
-      views: "12.3K",
-      creator: "StyleCreator",
-      premium: true
+      title: 'Style & Basketball Court',
+      thumbnail: '/lovable-uploads/e2dcb0be-c9c2-42cd-8966-b5e79a7902d2.png',
+      duration: '5:45',
+      views: '12.3K',
+      creator: 'StyleCreator',
+      premium: true,
     },
     {
       id: 2,
-      title: "Fashion & Shopping",
-      thumbnail: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Cdefs%3E%3ClinearGradient id='grad2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23FFC0CB;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%238B4513;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='300' fill='url(%23grad2)'/%3E%3Cellipse cx='200' cy='100' rx='60' ry='40' fill='%23000'/%3E%3Crect x='150' y='180' width='100' height='80' fill='%23800080'/%3E%3C/svg%3E",
-      duration: "8:40",
-      views: "25.7K",
-      creator: "FashionGuru",
-      vip: true
+      title: 'Fashion & Shopping',
+      thumbnail:
+        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Cdefs%3E%3ClinearGradient id='grad2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23FFC0CB;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%238B4513;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='300' fill='url(%23grad2)'/%3E%3Cellipse cx='200' cy='100' rx='60' ry='40' fill='%23000'/%3E%3Crect x='150' y='180' width='100' height='80' fill='%23800080'/%3E%3C/svg%3E",
+      duration: '8:40',
+      views: '25.7K',
+      creator: 'FashionGuru',
+      vip: true,
     },
     {
       id: 3,
-      title: "Nature Landscape",
-      thumbnail: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Cdefs%3E%3ClinearGradient id='grad3' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2387CEEB;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%23FFD700;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2332CD32;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='300' fill='url(%23grad3)'/%3E%3Cpolygon points='100,250 200,100 300,250' fill='%236B8E23'/%3E%3Ccircle cx='320' cy='80' r='25' fill='%23FFD700'/%3E%3C/svg%3E",
-      duration: "3:07",
-      views: "8.9K",
-      creator: "NatureLover"
-    }
+      title: 'Nature Landscape',
+      thumbnail:
+        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Cdefs%3E%3ClinearGradient id='grad3' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2387CEEB;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%23FFD700;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2332CD32;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='300' fill='url(%23grad3)'/%3E%3Cpolygon points='100,250 200,100 300,250' fill='%236B8E23'/%3E%3Ccircle cx='320' cy='80' r='25' fill='%23FFD700'/%3E%3C/svg%3E",
+      duration: '3:07',
+      views: '8.9K',
+      creator: 'NatureLover',
+    },
   ];
 
   const categories = [
-    { name: "All", icon: Home },
-    { name: "Art", icon: Users },
-    { name: "Lifestyle", icon: Heart },
-    { name: "Nature", icon: Eye },
-    { name: "Food", icon: TrendingUp }
+    { name: 'All', icon: Home },
+    { name: 'Art', icon: Users },
+    { name: 'Lifestyle', icon: Heart },
+    { name: 'Nature', icon: Eye },
+    { name: 'Food', icon: TrendingUp },
   ];
 
   const adaptiveStyles = neuro.getAdaptiveStyles();
@@ -140,7 +167,7 @@ const XDoseApp = () => {
             <Brain className="h-6 w-6 mr-2 text-purple-500" />
             Neuro-Aesthetics
           </h3>
-          <button 
+          <button
             onClick={() => setShowNeuroSettings(false)}
             className="p-2 hover:bg-gray-100 rounded-lg"
           >
@@ -153,7 +180,7 @@ const XDoseApp = () => {
           <div>
             <label className="block text-sm font-medium mb-3">Cognitive Profile</label>
             <div className="grid grid-cols-2 gap-2">
-              {['visual', 'analytical', 'balanced', 'immersive'].map(profile => (
+              {['visual', 'analytical', 'balanced', 'immersive'].map((profile) => (
                 <button
                   key={profile}
                   onClick={() => neuro.setCognitiveProfile(profile)}
@@ -172,9 +199,17 @@ const XDoseApp = () => {
           {/* Période circadienne */}
           <div>
             <label className="block text-sm font-medium mb-2">Current Period</label>
-            <div className={`p-3 rounded-lg bg-gradient-to-r ${adaptiveStyles.colors.primary} text-white flex items-center`}>
-              {neuro.circadianPeriod === 'night' ? <Moon className="h-4 w-4 mr-2" /> : <Sun className="h-4 w-4 mr-2" />}
-              <span className="capitalize">{neuro.circadianPeriod} - {adaptiveStyles.colors.mood}</span>
+            <div
+              className={`p-3 rounded-lg bg-gradient-to-r ${adaptiveStyles.colors.primary} text-white flex items-center`}
+            >
+              {neuro.circadianPeriod === 'night' ? (
+                <Moon className="h-4 w-4 mr-2" />
+              ) : (
+                <Sun className="h-4 w-4 mr-2" />
+              )}
+              <span className="capitalize">
+                {neuro.circadianPeriod} - {adaptiveStyles.colors.mood}
+              </span>
             </div>
           </div>
 
@@ -214,18 +249,18 @@ const XDoseApp = () => {
     };
 
     return (
-      <div 
+      <div
         className={`group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 ${
           neuro.microRewardActive ? 'scale-105 shadow-lg' : ''
         } ${featured ? 'lg:row-span-2' : ''}`}
       >
         <div className={`relative ${featured ? 'aspect-[3/4] lg:aspect-[3/5]' : 'aspect-video'}`}>
-          <img 
-            src={video.thumbnail} 
+          <img
+            src={video.thumbnail}
             alt={video.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          
+
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
             <div className="bg-white/90 rounded-full p-4 backdrop-blur-sm">
               <Play className="h-8 w-8 text-gray-800" fill="currentColor" />
@@ -245,24 +280,26 @@ const XDoseApp = () => {
 
         <div className="p-5">
           <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{video.title}</h3>
-          <p className="text-sm text-gray-500 mb-3">{video.creator} • {video.views} views</p>
-          
+          <p className="text-sm text-gray-500 mb-3">
+            {video.creator} • {video.views} views
+          </p>
+
           <div className="flex items-center space-x-4">
-            <button 
+            <button
               onClick={() => handleInteraction('like')}
               className="flex items-center space-x-1 text-gray-400 hover:text-red-500 transition-colors"
             >
               <Heart className="h-4 w-4" />
               <span className="text-xs font-medium">Like</span>
             </button>
-            <button 
+            <button
               onClick={() => handleInteraction('comment')}
               className="flex items-center space-x-1 text-gray-400 hover:text-blue-500 transition-colors"
             >
               <MessageCircle className="h-4 w-4" />
               <span className="text-xs font-medium">Comment</span>
             </button>
-            <button 
+            <button
               onClick={() => handleInteraction('share')}
               className="flex items-center space-x-1 text-gray-400 hover:text-purple-500 transition-colors"
             >
@@ -288,8 +325,8 @@ const XDoseApp = () => {
               neuro.triggerMicroReward('discover');
             }}
             className={`flex items-center space-x-2 px-4 py-2 rounded-full whitespace-nowrap transition-all duration-300 ${
-              isActive 
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' 
+              isActive
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
                 : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
             }`}
           >
@@ -305,7 +342,7 @@ const XDoseApp = () => {
     <div className="px-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Trending Content</h2>
-        <button 
+        <button
           onClick={() => neuro.triggerMicroReward('discover')}
           className="text-purple-500 font-medium hover:text-purple-600 transition-colors flex items-center"
         >
@@ -330,7 +367,7 @@ const XDoseApp = () => {
     { id: 'upload', name: 'Upload', icon: Upload, path: '/upload' },
     { id: 'monetization', name: 'Monetization', icon: DollarSign, path: '/monetisation' },
     { id: 'analytics', name: 'Analytics', icon: BarChart3, path: '/analytics' },
-    { id: 'settings', name: 'Settings', icon: Settings, path: '/parametres' }
+    { id: 'settings', name: 'Settings', icon: Settings, path: '/parametres' },
   ];
 
   return (
@@ -338,13 +375,13 @@ const XDoseApp = () => {
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
         <div className="flex items-center justify-between px-4 py-3">
-          <button 
+          <button
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             <Menu className="h-6 w-6 text-gray-600" />
           </button>
-          
+
           <div className="flex-1 max-w-md mx-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -358,9 +395,9 @@ const XDoseApp = () => {
               />
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-2">
-            <button 
+            <button
               onClick={() => setShowNeuroSettings(true)}
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
@@ -384,7 +421,7 @@ const XDoseApp = () => {
                 <X className="h-6 w-6 text-gray-600" />
               </button>
             </div>
-            
+
             <nav className="space-y-2">
               {sidebarItems.map((item) => {
                 const Icon = item.icon;
@@ -417,10 +454,15 @@ const XDoseApp = () => {
         {!user ? (
           <div className="px-4 py-16">
             <div className="text-center mb-16">
-              <XDoseLogo size="xl" className="mb-8" animated={!neuro.focusMode} neuroStyles={adaptiveStyles} />
-              
+              <XDoseLogo
+                size="xl"
+                className="mb-8"
+                animated={!neuro.focusMode}
+                neuroStyles={adaptiveStyles}
+              />
+
               <div className="space-y-6">
-                <button 
+                <button
                   onClick={() => {
                     setUser({ name: 'User', avatar: null });
                     neuro.triggerMicroReward('achievement');
@@ -430,7 +472,7 @@ const XDoseApp = () => {
                   <span className="mr-2">→</span>
                   Sign in
                 </button>
-                
+
                 <button className="text-gray-600 px-6 py-2 rounded-xl border-0 hover:text-gray-800 transition-colors flex items-center justify-center mx-auto">
                   <User className="h-4 w-4 mr-2" />
                   Create account
@@ -444,7 +486,7 @@ const XDoseApp = () => {
           <div className="space-y-8">
             <CategoryFilter />
             <TrendingContent />
-            
+
             <div className="px-6">
               <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 border border-gray-100">
                 <div className="flex items-center justify-between">
@@ -476,17 +518,17 @@ const XDoseApp = () => {
           {[
             { id: 'home', icon: Home, label: 'Home', path: '/' },
             { id: 'trending', icon: TrendingUp, label: 'Trending', path: '/tendances' },
-            { id: 'creators', icon: Users, label: 'Creators', path: '/createurs' }
-          ].map(item => {
+            { id: 'creators', icon: Users, label: 'Creators', path: '/createurs' },
+          ].map((item) => {
             const Icon = item.icon;
             return (
-              <Link 
+              <Link
                 key={item.id}
                 to={item.path}
                 onClick={() => neuro.triggerMicroReward('discover')}
                 className={`flex flex-col items-center py-2 px-4 transition-all duration-200 ${
-                  window.location.pathname === item.path 
-                    ? 'text-purple-500 scale-110' 
+                  window.location.pathname === item.path
+                    ? 'text-purple-500 scale-110'
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
@@ -499,7 +541,7 @@ const XDoseApp = () => {
       </nav>
 
       {/* Volume Button */}
-      <button 
+      <button
         onClick={() => neuro.triggerMicroReward('like')}
         className="fixed bottom-20 right-4 bg-white text-gray-600 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
       >

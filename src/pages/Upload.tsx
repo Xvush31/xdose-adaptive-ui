@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Upload as UploadIcon, FileVideo, Image, File, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -10,9 +9,9 @@ const Upload = () => {
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   };
@@ -21,15 +20,15 @@ const Upload = () => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const newFiles = Array.from(e.dataTransfer.files);
-      setFiles(prev => [...prev, ...newFiles]);
+      setFiles((prev) => [...prev, ...newFiles]);
     }
   };
 
   const removeFile = (index) => {
-    setFiles(prev => prev.filter((_, i) => i !== index));
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const getFileIcon = (type) => {
@@ -49,7 +48,7 @@ const Upload = () => {
             </h1>
             <p className="text-gray-600 mt-2">Partagez votre contenu avec la communauté</p>
           </div>
-          <Link 
+          <Link
             to="/"
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200"
           >
@@ -61,8 +60,8 @@ const Upload = () => {
           {/* Zone de drop */}
           <div
             className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
-              dragActive 
-                ? 'border-purple-500 bg-purple-50' 
+              dragActive
+                ? 'border-purple-500 bg-purple-50'
                 : 'border-gray-300 hover:border-purple-400'
             }`}
             onDragEnter={handleDrag}
@@ -74,9 +73,7 @@ const Upload = () => {
             <h3 className="text-xl font-semibold mb-2 text-gray-800">
               Glissez-déposez vos fichiers ici
             </h3>
-            <p className="text-gray-600 mb-6">
-              Formats supportés: MP4, MOV, AVI, JPG, PNG, GIF
-            </p>
+            <p className="text-gray-600 mb-6">Formats supportés: MP4, MOV, AVI, JPG, PNG, GIF</p>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all duration-200">
               Choisir des fichiers
             </button>
@@ -90,7 +87,10 @@ const Upload = () => {
                 {files.map((file, index) => {
                   const FileIcon = getFileIcon(file.type);
                   return (
-                    <div key={index} className="bg-white rounded-lg p-4 shadow-md flex items-center justify-between">
+                    <div
+                      key={index}
+                      className="bg-white rounded-lg p-4 shadow-md flex items-center justify-between"
+                    >
                       <div className="flex items-center">
                         <FileIcon className="h-8 w-8 text-purple-500 mr-3" />
                         <div>
@@ -110,7 +110,7 @@ const Upload = () => {
                   );
                 })}
               </div>
-              
+
               <div className="mt-6 flex justify-center">
                 <button className="bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all duration-200">
                   Publier ({files.length} fichier{files.length > 1 ? 's' : ''})

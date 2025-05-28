@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
-    mode === 'analyze' && visualizer({ open: true }),
+    mode === 'analyze' && visualizer({ open: false }),
   ].filter(Boolean),
   resolve: {
     alias: {

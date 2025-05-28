@@ -1,20 +1,25 @@
-
 import React from 'react';
 import { DollarSign, TrendingUp, Users, Eye, CreditCard, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Monetisation = () => {
   const stats = [
-    { title: "Revenus ce mois", amount: "€2,691", change: "+12%", icon: DollarSign, color: "green" },
-    { title: "Abonnements actifs", amount: "1,234", change: "+8%", icon: Users, color: "blue" },
-    { title: "Vues premium", amount: "45.2K", change: "+15%", icon: Eye, color: "purple" },
-    { title: "Dons reçus", amount: "€567", change: "+23%", icon: Gift, color: "pink" }
+    {
+      title: 'Revenus ce mois',
+      amount: '€2,691',
+      change: '+12%',
+      icon: DollarSign,
+      color: 'green',
+    },
+    { title: 'Abonnements actifs', amount: '1,234', change: '+8%', icon: Users, color: 'blue' },
+    { title: 'Vues premium', amount: '45.2K', change: '+15%', icon: Eye, color: 'purple' },
+    { title: 'Dons reçus', amount: '€567', change: '+23%', icon: Gift, color: 'pink' },
   ];
 
   const revenueStreams = [
-    { name: "Abonnements Premium", amount: "€1,234", percentage: 46 },
-    { name: "Contenu payant", amount: "€890", percentage: 33 },
-    { name: "Dons", amount: "€567", percentage: 21 }
+    { name: 'Abonnements Premium', amount: '€1,234', percentage: 46 },
+    { name: 'Contenu payant', amount: '€890', percentage: 33 },
+    { name: 'Dons', amount: '€567', percentage: 21 },
   ];
 
   return (
@@ -28,7 +33,7 @@ const Monetisation = () => {
             </h1>
             <p className="text-gray-600 mt-2">Gérez vos revenus et optimisez vos gains</p>
           </div>
-          <Link 
+          <Link
             to="/"
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200"
           >
@@ -41,10 +46,15 @@ const Monetisation = () => {
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div
+                key={index}
+                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+              >
                 <div className="flex items-center justify-between mb-4">
                   <Icon className={`h-8 w-8 text-${stat.color}-500`} />
-                  <span className={`text-sm font-medium text-${stat.color}-500 bg-${stat.color}-100 px-2 py-1 rounded-full`}>
+                  <span
+                    className={`text-sm font-medium text-${stat.color}-500 bg-${stat.color}-100 px-2 py-1 rounded-full`}
+                  >
                     {stat.change}
                   </span>
                 </div>
@@ -68,7 +78,7 @@ const Monetisation = () => {
                       <span className="text-gray-900 font-semibold">{stream.amount}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${stream.percentage}%` }}
                       />
@@ -90,7 +100,7 @@ const Monetisation = () => {
                 </div>
                 <span>→</span>
               </button>
-              
+
               <button className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:shadow-lg transition-all">
                 <div className="flex items-center">
                   <Users className="h-5 w-5 mr-3" />
@@ -98,7 +108,7 @@ const Monetisation = () => {
                 </div>
                 <span>→</span>
               </button>
-              
+
               <button className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg hover:shadow-lg transition-all">
                 <div className="flex items-center">
                   <TrendingUp className="h-5 w-5 mr-3" />
