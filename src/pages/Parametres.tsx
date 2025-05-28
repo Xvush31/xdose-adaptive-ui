@@ -28,32 +28,32 @@ const Parametres = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-800 flex items-center">
               <Settings className="h-8 w-8 mr-3 text-purple-500" />
-              Paramètres
+              Settings
             </h1>
-            <p className="text-gray-600 mt-2">Personnalisez votre expérience</p>
+            <p className="text-gray-600 mt-2">Customize your experience</p>
           </div>
           <Link 
             to="/"
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200"
           >
-            Retour
+            Back
           </Link>
         </div>
 
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Profil */}
+          {/* Profile */}
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
               <User className="h-5 w-5 mr-2" />
-              Profil
+              Profile
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nom d'utilisateur</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                 <input 
                   type="text" 
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  defaultValue="utilisateur123"
+                  defaultValue="user123"
                 />
               </div>
               <div>
@@ -65,11 +65,11 @@ const Parametres = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nom complet</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <input 
                   type="text" 
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  defaultValue="Utilisateur XDose"
+                  defaultValue="XDose User"
                 />
               </div>
               <div>
@@ -77,7 +77,7 @@ const Parametres = () => {
                 <textarea 
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   rows={3}
-                  defaultValue="Créateur de contenu passionné"
+                  defaultValue="Passionate content creator"
                 />
               </div>
             </div>
@@ -93,10 +93,10 @@ const Parametres = () => {
               {Object.entries(notifications).map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between">
                   <span className="text-gray-700 capitalize">
-                    {key === 'email' && 'Notifications par email'}
-                    {key === 'push' && 'Notifications push'}
-                    {key === 'comments' && 'Nouveaux commentaires'}
-                    {key === 'likes' && 'Nouveaux likes'}
+                    {key === 'email' && 'Email notifications'}
+                    {key === 'push' && 'Push notifications'}
+                    {key === 'comments' && 'New comments'}
+                    {key === 'likes' && 'New likes'}
                   </span>
                   <button
                     onClick={() => handleNotificationChange(key as keyof typeof notifications)}
@@ -115,17 +115,17 @@ const Parametres = () => {
             </div>
           </div>
 
-          {/* Apparence */}
+          {/* Appearance */}
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
               <Palette className="h-5 w-5 mr-2" />
-              Apparence
+              Appearance
             </h3>
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   {darkMode ? <Moon className="h-5 w-5 mr-2" /> : <Sun className="h-5 w-5 mr-2" />}
-                  <span className="text-gray-700">Mode sombre</span>
+                  <span className="text-gray-700">Dark mode</span>
                 </div>
                 <button
                   onClick={() => setDarkMode(!darkMode)}
@@ -161,24 +161,24 @@ const Parametres = () => {
             </div>
           </div>
 
-          {/* Sécurité */}
+          {/* Security */}
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
               <Shield className="h-5 w-5 mr-2" />
-              Sécurité et confidentialité
+              Security & Privacy
             </h3>
             <div className="space-y-4">
               <button className="w-full text-left p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="font-medium text-gray-800">Changer le mot de passe</div>
-                <div className="text-sm text-gray-600">Dernière modification il y a 3 mois</div>
+                <div className="font-medium text-gray-800">Change password</div>
+                <div className="text-sm text-gray-600">Last changed 3 months ago</div>
               </button>
               <button className="w-full text-left p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="font-medium text-gray-800">Authentification à deux facteurs</div>
-                <div className="text-sm text-gray-600">Sécurisez votre compte</div>
+                <div className="font-medium text-gray-800">Two-factor authentication</div>
+                <div className="text-sm text-gray-600">Secure your account</div>
               </button>
               <button className="w-full text-left p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="font-medium text-gray-800">Télécharger mes données</div>
-                <div className="text-sm text-gray-600">Exportez vos informations</div>
+                <div className="font-medium text-gray-800">Download my data</div>
+                <div className="text-sm text-gray-600">Export your information</div>
               </button>
             </div>
           </div>

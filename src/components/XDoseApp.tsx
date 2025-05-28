@@ -3,30 +3,30 @@ import { Play, Search, User, Heart, MessageCircle, Share2, Upload, Settings, Hom
 import { Link } from 'react-router-dom';
 
 // Hook neuro-esthétique (version simplifiée intégrée)
-const useNeuroAesthetics = (initialProfile = 'équilibré') => {
+const useNeuroAesthetics = (initialProfile = 'balanced') => {
   const [cognitiveProfile, setCognitiveProfile] = useState(initialProfile);
   const [circadianPeriod, setCircadianPeriod] = useState(() => {
     const hour = new Date().getHours();
-    if (hour >= 6 && hour < 12) return 'matin';
-    if (hour >= 12 && hour < 18) return 'après-midi';
-    if (hour >= 18 && hour < 22) return 'soir';
-    return 'nuit';
+    if (hour >= 6 && hour < 12) return 'morning';
+    if (hour >= 12 && hour < 18) return 'afternoon';
+    if (hour >= 18 && hour < 22) return 'evening';
+    return 'night';
   });
   const [focusMode, setFocusMode] = useState(false);
   const [microRewardActive, setMicroRewardActive] = useState(false);
 
   const profiles = {
-    visuel: { animationSpeed: 1.2, colorIntensity: 1.1 },
-    analytique: { animationSpeed: 0.8, colorIntensity: 0.9 },
-    équilibré: { animationSpeed: 1.0, colorIntensity: 1.0 },
-    immersif: { animationSpeed: 1.4, colorIntensity: 1.3 }
+    visual: { animationSpeed: 1.2, colorIntensity: 1.1 },
+    analytical: { animationSpeed: 0.8, colorIntensity: 0.9 },
+    balanced: { animationSpeed: 1.0, colorIntensity: 1.0 },
+    immersive: { animationSpeed: 1.4, colorIntensity: 1.3 }
   };
 
   const themes = {
-    matin: { primary: 'from-yellow-400 to-orange-500', mood: 'énergique' },
-    'après-midi': { primary: 'from-blue-500 to-purple-600', mood: 'productif' },
-    soir: { primary: 'from-purple-600 to-indigo-700', mood: 'relaxé' },
-    nuit: { primary: 'from-slate-700 to-slate-900', mood: 'calme' }
+    morning: { primary: 'from-yellow-400 to-orange-500', mood: 'energetic' },
+    afternoon: { primary: 'from-blue-500 to-purple-600', mood: 'productive' },
+    evening: { primary: 'from-purple-600 to-indigo-700', mood: 'relaxed' },
+    night: { primary: 'from-slate-700 to-slate-900', mood: 'calm' }
   };
 
   const triggerMicroReward = (type = 'like') => {
@@ -115,12 +115,12 @@ const XDoseLogo = ({ size = 'lg', className = '', animated = true, neuroStyles }
 };
 
 const XDoseApp = () => {
-  const neuro = useNeuroAesthetics('équilibré');
+  const neuro = useNeuroAesthetics('balanced');
   const [activeTab, setActiveTab] = useState('home');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('Tous');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [showNeuroSettings, setShowNeuroSettings] = useState(false);
 
   const trendingVideos = [
@@ -153,7 +153,7 @@ const XDoseApp = () => {
   ];
 
   const categories = [
-    { name: "Tous", icon: Home },
+    { name: "All", icon: Home },
     { name: "Art", icon: Users },
     { name: "Lifestyle", icon: Heart },
     { name: "Nature", icon: Eye },
@@ -169,7 +169,7 @@ const XDoseApp = () => {
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold flex items-center">
             <Brain className="h-6 w-6 mr-2 text-purple-500" />
-            Neuro-Esthétique
+            Neuro-Aesthetics
           </h3>
           <button 
             onClick={() => setShowNeuroSettings(false)}
@@ -182,9 +182,9 @@ const XDoseApp = () => {
         <div className="space-y-6">
           {/* Profil cognitif */}
           <div>
-            <label className="block text-sm font-medium mb-3">Profil Cognitif</label>
+            <label className="block text-sm font-medium mb-3">Cognitive Profile</label>
             <div className="grid grid-cols-2 gap-2">
-              {['visuel', 'analytique', 'équilibré', 'immersif'].map(profile => (
+              {['visual', 'analytical', 'balanced', 'immersive'].map(profile => (
                 <button
                   key={profile}
                   onClick={() => neuro.setCognitiveProfile(profile)}
@@ -202,16 +202,16 @@ const XDoseApp = () => {
 
           {/* Période circadienne */}
           <div>
-            <label className="block text-sm font-medium mb-2">Période Actuelle</label>
+            <label className="block text-sm font-medium mb-2">Current Period</label>
             <div className={`p-3 rounded-lg bg-gradient-to-r ${adaptiveStyles.colors.primary} text-white flex items-center`}>
-              {neuro.circadianPeriod === 'nuit' ? <Moon className="h-4 w-4 mr-2" /> : <Sun className="h-4 w-4 mr-2" />}
+              {neuro.circadianPeriod === 'night' ? <Moon className="h-4 w-4 mr-2" /> : <Sun className="h-4 w-4 mr-2" />}
               <span className="capitalize">{neuro.circadianPeriod} - {adaptiveStyles.colors.mood}</span>
             </div>
           </div>
 
           {/* Mode Focus */}
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Mode Focus</span>
+            <span className="text-sm font-medium">Focus Mode</span>
             <button
               onClick={() => neuro.setFocusMode(!neuro.focusMode)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -231,7 +231,7 @@ const XDoseApp = () => {
             onClick={() => neuro.triggerMicroReward('achievement')}
             className="w-full p-3 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg font-medium hover:shadow-lg transition-all"
           >
-            Tester Micro-Récompense ✨
+            Test Micro-Reward ✨
           </button>
         </div>
       </div>
@@ -280,7 +280,7 @@ const XDoseApp = () => {
 
         <div className="p-4">
           <h3 className="font-semibold text-gray-800 mb-1">{video.title}</h3>
-          <p className="text-sm text-gray-600">{video.creator} • {video.views} vues</p>
+          <p className="text-sm text-gray-600">{video.creator} • {video.views} views</p>
           
           {/* Actions avec micro-récompenses */}
           <div className="flex items-center space-x-4 mt-3">
@@ -289,21 +289,21 @@ const XDoseApp = () => {
               className="flex items-center space-x-1 text-gray-500 hover:text-red-500 transition-colors"
             >
               <Heart className="h-4 w-4" />
-              <span className="text-xs">J'aime</span>
+              <span className="text-xs">Like</span>
             </button>
             <button 
               onClick={() => handleInteraction('comment')}
               className="flex items-center space-x-1 text-gray-500 hover:text-blue-500 transition-colors"
             >
               <MessageCircle className="h-4 w-4" />
-              <span className="text-xs">Commenter</span>
+              <span className="text-xs">Comment</span>
             </button>
             <button 
               onClick={() => handleInteraction('share')}
               className="flex items-center space-x-1 text-gray-500 hover:text-purple-500 transition-colors"
             >
               <Share2 className="h-4 w-4" />
-              <span className="text-xs">Partager</span>
+              <span className="text-xs">Share</span>
             </button>
           </div>
         </div>
@@ -348,7 +348,7 @@ const XDoseApp = () => {
           onClick={() => neuro.triggerMicroReward('discover')}
           className={`bg-gradient-to-r ${adaptiveStyles.colors.primary} text-white px-4 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200 flex items-center`}
         >
-          Voir tout
+          View all
           <span className="ml-2">→</span>
         </button>
       </div>
@@ -356,12 +356,12 @@ const XDoseApp = () => {
       {/* Message motivationnel basé sur la période circadienne */}
       <div className={`mb-6 p-4 rounded-xl bg-gradient-to-r ${adaptiveStyles.colors.primary} text-white`}>
         <div className="flex items-center">
-          {neuro.circadianPeriod === 'nuit' ? <Moon className="h-5 w-5 mr-2" /> : <Sun className="h-5 w-5 mr-2" />}
+          {neuro.circadianPeriod === 'night' ? <Moon className="h-5 w-5 mr-2" /> : <Sun className="h-5 w-5 mr-2" />}
           <span className="text-sm">
-            {neuro.circadianPeriod === 'matin' && "Bonne journée ! Votre créativité est à son pic 🌅"}
-            {neuro.circadianPeriod === 'après-midi' && "Moment idéal pour explorer du contenu 🎯"}
-            {neuro.circadianPeriod === 'soir' && "Détendez-vous avec du contenu apaisant 🌙"}
-            {neuro.circadianPeriod === 'nuit' && "Mode nuit activé pour votre confort 🌜"}
+            {neuro.circadianPeriod === 'morning' && "Good morning! Your creativity is at its peak 🌅"}
+            {neuro.circadianPeriod === 'afternoon' && "Perfect time to explore content 🎯"}
+            {neuro.circadianPeriod === 'evening' && "Relax with some soothing content 🌙"}
+            {neuro.circadianPeriod === 'night' && "Night mode activated for your comfort 🌜"}
           </span>
         </div>
       </div>
@@ -391,9 +391,9 @@ const XDoseApp = () => {
                   <div className="flex items-center space-x-3">
                     <Brain className="h-6 w-6 text-purple-500" />
                     <div>
-                      <h3 className="font-semibold text-gray-800">Expérience Optimisée</h3>
+                      <h3 className="font-semibold text-gray-800">Optimized Experience</h3>
                       <p className="text-sm text-gray-600">
-                        Profil: {neuro.cognitiveProfile} • {neuro.circadianPeriod}
+                        Profile: {neuro.cognitiveProfile} • {neuro.circadianPeriod}
                       </p>
                     </div>
                   </div>
@@ -412,18 +412,18 @@ const XDoseApp = () => {
         return (
           <div className="p-6">
             <div className="max-w-2xl mx-auto">
-              <h2 className="text-2xl font-bold mb-6">Uploader une vidéo</h2>
+              <h2 className="text-2xl font-bold mb-6">Upload a video</h2>
               <div className={`border-2 border-dashed border-gray-300 rounded-xl p-12 text-center transition-all duration-300 ${
                 neuro.focusMode ? 'ring-4 ring-purple-200' : ''
               }`}>
                 <Upload className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-lg font-semibold mb-2">Glissez-déposez vos fichiers ici</h3>
-                <p className="text-gray-600 mb-4">Formats supportés: MP4, MOV, AVI</p>
+                <h3 className="text-lg font-semibold mb-2">Drag and drop your files here</h3>
+                <p className="text-gray-600 mb-4">Supported formats: MP4, MOV, AVI</p>
                 <button 
                   onClick={() => neuro.triggerMicroReward('achievement')}
                   className={`bg-gradient-to-r ${adaptiveStyles.colors.primary} text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all duration-200`}
                 >
-                  Choisir des fichiers
+                  Choose files
                 </button>
               </div>
             </div>
@@ -432,24 +432,24 @@ const XDoseApp = () => {
       case 'monetization':
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6">Monétisation</h2>
+            <h2 className="text-2xl font-bold mb-6">Monetization</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                 <DollarSign className="h-8 w-8 text-green-500 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Abonnements</h3>
-                <p className="text-gray-600">Revenus récurrents mensuels</p>
+                <h3 className="text-lg font-semibold mb-2">Subscriptions</h3>
+                <p className="text-gray-600">Monthly recurring revenue</p>
                 <div className="text-2xl font-bold text-green-500 mt-2">€1,234</div>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                 <Heart className="h-8 w-8 text-red-500 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Dons</h3>
-                <p className="text-gray-600">Contributions ponctuelles</p>
+                <h3 className="text-lg font-semibold mb-2">Donations</h3>
+                <p className="text-gray-600">One-time contributions</p>
                 <div className="text-2xl font-bold text-red-500 mt-2">€567</div>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                 <Eye className="h-8 w-8 text-blue-500 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Vues Premium</h3>
-                <p className="text-gray-600">Contenu payant à l'unité</p>
+                <h3 className="text-lg font-semibold mb-2">Premium Views</h3>
+                <p className="text-gray-600">Pay-per-view content</p>
                 <div className="text-2xl font-bold text-blue-500 mt-2">€890</div>
               </div>
             </div>
@@ -458,21 +458,21 @@ const XDoseApp = () => {
       default:
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Section en développement</h2>
-            <p className="text-gray-600">Cette section utilise les principes neuro-esthétiques pour une expérience optimale.</p>
+            <h2 className="text-2xl font-bold mb-4">Section in development</h2>
+            <p className="text-gray-600">This section uses neuro-aesthetic principles for an optimal experience.</p>
           </div>
         );
     }
   };
 
   const sidebarItems = [
-    { id: 'home', name: 'Accueil', icon: Home, path: '/' },
-    { id: 'trending', name: 'Tendances', icon: TrendingUp, path: '/tendances' },
-    { id: 'creators', name: 'Créateurs', icon: Users, path: '/createurs' },
+    { id: 'home', name: 'Home', icon: Home, path: '/' },
+    { id: 'trending', name: 'Trending', icon: TrendingUp, path: '/tendances' },
+    { id: 'creators', name: 'Creators', icon: Users, path: '/createurs' },
     { id: 'upload', name: 'Upload', icon: Upload, path: '/upload' },
-    { id: 'monetization', name: 'Monétisation', icon: DollarSign, path: '/monetisation' },
+    { id: 'monetization', name: 'Monetization', icon: DollarSign, path: '/monetisation' },
     { id: 'analytics', name: 'Analytics', icon: BarChart3, path: '/analytics' },
-    { id: 'settings', name: 'Paramètres', icon: Settings, path: '/parametres' }
+    { id: 'settings', name: 'Settings', icon: Settings, path: '/parametres' }
   ];
 
   return (
@@ -501,7 +501,7 @@ const XDoseApp = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Rechercher..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => neuro.triggerMicroReward('discover')}
@@ -586,18 +586,18 @@ const XDoseApp = () => {
               <div className="space-y-4">
                 <button 
                   onClick={() => {
-                    setUser({ name: 'Utilisateur', avatar: null });
+                    setUser({ name: 'User', avatar: null });
                     neuro.triggerMicroReward('achievement');
                   }}
                   className={`bg-gradient-to-r ${adaptiveStyles.colors.primary} text-white px-8 py-3 rounded-full font-medium text-lg hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center mx-auto min-w-[200px]`}
                 >
                   <span className="mr-2">→</span>
-                  Se connecter
+                  Sign in
                 </button>
                 
                 <button className="text-gray-600 px-6 py-2 rounded-full border-0 hover:text-gray-800 transition-colors flex items-center justify-center mx-auto">
                   <User className="h-4 w-4 mr-2" />
-                  Créer un compte
+                  Create account
                 </button>
               </div>
             </div>
@@ -616,9 +616,9 @@ const XDoseApp = () => {
                   <div className="flex items-center space-x-3">
                     <Brain className="h-6 w-6 text-purple-500" />
                     <div>
-                      <h3 className="font-semibold text-gray-800">Expérience Optimisée</h3>
+                      <h3 className="font-semibold text-gray-800">Optimized Experience</h3>
                       <p className="text-sm text-gray-600">
-                        Profil: {neuro.cognitiveProfile} • {neuro.circadianPeriod}
+                        Profile: {neuro.cognitiveProfile} • {neuro.circadianPeriod}
                       </p>
                     </div>
                   </div>
@@ -639,9 +639,9 @@ const XDoseApp = () => {
       <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 px-4 py-2">
         <div className="flex items-center justify-around max-w-md mx-auto">
           {[
-            { id: 'home', icon: Home, label: 'Accueil', path: '/' },
-            { id: 'trending', icon: TrendingUp, label: 'Tendances', path: '/tendances' },
-            { id: 'creators', icon: Users, label: 'Créateurs', path: '/createurs' }
+            { id: 'home', icon: Home, label: 'Home', path: '/' },
+            { id: 'trending', icon: TrendingUp, label: 'Trending', path: '/tendances' },
+            { id: 'creators', icon: Users, label: 'Creators', path: '/createurs' }
           ].map(item => {
             const Icon = item.icon;
             return (

@@ -11,7 +11,7 @@ const Tendances = () => {
     { id: 4, title: "Fashion Trends", growth: "+25%", posts: "1.2K", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=300&h=200&fit=crop" }
   ];
 
-  const timeframes = ['24h', '7j', '30j', '3m'];
+  const timeframes = ['24h', '7d', '30d', '3m'];
   const [selectedTimeframe, setSelectedTimeframe] = React.useState('24h');
 
   return (
@@ -21,21 +21,21 @@ const Tendances = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-800 flex items-center">
               <TrendingUp className="h-8 w-8 mr-3 text-purple-500" />
-              Tendances
+              Trending
             </h1>
-            <p className="text-gray-600 mt-2">Découvrez ce qui est populaire en ce moment</p>
+            <p className="text-gray-600 mt-2">Discover what's popular right now</p>
           </div>
           <Link 
             to="/"
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200"
           >
-            Retour
+            Back
           </Link>
         </div>
 
-        {/* Filtres temporels */}
+        {/* Time filters */}
         <div className="flex items-center space-x-2 mb-8">
-          <span className="text-gray-600 font-medium">Période :</span>
+          <span className="text-gray-600 font-medium">Period:</span>
           {timeframes.map((timeframe) => (
             <button
               key={timeframe}
@@ -51,7 +51,7 @@ const Tendances = () => {
           ))}
         </div>
 
-        {/* Grille des tendances */}
+        {/* Trending grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {trendingTopics.map((topic) => (
             <div key={topic.id} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
