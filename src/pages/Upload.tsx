@@ -3,12 +3,26 @@ import { Upload as UploadIcon, FileVideo, Image, File, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
+const ACCEPTED_TYPES = [
+  'video/mp4',
+  'video/quicktime',
+  'video/x-msvideo', // avi
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+];
+
+function sanitizeFileName(name: string) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+}
+
 const Upload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -26,7 +40,13 @@ const Upload = () => {
     setDragActive(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const newFiles = Array.from(e.dataTransfer.files);
+      const newFiles = Array.from(e.dataTransfer.files).filter((file: File) =>
+        ACCEPTED_TYPES.includes(file.type),
+      );
+      if (newFiles.length === 0) {
+        setUploadError('Format de fichier non supporté.');
+        return;
+      }
       setFiles((prev) => [...prev, ...newFiles]);
     }
   };
@@ -39,6 +59,17 @@ const Upload = () => {
     if (type.startsWith('video/')) return FileVideo;
     if (type.startsWith('image/')) return Image;
     return File;
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files).filter((file: File) =>
+      ACCEPTED_TYPES.includes(file.type),
+    );
+    if (selectedFiles.length === 0) {
+      setUploadError('Format de fichier non supporté.');
+      return;
+    }
+    setFiles((prev) => [...prev, ...selectedFiles]);
   };
 
   // Ajout handler upload Supabase Storage
@@ -57,7 +88,8 @@ const Upload = () => {
       }
       const userId = user.id;
       for (const file of files) {
-        const filePath = `${userId}/${Date.now()}_${file.name}`;
+        const safeName = sanitizeFileName(file.name);
+        const filePath = `${userId}/${Date.now()}_${safeName}`;
         const { error } = await supabase.storage.from('videos').upload(filePath, file, {
           cacheControl: '3600',
           upsert: false,
@@ -104,15 +136,31 @@ const Upload = () => {
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
             onDrop={handleDrop}
+            tabIndex={0}
+            role="button"
+            aria-label="Zone de dépôt pour uploader des vidéos"
           >
             <UploadIcon className="h-16 w-16 mx-auto mb-4 text-gray-400" />
             <h3 className="text-xl font-semibold mb-2 text-gray-800">
               Glissez-déposez vos fichiers ici
             </h3>
             <p className="text-gray-600 mb-6">Formats supportés: MP4, MOV, AVI, JPG, PNG, GIF</p>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all duration-200">
+            <button
+              type="button"
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all duration-200"
+              onClick={() => fileInputRef.current?.click()}
+            >
               Choisir des fichiers
             </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={ACCEPTED_TYPES.join(',')}
+              multiple
+              className="hidden"
+              onChange={handleFileChange}
+              tabIndex={-1}
+            />
           </div>
 
           {/* Liste des fichiers */}
@@ -158,9 +206,15 @@ const Upload = () => {
                     : `Publier (${files.length} fichier${files.length > 1 ? 's' : ''})`}
                 </button>
               </div>
-              {uploadError && <div className="text-red-600 text-center mt-4">{uploadError}</div>}
+              {uploadError && (
+                <div className="text-red-600 text-center mt-4" tabIndex={-1} aria-live="assertive">
+                  {uploadError}
+                </div>
+              )}
               {uploadSuccess && (
-                <div className="text-green-600 text-center mt-4">{uploadSuccess}</div>
+                <div className="text-green-600 text-center mt-4" tabIndex={-1} aria-live="polite">
+                  {uploadSuccess}
+                </div>
               )}
             </div>
           )}
