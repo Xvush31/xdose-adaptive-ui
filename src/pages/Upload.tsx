@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { Upload as UploadIcon, FileVideo, Image, File, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const Upload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -35,6 +39,29 @@ const Upload = () => {
     if (type.startsWith('video/')) return FileVideo;
     if (type.startsWith('image/')) return Image;
     return File;
+  };
+
+  // Ajout handler upload Supabase Storage
+  const handleUpload = async () => {
+    setUploading(true);
+    setUploadError(null);
+    setUploadSuccess(null);
+    try {
+      for (const file of files) {
+        const filePath = `videos/${Date.now()}_${file.name}`;
+        const { error } = await supabase.storage.from('videos').upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+        if (error) throw error;
+      }
+      setUploadSuccess('Fichiers uploadés avec succès !');
+      setFiles([]);
+    } catch (e) {
+      setUploadError(e instanceof Error ? e.message : 'Erreur inconnue');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -112,10 +139,20 @@ const Upload = () => {
               </div>
 
               <div className="mt-6 flex justify-center">
-                <button className="bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all duration-200">
-                  Publier ({files.length} fichier{files.length > 1 ? 's' : ''})
+                <button
+                  className="bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all duration-200 disabled:opacity-60"
+                  onClick={handleUpload}
+                  disabled={uploading || files.length === 0}
+                >
+                  {uploading
+                    ? 'Publication...'
+                    : `Publier (${files.length} fichier${files.length > 1 ? 's' : ''})`}
                 </button>
               </div>
+              {uploadError && <div className="text-red-600 text-center mt-4">{uploadError}</div>}
+              {uploadSuccess && (
+                <div className="text-green-600 text-center mt-4">{uploadSuccess}</div>
+              )}
             </div>
           )}
         </div>
