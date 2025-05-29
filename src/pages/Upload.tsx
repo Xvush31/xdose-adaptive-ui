@@ -69,7 +69,10 @@ const Upload = () => {
       const newFiles = Array.from(e.dataTransfer.files)
         .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
         .map((file: File) => {
-          const fileName = file && typeof file.name === 'string' ? file.name : 'fichier_sans_nom';
+          let fileName = 'fichier_sans_nom';
+          if (file && typeof file.name === 'string' && typeof file.name.replace === 'function') {
+            fileName = file.name;
+          }
           return {
             ...file,
             id: Math.random().toString(36).substr(2, 9),
@@ -110,7 +113,10 @@ const Upload = () => {
     const selectedFiles = Array.from(e.target.files)
       .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
       .map((file: File) => {
-        const fileName = file && typeof file.name === 'string' ? file.name : 'fichier_sans_nom';
+        let fileName = 'fichier_sans_nom';
+        if (file && typeof file.name === 'string' && typeof file.name.replace === 'function') {
+          fileName = file.name;
+        }
         return {
           ...file,
           id: Math.random().toString(36).substr(2, 9),
