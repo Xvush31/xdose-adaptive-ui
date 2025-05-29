@@ -70,12 +70,16 @@ const Upload = () => {
         .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
         .map((file: File) => {
           let title = 'fichier_sans_nom';
-          if (
-            file &&
-            typeof file.name === 'string' &&
-            typeof file.name.replace === 'function'
-          ) {
-            title = file.name.replace(/\.[^/.]+$/, '');
+          try {
+            if (
+              file &&
+              typeof file.name === 'string' &&
+              typeof file.name.replace === 'function'
+            ) {
+              title = file.name.replace(/\.[^/.]+$/, '');
+            }
+          } catch (err) {
+            // ignore, fallback to 'fichier_sans_nom'
           }
           return {
             ...file,
@@ -118,12 +122,16 @@ const Upload = () => {
       .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
       .map((file: File) => {
         let title = 'fichier_sans_nom';
-        if (
-          file &&
-          typeof file.name === 'string' &&
-          typeof file.name.replace === 'function'
-        ) {
-          title = file.name.replace(/\.[^/.]+$/, '');
+        try {
+          if (
+            file &&
+            typeof file.name === 'string' &&
+            typeof file.name.replace === 'function'
+          ) {
+            title = file.name.replace(/\.[^/.]+$/, '');
+          }
+        } catch (err) {
+          // ignore, fallback to 'fichier_sans_nom'
         }
         return {
           ...file,
