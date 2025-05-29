@@ -68,13 +68,16 @@ const Upload = () => {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const newFiles = Array.from(e.dataTransfer.files)
         .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
-        .map((file: File) => ({
-          ...file,
-          id: Math.random().toString(36).substr(2, 9),
-          title: safeGetFileName(file).replace(/\.[^/.]+$/, ''),
-          description: '',
-          visibility: 'public' as const,
-        }));
+        .map((file: File) => {
+          const fileName = safeGetFileName(file);
+          return {
+            ...file,
+            id: Math.random().toString(36).substr(2, 9),
+            title: typeof fileName === 'string' ? fileName.replace(/\.[^/.]+$/, '') : 'fichier_sans_nom',
+            description: '',
+            visibility: 'public' as const,
+          };
+        });
       
       if (newFiles.length === 0) {
         setUploadError('Format de fichier non supporté.');
@@ -106,13 +109,16 @@ const Upload = () => {
     
     const selectedFiles = Array.from(e.target.files)
       .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
-      .map((file: File) => ({
-        ...file,
-        id: Math.random().toString(36).substr(2, 9),
-        title: safeGetFileName(file).replace(/\.[^/.]+$/, ''),
-        description: '',
-        visibility: 'public' as const,
-      }));
+      .map((file: File) => {
+        const fileName = safeGetFileName(file);
+        return {
+          ...file,
+          id: Math.random().toString(36).substr(2, 9),
+          title: typeof fileName === 'string' ? fileName.replace(/\.[^/.]+$/, '') : 'fichier_sans_nom',
+          description: '',
+          visibility: 'public' as const,
+        };
+      });
     
     if (selectedFiles.length === 0) {
       setUploadError('Format de fichier non supporté.');
