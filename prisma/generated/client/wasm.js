@@ -163,7 +163,6 @@ const config = {
   engineVersion: '2060c79ba17c6bb9f5823312b6f6b7f4a845738e',
   datasourceNames: ['db'],
   activeProvider: 'postgresql',
-  postinstall: false,
   inlineDatasources: {
     db: {
       url: {
@@ -173,24 +172,17 @@ const config = {
     },
   },
   inlineSchema:
-    '// prisma/schema.prisma\n\ndatasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n}\n\ngenerator client {\n  provider        = "prisma-client-js"\n  previewFeatures = ["driverAdapters"]\n  output          = "./generated/client"\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  createdAt DateTime @default(now())\n  email     String   @unique\n  name      String?\n  role      String   @default("spectateur")\n  videos    Video[]\n}\n\nmodel Video {\n  id          Int      @id @default(autoincrement())\n  createdAt   DateTime @default(now())\n  title       String\n  description String?\n  fileUrl     String\n  muxAssetId  String?\n  muxUploadId String? // Ajouté pour Mux upload\n  status      String   @default("pending")\n  visibility  String   @default("public")\n  user        User     @relation(fields: [userId], references: [id])\n  userId      Int\n}\n',
-  inlineSchemaHash: '1664b82489ddefc242699646c856f287798eda9b7f63d21343dc837a2d8127a2',
-  copyEngine: true,
+    '// prisma/schema.prisma\n\ndatasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n}\n\ngenerator client {\n  provider        = "prisma-client-js"\n  previewFeatures = ["driverAdapters"]\n  output          = "./generated/client"\n}\n\nmodel User {\n  id        String   @id // Supabase Auth UUID\n  createdAt DateTime @default(now())\n  email     String   @unique\n  name      String?\n  role      String   @default("spectateur")\n  videos    Video[]\n}\n\nmodel Video {\n  id          Int      @id @default(autoincrement())\n  createdAt   DateTime @default(now())\n  title       String\n  description String?\n  fileUrl     String\n  muxAssetId  String?\n  muxUploadId String?\n  status      String   @default("pending")\n  visibility  String   @default("public")\n  user        User     @relation(fields: [userId], references: [id])\n  userId      String // Now a String, matches Supabase UUID\n}\n',
+  inlineSchemaHash: '26efb23a801c0301a0a29b1f9af48401b30a0d954acdb843748da2f04d2b43db',
+  copyEngine: false,
 };
 config.dirname = '/';
 
 config.runtimeDataModel = JSON.parse(
-  '{"models":{"User":{"fields":[{"name":"id","kind":"scalar","type":"Int"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"email","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"role","kind":"scalar","type":"String"},{"name":"videos","kind":"object","type":"Video","relationName":"UserToVideo"}],"dbName":null},"Video":{"fields":[{"name":"id","kind":"scalar","type":"Int"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"title","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"fileUrl","kind":"scalar","type":"String"},{"name":"muxAssetId","kind":"scalar","type":"String"},{"name":"muxUploadId","kind":"scalar","type":"String"},{"name":"status","kind":"scalar","type":"String"},{"name":"visibility","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"UserToVideo"},{"name":"userId","kind":"scalar","type":"Int"}],"dbName":null}},"enums":{},"types":{}}',
+  '{"models":{"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"email","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"role","kind":"scalar","type":"String"},{"name":"videos","kind":"object","type":"Video","relationName":"UserToVideo"}],"dbName":null},"Video":{"fields":[{"name":"id","kind":"scalar","type":"Int"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"title","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"fileUrl","kind":"scalar","type":"String"},{"name":"muxAssetId","kind":"scalar","type":"String"},{"name":"muxUploadId","kind":"scalar","type":"String"},{"name":"status","kind":"scalar","type":"String"},{"name":"visibility","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"UserToVideo"},{"name":"userId","kind":"scalar","type":"String"}],"dbName":null}},"enums":{},"types":{}}',
 );
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel);
-config.engineWasm = {
-  getRuntime: async () => require('./query_engine_bg.js'),
-  getQueryEngineWasmModule: async () => {
-    const loader = (await import('#wasm-engine-loader')).default;
-    const engine = (await loader).default;
-    return engine;
-  },
-};
+config.engineWasm = undefined;
 config.compilerWasm = undefined;
 
 config.injectableEdgeEnv = () => ({

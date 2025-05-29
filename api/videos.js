@@ -10,9 +10,9 @@ async function handler(req, res) {
         res.status(400).json({ error: 'Missing required fields' });
         return;
       }
-      const parsedUserId = parseInt(userId, 10);
+      // userId is now a string (UUID), no parsing needed
       const video = await prisma.video.create({
-        data: { title, description, fileUrl, userId: parsedUserId, visibility },
+        data: { title, description, fileUrl, userId, visibility },
       });
       res.status(201).json(video);
     } catch (error) {

@@ -3,10 +3,14 @@ const prisma = new PrismaClient();
 
 async function handler(req, res) {
   if (req.method === 'POST') {
-    const { email, name, role } = req.body;
+    const { id, email, name, role } = req.body; // id is the Supabase UUID
     try {
+      if (!id || !email) {
+        res.status(400).json({ error: 'Missing required fields' });
+        return;
+      }
       const user = await prisma.user.create({
-        data: { email, name, role },
+        data: { id, email, name, role },
       });
       res.status(201).json(user);
     } catch (error) {

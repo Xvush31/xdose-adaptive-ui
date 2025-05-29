@@ -12,7 +12,7 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id // Supabase Auth UUID
   createdAt DateTime @default(now())
   email     String   @unique
   name      String?
@@ -27,9 +27,9 @@ model Video {
   description String?
   fileUrl     String
   muxAssetId  String?
-  muxUploadId String? // Ajouté pour Mux upload
-  status      String    @default("pending")
-  visibility  String    @default("public")
-  user        User      @relation(fields: [userId], references: [id])
-  userId      Int
+  muxUploadId String?
+  status      String   @default("pending")
+  visibility  String   @default("public")
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   // Now a String, matches Supabase UUID
 }
