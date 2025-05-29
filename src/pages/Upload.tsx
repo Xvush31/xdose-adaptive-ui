@@ -35,7 +35,9 @@ const Upload = () => {
 
   useEffect(() => {
     const checkUserRole = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         const { data: profile } = await supabase
           .from('profiles')
@@ -58,7 +60,8 @@ const Upload = () => {
     }
   };
 
-  const safeGetFileName = (file: File) => (file && typeof file.name === 'string' ? file.name : 'fichier_sans_nom');
+  const safeGetFileName = (file: File) =>
+    file && typeof file.name === 'string' ? file.name : 'fichier_sans_nom';
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -99,9 +102,7 @@ const Upload = () => {
   };
 
   const updateFileMetadata = (index: number, field: string, value: string) => {
-    setFiles((prev) => prev.map((file, i) => 
-      i === index ? { ...file, [field]: value } : file
-    ));
+    setFiles((prev) => prev.map((file, i) => (i === index ? { ...file, [field]: value } : file)));
   };
 
   const getFileIcon = (type: string | undefined) => {
@@ -152,12 +153,26 @@ const Upload = () => {
     setUploadSuccess(null);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         setUploadError('Vous devez être connecté pour uploader.');
         setUploading(false);
         return;
       }
+      // 1. Sync user to Prisma before upload
+      await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: user.id,
+          email: user.email,
+          name: user.user_metadata?.full_name || '',
+          role: user.user_metadata?.role || 'spectateur',
+        }),
+      });
+
       const userId = user.id;
       const uploadedVideos: string[] = [];
 
@@ -235,7 +250,9 @@ const Upload = () => {
             {/* Liste des fichiers avec métadonnées */}
             {files.length > 0 && (
               <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4">Fichiers sélectionnés ({files.length})</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  Fichiers sélectionnés ({files.length})
+                </h3>
                 <div className="space-y-6">
                   {files.map((file, index) => {
                     const FileIcon = getFileIcon(file.type);
@@ -282,7 +299,9 @@ const Upload = () => {
                             </label>
                             <select
                               value={file.visibility || 'public'}
-                              onChange={(e) => updateFileMetadata(index, 'visibility', e.target.value)}
+                              onChange={(e) =>
+                                updateFileMetadata(index, 'visibility', e.target.value)
+                              }
                               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             >
                               <option value="public">Public</option>
@@ -298,7 +317,9 @@ const Upload = () => {
                           </label>
                           <textarea
                             value={file.description || ''}
-                            onChange={(e) => updateFileMetadata(index, 'description', e.target.value)}
+                            onChange={(e) =>
+                              updateFileMetadata(index, 'description', e.target.value)
+                            }
                             className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             rows={3}
                             placeholder="Description de la vidéo"
@@ -323,12 +344,18 @@ const Upload = () => {
                 </div>
 
                 {uploadError && (
-                  <div className="text-red-600 text-center mt-4 bg-red-50 p-3 rounded-lg" role="alert">
+                  <div
+                    className="text-red-600 text-center mt-4 bg-red-50 p-3 rounded-lg"
+                    role="alert"
+                  >
                     {uploadError}
                   </div>
                 )}
                 {uploadSuccess && (
-                  <div className="text-green-600 text-center mt-4 bg-green-50 p-3 rounded-lg" role="alert">
+                  <div
+                    className="text-green-600 text-center mt-4 bg-green-50 p-3 rounded-lg"
+                    role="alert"
+                  >
                     {uploadSuccess}
                   </div>
                 )}
