@@ -3,9 +3,15 @@ import { PrismaClient } from '../prisma/generated/client';
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
+  console.log('API /api/videos called', req.method);
   if (req.method === 'POST') {
-    const { title, description, fileUrl, userId, visibility } = req.body;
+    let { title, description, fileUrl, userId, visibility } = req.body;
     try {
+      if (!title || !fileUrl || !userId) {
+        res.status(400).json({ error: 'Missing required fields' });
+        return;
+      }
+      userId = parseInt(userId, 10);
       const video = await prisma.video.create({
         data: { title, description, fileUrl, userId, visibility }
       });
@@ -24,3 +30,5 @@ export default async function handler(req, res) {
     res.status(405).end();
   }
 }
+
+module.exports = handler;
