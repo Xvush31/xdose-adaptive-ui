@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,18 +7,28 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
   const location = useLocation();
   const navigate = useNavigate();
   const [mode, setMode] = useState<'login' | 'register'>(initialMode || 'login');
-  const [role, setRole] = useState<'spectateur' | 'createur'>('spectateur');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
+    // Check if user is already logged in
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        navigate('/');
+      }
+    };
+    checkAuth();
+  }, [navigate]);
+
+  useEffect(() => {
     if (initialMode && mode !== initialMode) {
       navigate(`/auth/${mode}`);
     }
-    // eslint-disable-next-line
   }, [mode, initialMode, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,126 +36,145 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
     setError(null);
     setSuccess(null);
     setLoading(true);
-    if (mode === 'register') {
-      // Register user with Supabase Auth
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { role } },
-      });
-      if (signUpError) {
-        setError(signUpError.message);
-        setLoading(false);
-        return;
-      }
-      // Insert role request if "createur" is selected
-      if (role === 'createur') {
-        // On récupère l'utilisateur courant pour lier la demande à son id
-        const { data: currentUserData } = await supabase.auth.getUser();
-        const currentUser = currentUserData?.user;
-        await supabase.from('role_requests').insert({
-          user_id: currentUser?.id || '',
-          user_email: email,
-          status: 'pending',
+
+    try {
+      if (mode === 'register') {
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { 
+            data: { 
+              full_name: fullName 
+            }
+          }
         });
-      }
-      setSuccess('Inscription réussie ! Vérifiez votre email pour valider votre compte.');
-    } else {
-      // Login
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (signInError) {
-        setError(signInError.message);
-        setLoading(false);
-        return;
-      }
-      setSuccess('Connexion réussie ! Redirection en cours...');
-      // Récupérer le rôle de l'utilisateur après login
-      const { data: userData } = await supabase.auth.getUser();
-      const user = userData?.user;
-      let userRole = 'spectateur';
-      if (user && user.user_metadata && user.user_metadata.role) {
-        userRole = user.user_metadata.role;
-      }
-      // Redirection selon le rôle
-      if (userRole === 'createur') {
-        navigate('/upload'); // page créateur
-      } else if (userRole === 'admin') {
-        navigate('/admin'); // page admin (à créer)
+
+        if (signUpError) {
+          setError(signUpError.message);
+          return;
+        }
+
+        setSuccess('Inscription réussie ! Vérifiez votre email pour valider votre compte.');
       } else {
-        navigate('/'); // page spectateur
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (signInError) {
+          setError(signInError.message);
+          return;
+        }
+
+        // Get user profile to determine redirect
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+          const userRole = profile?.role || 'spectateur';
+          
+          if (userRole === 'admin') {
+            navigate('/admin');
+          } else if (userRole === 'createur') {
+            navigate('/upload');
+          } else {
+            navigate('/');
+          }
+        }
       }
+    } catch (err) {
+      setError('Une erreur inattendue s\'est produite');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <main role="main" className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 bg-white rounded shadow">
-        <h1 className="text-2xl font-bold mb-4 text-center">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-900">
           {mode === 'login' ? 'Connexion' : 'Inscription'}
         </h1>
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {mode === 'register' && (
             <div>
-              <label className="block mb-1 font-medium">Choix du rôle</label>
-              <select
-                className="w-full border rounded px-3 py-2"
-                value={role}
-                onChange={(e) => setRole(e.target.value as 'spectateur' | 'createur')}
-              >
-                <option value="spectateur">Spectateur (par défaut)</option>
-                <option value="createur">Demander à devenir Créateur</option>
-              </select>
+              <label className="block mb-2 font-semibold text-gray-700">Nom complet</label>
+              <input
+                type="text"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
             </div>
           )}
+          
           <div>
-            <label className="block mb-1 font-medium">Email</label>
+            <label className="block mb-2 font-semibold text-gray-700">Email</label>
             <input
               type="email"
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
+          
           <div>
-            <label className="block mb-1 font-medium">Mot de passe</label>
+            <label className="block mb-2 font-semibold text-gray-700">Mot de passe</label>
             <input
               type="password"
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {error && <div className="text-red-600 text-sm">{error}</div>}
-          {success && <div className="text-green-600 text-sm">{success}</div>}
+          
+          {error && (
+            <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg" role="alert">
+              {error}
+            </div>
+          )}
+          
+          {success && (
+            <div className="text-green-600 text-sm bg-green-50 p-3 rounded-lg" role="alert">
+              {success}
+            </div>
+          )}
+          
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 disabled:opacity-60"
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-60"
             disabled={loading}
           >
             {loading ? 'Chargement...' : mode === 'login' ? 'Se connecter' : 'Créer un compte'}
           </button>
         </form>
-        <div className="mt-4 text-center">
+        
+        <div className="mt-6 text-center">
           {mode === 'login' ? (
-            <span>
+            <span className="text-gray-600">
               Pas encore de compte ?{' '}
               <button
-                className="text-blue-600 underline"
+                className="text-purple-600 font-semibold hover:text-purple-700"
                 onClick={() => navigate('/auth/register')}
               >
                 S'inscrire
               </button>
             </span>
           ) : (
-            <span>
+            <span className="text-gray-600">
               Déjà inscrit ?{' '}
-              <button className="text-blue-600 underline" onClick={() => navigate('/auth/login')}>
+              <button 
+                className="text-purple-600 font-semibold hover:text-purple-700" 
+                onClick={() => navigate('/auth/login')}
+              >
                 Se connecter
               </button>
             </span>

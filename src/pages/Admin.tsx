@@ -1,7 +1,10 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { User } from '@supabase/supabase-js';
+import AuthGuard from '@/components/AuthGuard';
+import { CheckCircle, XCircle, Clock, Users, Video, Settings } from 'lucide-react';
 
 interface RoleRequest {
   id: string;
@@ -11,106 +14,348 @@ interface RoleRequest {
   created_at: string;
 }
 
+interface VideoData {
+  id: string;
+  title: string;
+  description: string;
+  user_id: string;
+  status: string;
+  created_at: string;
+  profiles: {
+    full_name: string;
+    email: string;
+  };
+}
+
 export default function AdminBackoffice() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [roleRequests, setRoleRequests] = useState<RoleRequest[]>([]);
+  const [videos, setVideos] = useState<VideoData[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'requests' | 'videos'>('requests');
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAdmin = async () => {
       setLoading(true);
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
       if (error || !user) {
         navigate('/');
         return;
       }
-      if (user.user_metadata?.role !== 'admin') {
+
+      // Check if user is admin
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profile?.role !== 'admin') {
         navigate('/');
         return;
       }
+
       setUser(user);
-      // Charger les demandes créateur
+      await loadData();
+      setLoading(false);
+    };
+    
+    checkAdmin();
+  }, [navigate]);
+
+  const loadData = async () => {
+    try {
+      // Load role requests
       const { data: requests, error: reqError } = await supabase
         .from('role_requests')
         .select('*')
         .order('created_at', { ascending: false });
-      if (reqError) setError(reqError.message);
-      setRoleRequests(requests || []);
-      setLoading(false);
-    };
-    checkAdmin();
-  }, [navigate]);
+      
+      if (reqError) {
+        setError(reqError.message);
+      } else {
+        setRoleRequests(requests || []);
+      }
 
-  // Appel Edge Function pour notification email
-  const notifyUser = async (email: string, status: 'accepted' | 'refused') => {
-    try {
-      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/notify-creator-request`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ email, status }),
-      });
+      // Load videos with user info
+      const { data: videosData, error: videoError } = await supabase
+        .from('videos')
+        .select(`
+          *,
+          profiles (
+            full_name,
+            email
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (videoError) {
+        setError(videoError.message);
+      } else {
+        setVideos(videosData || []);
+      }
     } catch (e) {
-      // Optionnel: afficher une erreur admin
+      setError('Erreur lors du chargement des données');
     }
   };
 
-  const handleUpdateStatus = async (id: string, status: 'accepted' | 'refused', email?: string) => {
-    await supabase.from('role_requests').update({ status }).eq('id', id);
-    setRoleRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
-    if (email) await notifyUser(email, status);
+  const handleUpdateRoleStatus = async (id: string, status: 'accepted' | 'refused', email?: string) => {
+    try {
+      if (status === 'accepted') {
+        // Find the user and update their role
+        const roleRequest = roleRequests.find(r => r.id === id);
+        if (roleRequest) {
+          await supabase
+            .from('profiles')
+            .update({ role: 'createur' })
+            .eq('id', roleRequest.user_id);
+        }
+      }
+
+      // Update role request status
+      await supabase
+        .from('role_requests')
+        .update({ status })
+        .eq('id', id);
+
+      setRoleRequests((prev) => 
+        prev.map((r) => (r.id === id ? { ...r, status } : r))
+      );
+    } catch (e) {
+      setError('Erreur lors de la mise à jour');
+    }
   };
 
-  if (loading) return <div className="p-8">Chargement...</div>;
-  if (error) return <div className="p-8 text-red-600">{error}</div>;
+  const handleUpdateVideoStatus = async (id: string, status: 'approved' | 'rejected') => {
+    try {
+      await supabase
+        .from('videos')
+        .update({ status })
+        .eq('id', id);
+
+      setVideos((prev) => 
+        prev.map((v) => (v.id === id ? { ...v, status } : v))
+      );
+    } catch (e) {
+      setError('Erreur lors de la mise à jour');
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const baseClasses = "px-3 py-1 rounded-full text-sm font-medium";
+    switch (status) {
+      case 'pending':
+        return `${baseClasses} bg-yellow-100 text-yellow-800`;
+      case 'accepted':
+      case 'approved':
+        return `${baseClasses} bg-green-100 text-green-800`;
+      case 'refused':
+      case 'rejected':
+        return `${baseClasses} bg-red-100 text-red-800`;
+      default:
+        return `${baseClasses} bg-gray-100 text-gray-800`;
+    }
+  };
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-lg">Chargement...</div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-red-600">{error}</div>
+    </div>
+  );
 
   return (
-    <main className="max-w-2xl mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6">Demandes Créateur</h1>
-      {roleRequests.length === 0 ? (
-        <div>Aucune demande en attente.</div>
-      ) : (
-        <table className="w-full border bg-white rounded-xl overflow-hidden">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-3 text-left">Email</th>
-              <th className="p-3 text-left">Statut</th>
-              <th className="p-3 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {roleRequests.map((req) => (
-              <tr key={req.id} className="border-t">
-                <td className="p-3">{req.user_email}</td>
-                <td className="p-3 capitalize">{req.status}</td>
-                <td className="p-3 space-x-2">
-                  <button
-                    className="px-3 py-1 bg-green-500 text-white rounded disabled:opacity-50"
-                    disabled={req.status === 'accepted'}
-                    onClick={() => handleUpdateStatus(req.id, 'accepted', req.user_email)}
-                  >
-                    Valider
-                  </button>
-                  <button
-                    className="px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50"
-                    disabled={req.status === 'refused'}
-                    onClick={() => handleUpdateStatus(req.id, 'refused', req.user_email)}
-                  >
-                    Refuser
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </main>
+    <AuthGuard requireAuth={true} requiredRole="admin">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+                <Settings className="h-8 w-8 mr-3 text-purple-500" />
+                Administration
+              </h1>
+              <p className="text-gray-600 mt-2">Gérez les utilisateurs et le contenu</p>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="max-w-6xl mx-auto">
+            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-8">
+              <button
+                onClick={() => setActiveTab('requests')}
+                className={`flex items-center px-4 py-2 rounded-md font-medium transition-colors ${
+                  activeTab === 'requests'
+                    ? 'bg-white text-purple-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Users className="h-5 w-5 mr-2" />
+                Demandes créateurs ({roleRequests.filter(r => r.status === 'pending').length})
+              </button>
+              <button
+                onClick={() => setActiveTab('videos')}
+                className={`flex items-center px-4 py-2 rounded-md font-medium transition-colors ${
+                  activeTab === 'videos'
+                    ? 'bg-white text-purple-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Video className="h-5 w-5 mr-2" />
+                Vidéos ({videos.filter(v => v.status === 'pending').length})
+              </button>
+            </div>
+
+            {/* Role Requests Tab */}
+            {activeTab === 'requests' && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-100">
+                  <h2 className="text-xl font-semibold text-gray-900">Demandes créateurs</h2>
+                </div>
+                {roleRequests.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">
+                    Aucune demande en attente.
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Email</th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Statut</th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {roleRequests.map((req) => (
+                          <tr key={req.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 text-sm text-gray-900">{req.user_email}</td>
+                            <td className="px-6 py-4 text-sm text-gray-500">
+                              {new Date(req.created_at).toLocaleDateString('fr-FR')}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={getStatusBadge(req.status)}>
+                                {req.status === 'pending' ? 'En attente' :
+                                 req.status === 'accepted' ? 'Accepté' : 'Refusé'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex space-x-2">
+                                <button
+                                  className="flex items-center px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50 text-sm"
+                                  disabled={req.status === 'accepted'}
+                                  onClick={() => handleUpdateRoleStatus(req.id, 'accepted', req.user_email)}
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-1" />
+                                  Accepter
+                                </button>
+                                <button
+                                  className="flex items-center px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:opacity-50 text-sm"
+                                  disabled={req.status === 'refused'}
+                                  onClick={() => handleUpdateRoleStatus(req.id, 'refused', req.user_email)}
+                                >
+                                  <XCircle className="h-4 w-4 mr-1" />
+                                  Refuser
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Videos Tab */}
+            {activeTab === 'videos' && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-100">
+                  <h2 className="text-xl font-semibold text-gray-900">Modération des vidéos</h2>
+                </div>
+                {videos.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">
+                    Aucune vidéo à modérer.
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Titre</th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Créateur</th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Statut</th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {videos.map((video) => (
+                          <tr key={video.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4">
+                              <div>
+                                <div className="text-sm font-medium text-gray-900">{video.title}</div>
+                                {video.description && (
+                                  <div className="text-sm text-gray-500 truncate max-w-xs">
+                                    {video.description}
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm text-gray-900">
+                                {video.profiles?.full_name || video.profiles?.email}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-500">
+                              {new Date(video.created_at).toLocaleDateString('fr-FR')}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={getStatusBadge(video.status)}>
+                                {video.status === 'pending' ? 'En attente' :
+                                 video.status === 'approved' ? 'Approuvé' : 'Rejeté'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex space-x-2">
+                                <button
+                                  className="flex items-center px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50 text-sm"
+                                  disabled={video.status === 'approved'}
+                                  onClick={() => handleUpdateVideoStatus(video.id, 'approved')}
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-1" />
+                                  Approuver
+                                </button>
+                                <button
+                                  className="flex items-center px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:opacity-50 text-sm"
+                                  disabled={video.status === 'rejected'}
+                                  onClick={() => handleUpdateVideoStatus(video.id, 'rejected')}
+                                >
+                                  <XCircle className="h-4 w-4 mr-1" />
+                                  Rejeter
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </AuthGuard>
   );
 }
