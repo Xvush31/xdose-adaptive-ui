@@ -153,7 +153,12 @@ const Upload = () => {
             upsert: false,
           });
 
-        if (storageError) throw storageError;
+        if (storageError) {
+          console.error('Erreur Supabase Storage:', storageError, { filePath, file });
+          setUploadError(`Erreur Supabase Storage: ${storageError.message || storageError}`);
+          setUploading(false);
+          return;
+        }
 
         // Save video metadata to database
         const { error: dbError } = await supabase
@@ -168,7 +173,12 @@ const Upload = () => {
             status: 'pending'
           });
 
-        if (dbError) throw dbError;
+        if (dbError) {
+          console.error('Erreur DB Supabase:', dbError, { filePath, file });
+          setUploadError(`Erreur DB Supabase: ${dbError.message || dbError}`);
+          setUploading(false);
+          return;
+        }
 
         uploadedVideos.push(file.title || file.name);
       }
