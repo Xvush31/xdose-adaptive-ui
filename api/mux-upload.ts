@@ -1,5 +1,5 @@
-import { PrismaClient } from '../prisma/generated/client';
-import Mux from '@mux/mux-node';
+const { PrismaClient } = require('../prisma/generated/client');
+const Mux = require('@mux/mux-node');
 
 const prisma = new PrismaClient();
 
@@ -9,7 +9,7 @@ const mux = new Mux({
 });
 
 // Vercel/Node handler signature
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method === 'POST') {
     const { title, description, userId, visibility } = req.body;
     try {

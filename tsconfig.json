@@ -6,6 +6,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "module": "CommonJS",
     "noImplicitAny": false,
     "noUnusedParameters": false,
     "skipLibCheck": true,
