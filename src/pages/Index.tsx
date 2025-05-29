@@ -22,9 +22,7 @@ const Index = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const {
-        data: {
-          user
-        }
+        data: { user }
       } = await supabase.auth.getUser();
       setUser(user);
       if (user) {
@@ -35,51 +33,15 @@ const Index = () => {
       }
     };
     const loadVideos = async () => {
-      // First get videos with approved status and public visibility
-      const {
-        data: videosData,
-        error: videosError
-      } = await supabase.from('videos').select('id, title, description, created_at, user_id').eq('status', 'approved').eq('visibility', 'public').order('created_at', {
-        ascending: false
-      });
-      if (videosError) {
-        console.error('Error loading videos:', videosError);
+      try {
+        const res = await fetch('/api/videos');
+        const videosData = await res.json();
+        setVideos(videosData.filter((v: any) => v.status === 'ready' && v.visibility === 'public'));
+      } catch (e) {
         setVideos([]);
+      } finally {
         setLoading(false);
-        return;
       }
-      if (!videosData || videosData.length === 0) {
-        setVideos([]);
-        setLoading(false);
-        return;
-      }
-
-      // Get user profiles for the video creators
-      const userIds = videosData.map(video => video.user_id);
-      const {
-        data: profilesData,
-        error: profilesError
-      } = await supabase.from('profiles').select('id, full_name, email').in('id', userIds);
-      if (profilesError) {
-        console.error('Error loading profiles:', profilesError);
-        setVideos([]);
-        setLoading(false);
-        return;
-      }
-
-      // Combine videos with their profile data
-      const videosWithProfiles = videosData.map(video => {
-        const profile = profilesData?.find(p => p.id === video.user_id);
-        return {
-          ...video,
-          profiles: profile ? {
-            full_name: profile.full_name || profile.email || '',
-            email: profile.email || ''
-          } : null
-        };
-      });
-      setVideos(videosWithProfiles);
-      setLoading(false);
     };
     checkAuth();
     loadVideos();

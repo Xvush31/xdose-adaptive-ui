@@ -25,6 +25,7 @@ export default async function handler(req, res) {
           description,
           fileUrl: '', // sera rempli après le webhook
           muxAssetId: '', // sera rempli après le webhook
+          muxUploadId: upload.id, // stocke l'uploadId Mux
           status: 'pending',
           visibility: visibility || 'public',
           userId,

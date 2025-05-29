@@ -2123,6 +2123,7 @@ export namespace Prisma {
     description: string | null
     fileUrl: string | null
     muxAssetId: string | null
+    muxUploadId: string | null
     status: string | null
     visibility: string | null
     userId: number | null
@@ -2135,6 +2136,7 @@ export namespace Prisma {
     description: string | null
     fileUrl: string | null
     muxAssetId: string | null
+    muxUploadId: string | null
     status: string | null
     visibility: string | null
     userId: number | null
@@ -2147,6 +2149,7 @@ export namespace Prisma {
     description: number
     fileUrl: number
     muxAssetId: number
+    muxUploadId: number
     status: number
     visibility: number
     userId: number
@@ -2171,6 +2174,7 @@ export namespace Prisma {
     description?: true
     fileUrl?: true
     muxAssetId?: true
+    muxUploadId?: true
     status?: true
     visibility?: true
     userId?: true
@@ -2183,6 +2187,7 @@ export namespace Prisma {
     description?: true
     fileUrl?: true
     muxAssetId?: true
+    muxUploadId?: true
     status?: true
     visibility?: true
     userId?: true
@@ -2195,6 +2200,7 @@ export namespace Prisma {
     description?: true
     fileUrl?: true
     muxAssetId?: true
+    muxUploadId?: true
     status?: true
     visibility?: true
     userId?: true
@@ -2294,6 +2300,7 @@ export namespace Prisma {
     description: string | null
     fileUrl: string
     muxAssetId: string | null
+    muxUploadId: string | null
     status: string
     visibility: string
     userId: number
@@ -2325,6 +2332,7 @@ export namespace Prisma {
     description?: boolean
     fileUrl?: boolean
     muxAssetId?: boolean
+    muxUploadId?: boolean
     status?: boolean
     visibility?: boolean
     userId?: boolean
@@ -2338,6 +2346,7 @@ export namespace Prisma {
     description?: boolean
     fileUrl?: boolean
     muxAssetId?: boolean
+    muxUploadId?: boolean
     status?: boolean
     visibility?: boolean
     userId?: boolean
@@ -2351,6 +2360,7 @@ export namespace Prisma {
     description?: boolean
     fileUrl?: boolean
     muxAssetId?: boolean
+    muxUploadId?: boolean
     status?: boolean
     visibility?: boolean
     userId?: boolean
@@ -2364,12 +2374,13 @@ export namespace Prisma {
     description?: boolean
     fileUrl?: boolean
     muxAssetId?: boolean
+    muxUploadId?: boolean
     status?: boolean
     visibility?: boolean
     userId?: boolean
   }
 
-  export type VideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "description" | "fileUrl" | "muxAssetId" | "status" | "visibility" | "userId", ExtArgs["result"]["video"]>
+  export type VideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "description" | "fileUrl" | "muxAssetId" | "muxUploadId" | "status" | "visibility" | "userId", ExtArgs["result"]["video"]>
   export type VideoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2392,6 +2403,7 @@ export namespace Prisma {
       description: string | null
       fileUrl: string
       muxAssetId: string | null
+      muxUploadId: string | null
       status: string
       visibility: string
       userId: number
@@ -2825,6 +2837,7 @@ export namespace Prisma {
     readonly description: FieldRef<"Video", 'String'>
     readonly fileUrl: FieldRef<"Video", 'String'>
     readonly muxAssetId: FieldRef<"Video", 'String'>
+    readonly muxUploadId: FieldRef<"Video", 'String'>
     readonly status: FieldRef<"Video", 'String'>
     readonly visibility: FieldRef<"Video", 'String'>
     readonly userId: FieldRef<"Video", 'Int'>
@@ -3274,6 +3287,7 @@ export namespace Prisma {
     description: 'description',
     fileUrl: 'fileUrl',
     muxAssetId: 'muxAssetId',
+    muxUploadId: 'muxUploadId',
     status: 'status',
     visibility: 'visibility',
     userId: 'userId'
@@ -3437,6 +3451,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Video"> | string | null
     fileUrl?: StringFilter<"Video"> | string
     muxAssetId?: StringNullableFilter<"Video"> | string | null
+    muxUploadId?: StringNullableFilter<"Video"> | string | null
     status?: StringFilter<"Video"> | string
     visibility?: StringFilter<"Video"> | string
     userId?: IntFilter<"Video"> | number
@@ -3450,6 +3465,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     fileUrl?: SortOrder
     muxAssetId?: SortOrderInput | SortOrder
+    muxUploadId?: SortOrderInput | SortOrder
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
@@ -3466,6 +3482,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Video"> | string | null
     fileUrl?: StringFilter<"Video"> | string
     muxAssetId?: StringNullableFilter<"Video"> | string | null
+    muxUploadId?: StringNullableFilter<"Video"> | string | null
     status?: StringFilter<"Video"> | string
     visibility?: StringFilter<"Video"> | string
     userId?: IntFilter<"Video"> | number
@@ -3479,6 +3496,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     fileUrl?: SortOrder
     muxAssetId?: SortOrderInput | SortOrder
+    muxUploadId?: SortOrderInput | SortOrder
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
@@ -3499,6 +3517,7 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Video"> | string | null
     fileUrl?: StringWithAggregatesFilter<"Video"> | string
     muxAssetId?: StringNullableWithAggregatesFilter<"Video"> | string | null
+    muxUploadId?: StringNullableWithAggregatesFilter<"Video"> | string | null
     status?: StringWithAggregatesFilter<"Video"> | string
     visibility?: StringWithAggregatesFilter<"Video"> | string
     userId?: IntWithAggregatesFilter<"Video"> | number
@@ -3567,6 +3586,7 @@ export namespace Prisma {
     description?: string | null
     fileUrl: string
     muxAssetId?: string | null
+    muxUploadId?: string | null
     status?: string
     visibility?: string
     user: UserCreateNestedOneWithoutVideosInput
@@ -3579,6 +3599,7 @@ export namespace Prisma {
     description?: string | null
     fileUrl: string
     muxAssetId?: string | null
+    muxUploadId?: string | null
     status?: string
     visibility?: string
     userId: number
@@ -3590,6 +3611,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: StringFieldUpdateOperationsInput | string
     muxAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutVideosNestedInput
@@ -3602,6 +3624,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: StringFieldUpdateOperationsInput | string
     muxAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
@@ -3614,6 +3637,7 @@ export namespace Prisma {
     description?: string | null
     fileUrl: string
     muxAssetId?: string | null
+    muxUploadId?: string | null
     status?: string
     visibility?: string
     userId: number
@@ -3625,6 +3649,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: StringFieldUpdateOperationsInput | string
     muxAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
   }
@@ -3636,6 +3661,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: StringFieldUpdateOperationsInput | string
     muxAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
@@ -3818,6 +3844,7 @@ export namespace Prisma {
     description?: SortOrder
     fileUrl?: SortOrder
     muxAssetId?: SortOrder
+    muxUploadId?: SortOrder
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
@@ -3835,6 +3862,7 @@ export namespace Prisma {
     description?: SortOrder
     fileUrl?: SortOrder
     muxAssetId?: SortOrder
+    muxUploadId?: SortOrder
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
@@ -3847,6 +3875,7 @@ export namespace Prisma {
     description?: SortOrder
     fileUrl?: SortOrder
     muxAssetId?: SortOrder
+    muxUploadId?: SortOrder
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
@@ -4075,6 +4104,7 @@ export namespace Prisma {
     description?: string | null
     fileUrl: string
     muxAssetId?: string | null
+    muxUploadId?: string | null
     status?: string
     visibility?: string
   }
@@ -4086,6 +4116,7 @@ export namespace Prisma {
     description?: string | null
     fileUrl: string
     muxAssetId?: string | null
+    muxUploadId?: string | null
     status?: string
     visibility?: string
   }
@@ -4126,6 +4157,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Video"> | string | null
     fileUrl?: StringFilter<"Video"> | string
     muxAssetId?: StringNullableFilter<"Video"> | string | null
+    muxUploadId?: StringNullableFilter<"Video"> | string | null
     status?: StringFilter<"Video"> | string
     visibility?: StringFilter<"Video"> | string
     userId?: IntFilter<"Video"> | number
@@ -4184,6 +4216,7 @@ export namespace Prisma {
     description?: string | null
     fileUrl: string
     muxAssetId?: string | null
+    muxUploadId?: string | null
     status?: string
     visibility?: string
   }
@@ -4194,6 +4227,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: StringFieldUpdateOperationsInput | string
     muxAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
   }
@@ -4205,6 +4239,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: StringFieldUpdateOperationsInput | string
     muxAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
   }
@@ -4216,6 +4251,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: StringFieldUpdateOperationsInput | string
     muxAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
   }

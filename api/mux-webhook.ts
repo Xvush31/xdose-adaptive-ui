@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     }
     // Met à jour la vidéo correspondante
     await prisma.video.updateMany({
-      where: { muxAssetId: uploadId },
+      where: { muxUploadId: uploadId },
       data: {
         muxAssetId: assetId,
         fileUrl: `https://stream.mux.com/${playbackId}.m3u8`,

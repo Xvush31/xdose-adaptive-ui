@@ -135,6 +135,7 @@ exports.Prisma.VideoScalarFieldEnum = {
   description: 'description',
   fileUrl: 'fileUrl',
   muxAssetId: 'muxAssetId',
+  muxUploadId: 'muxUploadId',
   status: 'status',
   visibility: 'visibility',
   userId: 'userId'
