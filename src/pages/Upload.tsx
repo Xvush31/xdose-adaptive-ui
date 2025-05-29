@@ -58,7 +58,7 @@ const Upload = () => {
     }
   };
 
-  const safeGetFileName = (file: File) => file.name || 'fichier_sans_nom';
+  const safeGetFileName = (file: File) => (file && typeof file.name === 'string' ? file.name : 'fichier_sans_nom');
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
