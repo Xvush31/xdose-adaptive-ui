@@ -2,7 +2,7 @@ import { PrismaClient } from '../prisma/generated/client';
 
 const prisma = new PrismaClient();
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   console.log('API /api/videos called', req.method);
   if (req.method === 'POST') {
     let { title, description, fileUrl, userId, visibility } = req.body;
@@ -30,3 +30,5 @@ export default async function handler(req, res) {
     res.status(405).end();
   }
 }
+
+export default handler;

@@ -2,7 +2,7 @@ import { PrismaClient } from '../prisma/generated/client';
 
 const prisma = new PrismaClient();
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method === 'POST') {
     const { email, name, role } = req.body;
     try {
@@ -24,3 +24,5 @@ export default async function handler(req, res) {
     res.status(405).end();
   }
 }
+
+export default handler;

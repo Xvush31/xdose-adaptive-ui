@@ -9,7 +9,7 @@ const mux = new Mux({
 });
 
 // Vercel/Node handler signature
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method === 'POST') {
     const { title, description, userId, visibility } = req.body;
     try {
@@ -43,3 +43,5 @@ export default async function handler(req, res) {
     res.status(405).end();
   }
 }
+
+export default handler;
