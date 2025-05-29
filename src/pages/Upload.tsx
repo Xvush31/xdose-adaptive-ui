@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Upload as UploadIcon, FileVideo, Image, File, X, Save } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -93,7 +92,8 @@ const Upload = () => {
     ));
   };
 
-  const getFileIcon = (type: string) => {
+  const getFileIcon = (type: string | undefined) => {
+    if (!type) return File;
     if (type.startsWith('video/')) return FileVideo;
     if (type.startsWith('image/')) return Image;
     return File;
