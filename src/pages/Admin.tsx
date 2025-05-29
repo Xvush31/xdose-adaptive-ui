@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -79,29 +80,49 @@ export default function AdminBackoffice() {
         setRoleRequests(requests || []);
       }
 
-      // Load videos with user info
+      // Load videos with separate profile queries
       const { data: videosData, error: videoError } = await supabase
         .from('videos')
-        .select(`
-          id,
-          title,
-          description,
-          user_id,
-          status,
-          created_at,
-          profiles!inner (
-            full_name,
-            email
-          )
-        `)
+        .select('id, title, description, user_id, status, created_at')
         .order('created_at', { ascending: false });
 
       if (videoError) {
         console.error('Error loading videos:', videoError);
         setVideos([]);
-      } else {
-        setVideos(videosData || []);
+        return;
       }
+
+      if (!videosData || videosData.length === 0) {
+        setVideos([]);
+        return;
+      }
+
+      // Get user profiles for the video creators
+      const userIds = videosData.map(video => video.user_id);
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', userIds);
+
+      if (profilesError) {
+        console.error('Error loading profiles:', profilesError);
+        setVideos([]);
+        return;
+      }
+
+      // Combine videos with their profile data
+      const videosWithProfiles = videosData.map(video => {
+        const profile = profilesData?.find(p => p.id === video.user_id);
+        return {
+          ...video,
+          profiles: profile ? {
+            full_name: profile.full_name || profile.email || '',
+            email: profile.email || ''
+          } : null
+        };
+      });
+
+      setVideos(videosWithProfiles);
     } catch (e) {
       setError('Erreur lors du chargement des données');
     }
