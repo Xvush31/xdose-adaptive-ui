@@ -1,5 +1,4 @@
-import { PrismaClient } from '../prisma/generated/client/edge';
-
+const { PrismaClient } = require('../prisma/generated/client');
 const prisma = new PrismaClient();
 
 async function handler(req, res) {
@@ -25,4 +24,4 @@ async function handler(req, res) {
   }
 }
 
-export default handler;
+module.exports = handler;

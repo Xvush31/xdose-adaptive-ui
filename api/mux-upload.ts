@@ -1,7 +1,6 @@
-import { PrismaClient } from '../prisma/generated/client/edge';
-import Mux from '@mux/mux-node';
-
+const { PrismaClient } = require('../prisma/generated/client');
 const prisma = new PrismaClient();
+import Mux from '@mux/mux-node';
 
 const mux = new Mux({
   tokenId: process.env.MUX_TOKEN_ID!,
@@ -44,4 +43,4 @@ async function handler(req, res) {
   }
 }
 
-export default handler;
+module.exports = handler;
