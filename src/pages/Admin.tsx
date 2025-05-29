@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +23,7 @@ interface VideoData {
   profiles: {
     full_name: string;
     email: string;
-  };
+  } | null;
 }
 
 export default function AdminBackoffice() {
@@ -84,8 +83,13 @@ export default function AdminBackoffice() {
       const { data: videosData, error: videoError } = await supabase
         .from('videos')
         .select(`
-          *,
-          profiles (
+          id,
+          title,
+          description,
+          user_id,
+          status,
+          created_at,
+          profiles!inner (
             full_name,
             email
           )
@@ -93,7 +97,8 @@ export default function AdminBackoffice() {
         .order('created_at', { ascending: false });
 
       if (videoError) {
-        setError(videoError.message);
+        console.error('Error loading videos:', videoError);
+        setVideos([]);
       } else {
         setVideos(videosData || []);
       }

@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Play, User, Calendar, Eye, Heart, MessageCircle, Share2, Upload, Settings, LogOut } from 'lucide-react';
+import { Play, User, Calendar, Eye, Heart, MessageCircle, Share2, Upload, Settings, LogOut, VideoIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Video {
@@ -12,7 +12,7 @@ interface Video {
   profiles: {
     full_name: string;
     email: string;
-  };
+  } | null;
 }
 
 const Index = () => {
@@ -37,11 +37,14 @@ const Index = () => {
     };
 
     const loadVideos = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('videos')
         .select(`
-          *,
-          profiles (
+          id,
+          title,
+          description,
+          created_at,
+          profiles!inner (
             full_name,
             email
           )
@@ -50,7 +53,12 @@ const Index = () => {
         .eq('visibility', 'public')
         .order('created_at', { ascending: false });
       
-      setVideos(data || []);
+      if (error) {
+        console.error('Error loading videos:', error);
+        setVideos([]);
+      } else {
+        setVideos(data || []);
+      }
       setLoading(false);
     };
 
@@ -257,7 +265,7 @@ const Index = () => {
         ) : (
           <div className="text-center py-16">
             <div className="text-gray-500 mb-4">
-              <Video className="h-16 w-16 mx-auto mb-4" />
+              <VideoIcon className="h-16 w-16 mx-auto mb-4" />
               <p className="text-lg">Aucune vidéo disponible pour le moment</p>
               <p className="text-sm">Les créateurs peuvent commencer à uploader du contenu !</p>
             </div>
