@@ -1,4 +1,4 @@
-import { PrismaClient } from '../prisma/generated/client';
+import { PrismaClient } from '../prisma/generated/client/edge';
 import Mux from '@mux/mux-node';
 
 const prisma = new PrismaClient();

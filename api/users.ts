@@ -1,4 +1,4 @@
-import { PrismaClient } from '../prisma/generated/client';
+import { PrismaClient } from '../prisma/generated/client/edge';
 
 const prisma = new PrismaClient();
 
@@ -7,7 +7,7 @@ async function handler(req, res) {
     const { email, name, role } = req.body;
     try {
       const user = await prisma.user.create({
-        data: { email, name, role }
+        data: { email, name, role },
       });
       res.status(201).json(user);
     } catch (error) {

@@ -1,19 +1,19 @@
-import { PrismaClient } from '../prisma/generated/client';
+import { PrismaClient } from '../prisma/generated/client/edge';
 
 const prisma = new PrismaClient();
 
 async function handler(req, res) {
   console.log('API /api/videos called', req.method);
   if (req.method === 'POST') {
-    let { title, description, fileUrl, userId, visibility } = req.body;
+    const { title, description, fileUrl, userId, visibility } = req.body;
     try {
       if (!title || !fileUrl || !userId) {
         res.status(400).json({ error: 'Missing required fields' });
         return;
       }
-      userId = parseInt(userId, 10);
+      const parsedUserId = parseInt(userId, 10);
       const video = await prisma.video.create({
-        data: { title, description, fileUrl, userId, visibility }
+        data: { title, description, fileUrl, userId: parsedUserId, visibility },
       });
       res.status(201).json(video);
     } catch (error) {
