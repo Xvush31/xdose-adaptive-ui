@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Play, User, Calendar, Eye, Heart, MessageCircle, Share2, Upload, Settings, LogOut, VideoIcon } from 'lucide-react';
+import { Play, User, Calendar, Eye, Heart, MessageCircle, Share2, Upload, Settings, LogOut, VideoIcon, Menu, X, TrendingUp, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Video {
@@ -21,6 +21,7 @@ const Index = () => {
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState<string>('spectateur');
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -99,6 +100,26 @@ const Index = () => {
     setUserRole('spectateur');
   };
 
+  const XDoseLogo = () => (
+    <div className="text-center mb-8">
+      <div className="inline-block">
+        <div className="flex items-center">
+          <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center mr-2 animate-pulse">
+            💡
+          </div>
+          <span className="text-sm text-gray-600">Insight!</span>
+        </div>
+        <div className="text-5xl font-bold mt-2">
+          <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent animate-pulse">
+            X
+          </span>
+          <span className="text-slate-700">Dose</span>
+        </div>
+        <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2 animate-pulse" />
+      </div>
+    </div>
+  );
+
   const VideoCard = ({ video }: { video: Video }) => (
     <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
       <div className="aspect-video bg-gradient-to-br from-purple-400 to-pink-400 relative overflow-hidden">
@@ -106,12 +127,20 @@ const Index = () => {
           <Play className="h-16 w-16 text-white" />
         </div>
         <div className="absolute top-4 right-4 bg-black bg-opacity-60 text-white px-2 py-1 rounded-lg text-sm">
-          12:34
+          5:45
         </div>
+        <div className="absolute top-4 left-4">
+          <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+            Premium
+          </span>
+        </div>
+        <button className="absolute bottom-4 right-4 bg-white rounded-full p-2 shadow-lg">
+          <X className="h-4 w-4 text-gray-600" />
+        </button>
       </div>
       
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+      <div className="p-4">
+        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
           {video.title}
         </h3>
         
@@ -119,17 +148,6 @@ const Index = () => {
           <User className="h-4 w-4 mr-2" />
           <span className="text-sm">{video.profiles?.full_name || video.profiles?.email}</span>
         </div>
-        
-        <div className="flex items-center text-gray-500 text-sm mb-4">
-          <Calendar className="h-4 w-4 mr-2" />
-          <span>{new Date(video.created_at).toLocaleDateString('fr-FR')}</span>
-        </div>
-
-        {video.description && (
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-            {video.description}
-          </p>
-        )}
         
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4 text-gray-500">
@@ -141,14 +159,7 @@ const Index = () => {
               <Heart className="h-4 w-4 mr-1" />
               <span className="text-sm">89</span>
             </div>
-            <div className="flex items-center">
-              <MessageCircle className="h-4 w-4 mr-1" />
-              <span className="text-sm">12</span>
-            </div>
           </div>
-          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <Share2 className="h-4 w-4 text-gray-500" />
-          </button>
         </div>
       </div>
     </div>
@@ -166,139 +177,208 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
       <header className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                XDose
-              </h1>
+        <div className="flex items-center justify-between px-4 py-3">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <Menu className="h-6 w-6 text-gray-600" />
+          </button>
+          
+          <div className="flex-1 max-w-md mx-4">
+            <input
+              type="text"
+              placeholder="Rechercher..."
+              className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+            />
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            {user && (
+              <Link
+                to="/upload"
+                className="p-2 text-gray-600 hover:text-purple-600 transition-colors"
+              >
+                <Upload className="h-5 w-5" />
+              </Link>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Sidebar */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="bg-black/50 flex-1" onClick={() => setSidebarOpen(false)} />
+          <div className="bg-white w-80 p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-8">
+              <XDoseLogo />
+              <button onClick={() => setSidebarOpen(false)}>
+                <X className="h-6 w-6 text-gray-600" />
+              </button>
             </div>
-            
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link to="/tendances" className="text-gray-600 hover:text-purple-600 transition-colors">
-                Tendances
+
+            <nav className="space-y-2">
+              <Link
+                to="/"
+                onClick={() => setSidebarOpen(false)}
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
+              >
+                <Eye className="h-5 w-5" />
+                <span className="font-medium">Accueil</span>
               </Link>
-              <Link to="/createurs" className="text-gray-600 hover:text-purple-600 transition-colors">
-                Créateurs
+              
+              <Link
+                to="/tendances"
+                onClick={() => setSidebarOpen(false)}
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
+              >
+                <TrendingUp className="h-5 w-5" />
+                <span className="font-medium">Tendances</span>
               </Link>
+              
+              <Link
+                to="/createurs"
+                onClick={() => setSidebarOpen(false)}
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
+              >
+                <Users className="h-5 w-5" />
+                <span className="font-medium">Créateurs</span>
+              </Link>
+
               {(userRole === 'createur' || userRole === 'admin') && (
-                <Link to="/upload" className="text-gray-600 hover:text-purple-600 transition-colors">
-                  Upload
+                <Link
+                  to="/upload"
+                  onClick={() => setSidebarOpen(false)}
+                  className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
+                >
+                  <Upload className="h-5 w-5" />
+                  <span className="font-medium">Upload</span>
                 </Link>
               )}
-            </nav>
-            
-            <div className="flex items-center space-x-4">
-              {user ? (
-                <div className="flex items-center space-x-3">
+
+              {user && (
+                <>
                   {userRole === 'admin' && (
                     <Link
                       to="/admin"
-                      className="flex items-center px-4 py-2 bg-red-500 text-white rounded-full font-medium hover:bg-red-600 transition-colors"
+                      onClick={() => setSidebarOpen(false)}
+                      className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
                     >
-                      <Settings className="h-4 w-4 mr-2" />
-                      Admin
-                    </Link>
-                  )}
-                  
-                  {(userRole === 'createur' || userRole === 'admin') && (
-                    <Link
-                      to="/upload"
-                      className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-medium hover:shadow-lg transition-all duration-200"
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload
+                      <Settings className="h-5 w-5" />
+                      <span className="font-medium">Admin</span>
                     </Link>
                   )}
                   
                   <Link
                     to="/parametres"
-                    className="p-2 text-gray-600 hover:text-purple-600 transition-colors"
+                    onClick={() => setSidebarOpen(false)}
+                    className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
                   >
                     <Settings className="h-5 w-5" />
+                    <span className="font-medium">Paramètres</span>
                   </Link>
                   
                   <button
-                    onClick={handleLogout}
-                    className="p-2 text-gray-600 hover:text-red-600 transition-colors"
+                    onClick={() => {
+                      handleLogout();
+                      setSidebarOpen(false);
+                    }}
+                    className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
                   >
                     <LogOut className="h-5 w-5" />
+                    <span className="font-medium">Déconnexion</span>
                   </button>
-                </div>
-              ) : (
-                <Link
-                  to="/auth"
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200"
-                >
-                  Se connecter
-                </Link>
+                </>
               )}
-            </div>
+            </nav>
           </div>
         </div>
-      </header>
+      )}
 
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Découvrez du contenu
-            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {" "}exclusif
-            </span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Plongez dans un univers de créateurs talentueux et de contenu premium. 
-            Rejoignez notre communauté dès aujourd'hui.
-          </p>
-          
-          {!user && (
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/auth/register"
-                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200"
-              >
-                Commencer gratuitement
-              </Link>
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        {!user ? (
+          <>
+            <XDoseLogo />
+            
+            <div className="text-center space-y-4 mb-12">
               <Link
                 to="/auth/login"
-                className="border-2 border-purple-500 text-purple-600 px-8 py-4 rounded-2xl font-semibold hover:bg-purple-50 transition-all duration-200"
+                className="block w-full max-w-sm mx-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:shadow-lg transition-all duration-200"
               >
-                Se connecter
+                → Se connecter
+              </Link>
+              
+              <Link
+                to="/auth/register"
+                className="flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Créer un compte
               </Link>
             </div>
-          )}
-        </div>
-      </section>
+          </>
+        ) : null}
 
-      {/* Videos Grid */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="flex items-center justify-between mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">Vidéos populaires</h2>
-          <Link 
-            to="/tendances" 
-            className="text-purple-600 hover:text-purple-700 font-semibold"
+        {/* Trending Content Section */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Trending Content</h2>
+            <Link 
+              to="/tendances" 
+              className="text-purple-600 hover:text-purple-700 font-semibold flex items-center"
+            >
+              Voir tout →
+            </Link>
+          </div>
+          
+          {videos.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {videos.map((video) => (
+                <VideoCard key={video.id} video={video} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="text-gray-500 mb-4">
+                <VideoIcon className="h-16 w-16 mx-auto mb-4" />
+                <p className="text-lg">Aucune vidéo disponible pour le moment</p>
+                <p className="text-sm">Les créateurs peuvent commencer à uploader du contenu !</p>
+              </div>
+            </div>
+          )}
+        </section>
+      </main>
+
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 px-4 py-2">
+        <div className="flex items-center justify-around max-w-md mx-auto">
+          <Link
+            to="/"
+            className="flex flex-col items-center py-2 px-4 text-purple-500"
           >
-            Voir tout →
+            <Eye className="h-6 w-6 mb-1" />
+            <span className="text-xs font-medium">Accueil</span>
+          </Link>
+          
+          <Link
+            to="/tendances"
+            className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-gray-600"
+          >
+            <TrendingUp className="h-6 w-6 mb-1" />
+            <span className="text-xs font-medium">Tendances</span>
+          </Link>
+          
+          <Link
+            to="/createurs"
+            className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-gray-600"
+          >
+            <Users className="h-6 w-6 mb-1" />
+            <span className="text-xs font-medium">Créateurs</span>
           </Link>
         </div>
-        
-        {videos.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {videos.map((video) => (
-              <VideoCard key={video.id} video={video} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <div className="text-gray-500 mb-4">
-              <VideoIcon className="h-16 w-16 mx-auto mb-4" />
-              <p className="text-lg">Aucune vidéo disponible pour le moment</p>
-              <p className="text-sm">Les créateurs peuvent commencer à uploader du contenu !</p>
-            </div>
-          </div>
-        )}
-      </section>
+      </nav>
     </div>
   );
 };

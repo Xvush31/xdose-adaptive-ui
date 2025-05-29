@@ -10,6 +10,7 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [selectedRole, setSelectedRole] = useState<'spectateur' | 'createur'>('spectateur');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -44,7 +45,8 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
           password,
           options: { 
             data: { 
-              full_name: fullName 
+              full_name: fullName,
+              role: selectedRole
             }
           }
         });
@@ -102,16 +104,55 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
         
         <form className="space-y-6" onSubmit={handleSubmit}>
           {mode === 'register' && (
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Nom complet</label>
-              <input
-                type="text"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-              />
-            </div>
+            <>
+              <div>
+                <label className="block mb-2 font-semibold text-gray-700">Nom complet</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 font-semibold text-gray-700">Type de compte</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole('spectateur')}
+                    className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                      selectedRole === 'spectateur'
+                        ? 'border-purple-500 bg-purple-50 text-purple-700'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl mb-2">👀</div>
+                      <div className="font-semibold">Spectateur</div>
+                      <div className="text-sm text-gray-600">Regarder du contenu</div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole('createur')}
+                    className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                      selectedRole === 'createur'
+                        ? 'border-purple-500 bg-purple-50 text-purple-700'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl mb-2">🎬</div>
+                      <div className="font-semibold">Créateur</div>
+                      <div className="text-sm text-gray-600">Créer du contenu</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </>
           )}
           
           <div>
