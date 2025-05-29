@@ -58,6 +58,8 @@ const Upload = () => {
     }
   };
 
+  const safeGetFileName = (file: File) => file.name || 'fichier_sans_nom';
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -69,7 +71,7 @@ const Upload = () => {
         .map((file: File) => ({
           ...file,
           id: Math.random().toString(36).substr(2, 9),
-          title: file.name.replace(/\.[^/.]+$/, ''),
+          title: safeGetFileName(file).replace(/\.[^/.]+$/, ''),
           description: '',
           visibility: 'public' as const,
         }));
@@ -107,7 +109,7 @@ const Upload = () => {
       .map((file: File) => ({
         ...file,
         id: Math.random().toString(36).substr(2, 9),
-        title: file.name.replace(/\.[^/.]+$/, ''),
+        title: safeGetFileName(file).replace(/\.[^/.]+$/, ''),
         description: '',
         visibility: 'public' as const,
       }));
