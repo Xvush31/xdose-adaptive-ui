@@ -158,7 +158,9 @@ const config = {
         "native": true
       }
     ],
-    "previewFeatures": [],
+    "previewFeatures": [
+      "driverAdapters"
+    ],
     "sourceFilePath": "/workspaces/xdose-adaptive-ui/prisma/schema.prisma",
     "isCustomOutput": true
   },
@@ -182,8 +184,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// prisma/schema.prisma\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  createdAt DateTime @default(now())\n  email     String   @unique\n  name      String?\n  role      String   @default(\"spectateur\")\n  videos    Video[]\n}\n\nmodel Video {\n  id          Int      @id @default(autoincrement())\n  createdAt   DateTime @default(now())\n  title       String\n  description String?\n  fileUrl     String\n  muxAssetId  String?\n  muxUploadId String? // Ajouté pour Mux upload\n  status      String   @default(\"pending\")\n  visibility  String   @default(\"public\")\n  user        User     @relation(fields: [userId], references: [id])\n  userId      Int\n}\n",
-  "inlineSchemaHash": "8c1cff4205d6d2a3e4a6da0399f63bdca5cb71583a7fc38bce8b43e6701a53a6",
+  "inlineSchema": "// prisma/schema.prisma\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider        = \"prisma-client-js\"\n  output          = \"./generated/client\"\n  previewFeatures = [\"driverAdapters\"]\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  createdAt DateTime @default(now())\n  email     String   @unique\n  name      String?\n  role      String   @default(\"spectateur\")\n  videos    Video[]\n}\n\nmodel Video {\n  id          Int      @id @default(autoincrement())\n  createdAt   DateTime @default(now())\n  title       String\n  description String?\n  fileUrl     String\n  muxAssetId  String?\n  muxUploadId String? // Ajouté pour Mux upload\n  status      String   @default(\"pending\")\n  visibility  String   @default(\"public\")\n  user        User     @relation(fields: [userId], references: [id])\n  userId      Int\n}\n",
+  "inlineSchemaHash": "751094e3e8b5dd107abf0343fb4f9f418b9dee4943e8243b07d881093d6a6bdb",
   "copyEngine": true
 }
 
