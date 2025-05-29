@@ -69,19 +69,23 @@ const Upload = () => {
       const newFiles = Array.from(e.dataTransfer.files)
         .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
         .map((file: File) => {
-          let fileName = 'fichier_sans_nom';
-          if (file && typeof file.name === 'string' && typeof file.name.replace === 'function') {
-            fileName = file.name;
+          let title = 'fichier_sans_nom';
+          if (
+            file &&
+            typeof file.name === 'string' &&
+            typeof file.name.replace === 'function'
+          ) {
+            title = file.name.replace(/\.[^/.]+$/, '');
           }
           return {
             ...file,
             id: Math.random().toString(36).substr(2, 9),
-            title: fileName.replace(/\.[^/.]+$/, ''),
+            title,
             description: '',
             visibility: 'public' as const,
           };
         });
-      
+
       if (newFiles.length === 0) {
         setUploadError('Format de fichier non supporté.');
         return;
@@ -109,23 +113,27 @@ const Upload = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    
+
     const selectedFiles = Array.from(e.target.files)
       .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
       .map((file: File) => {
-        let fileName = 'fichier_sans_nom';
-        if (file && typeof file.name === 'string' && typeof file.name.replace === 'function') {
-          fileName = file.name;
+        let title = 'fichier_sans_nom';
+        if (
+          file &&
+          typeof file.name === 'string' &&
+          typeof file.name.replace === 'function'
+        ) {
+          title = file.name.replace(/\.[^/.]+$/, '');
         }
         return {
           ...file,
           id: Math.random().toString(36).substr(2, 9),
-          title: fileName.replace(/\.[^/.]+$/, ''),
+          title,
           description: '',
           visibility: 'public' as const,
         };
       });
-    
+
     if (selectedFiles.length === 0) {
       setUploadError('Format de fichier non supporté.');
       return;
