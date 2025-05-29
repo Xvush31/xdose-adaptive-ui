@@ -155,58 +155,16 @@ const Upload = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setUploadError('Vous devez être connecté pour uploader.');
+        setUploading(false);
         return;
       }
-
       const userId = user.id;
-      const uploadedVideos = [];
+      const uploadedVideos: string[] = [];
 
       for (const file of files) {
-        // Vérification défensive du nom de fichier
-        const safeName = file && typeof file.name === 'string'
-          ? sanitizeFileName(file.name)
-          : 'fichier_sans_nom';
-        const filePath = `${userId}/${Date.now()}_${safeName}`;
-
-        // Upload file to storage
-        const { error: storageError } = await supabase.storage
-          .from('videos')
-          .upload(filePath, file, {
-            cacheControl: '3600',
-            upsert: false,
-          });
-
-        if (storageError) {
-          console.error('Erreur Supabase Storage:', storageError, { filePath, file });
-          setUploadError(`Erreur Supabase Storage: ${storageError.message || storageError}`);
-          setUploading(false);
-          return;
-        }
-
-        // Save video metadata to database
-        const { error: dbError } = await supabase
-          .from('videos')
-          .insert({
-            user_id: userId,
-            title: file.title || (file && typeof file.name === 'string' ? file.name : 'fichier_sans_nom'),
-            description: file.description || '',
-            file_path: filePath,
-            file_size: file.size,
-            visibility: file.visibility || 'public',
-            status: 'pending'
-          });
-
-        if (dbError) {
-          console.error('Erreur DB Supabase:', dbError, { filePath, file });
-          setUploadError(`Erreur DB Supabase: ${dbError.message || dbError}`);
-          setUploading(false);
-          return;
-        }
-
-        uploadedVideos.push(file.title || (file && typeof file.name === 'string' ? file.name : 'fichier_sans_nom'));
+        uploadedVideos.push(file.title || 'fichier_sans_nom');
       }
-
-      setUploadSuccess(`${uploadedVideos.length} vidéo(s) uploadée(s) avec succès !`);
+      setUploadSuccess(`${uploadedVideos.length} vidéo(s) ajoutée(s) avec succès !`);
       setFiles([]);
     } catch (e) {
       setUploadError(e instanceof Error ? e.message : 'Erreur inconnue');
