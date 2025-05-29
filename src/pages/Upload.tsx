@@ -70,16 +70,12 @@ const Upload = () => {
         .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
         .map((file: File) => {
           let title = 'fichier_sans_nom';
-          try {
-            if (
-              file &&
-              typeof file.name === 'string' &&
-              typeof file.name.replace === 'function'
-            ) {
+          if (file && typeof file.name === 'string') {
+            try {
               title = file.name.replace(/\.[^/.]+$/, '');
+            } catch {
+              // fallback déjà prévu
             }
-          } catch (err) {
-            // ignore, fallback to 'fichier_sans_nom'
           }
           return {
             ...file,
@@ -122,16 +118,12 @@ const Upload = () => {
       .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
       .map((file: File) => {
         let title = 'fichier_sans_nom';
-        try {
-          if (
-            file &&
-            typeof file.name === 'string' &&
-            typeof file.name.replace === 'function'
-          ) {
+        if (file && typeof file.name === 'string') {
+          try {
             title = file.name.replace(/\.[^/.]+$/, '');
+          } catch {
+            // fallback déjà prévu
           }
-        } catch (err) {
-          // ignore, fallback to 'fichier_sans_nom'
         }
         return {
           ...file,
@@ -170,7 +162,10 @@ const Upload = () => {
       const uploadedVideos = [];
 
       for (const file of files) {
-        const safeName = sanitizeFileName(file.name);
+        // Vérification défensive du nom de fichier
+        const safeName = file && typeof file.name === 'string'
+          ? sanitizeFileName(file.name)
+          : 'fichier_sans_nom';
         const filePath = `${userId}/${Date.now()}_${safeName}`;
 
         // Upload file to storage
@@ -193,7 +188,7 @@ const Upload = () => {
           .from('videos')
           .insert({
             user_id: userId,
-            title: file.title || file.name,
+            title: file.title || (file && typeof file.name === 'string' ? file.name : 'fichier_sans_nom'),
             description: file.description || '',
             file_path: filePath,
             file_size: file.size,
@@ -208,7 +203,7 @@ const Upload = () => {
           return;
         }
 
-        uploadedVideos.push(file.title || file.name);
+        uploadedVideos.push(file.title || (file && typeof file.name === 'string' ? file.name : 'fichier_sans_nom'));
       }
 
       setUploadSuccess(`${uploadedVideos.length} vidéo(s) uploadée(s) avec succès !`);
