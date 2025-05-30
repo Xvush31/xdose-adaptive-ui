@@ -1,0 +1,16 @@
+/* SPA fallback for Vercel/Netlify: redirect all routes to index.html */
+/* This enables client-side routing for React Router */
+
+/* For Netlify */
+/*
+  /index.html    200
+*/
+
+/* For Vercel (vercel.json) */
+/*
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+*/
