@@ -1,0 +1,48 @@
+
+project_id = "jhfvvqsqfdflnzqkdwfp"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+enabled = true
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://127.0.0.1:54321"
+
+[inbucket]
+enabled = true
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+image_transformation = {enabled = true}
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://jhfvvqsqfdflnzqkdwfp.supabase.co"]
+jwt_expiry = 3600
+external_email_enabled = true
+external_phone_enabled = true
+sms_test_otp = "123456"
+email_test_otp = "123456"
+
+[edge_runtime]
+enabled = true
+ip_version = "ipv4"
+
+[functions.sync-user-to-prisma]
+verify_jwt = false

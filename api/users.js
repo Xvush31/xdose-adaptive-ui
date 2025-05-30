@@ -1,3 +1,4 @@
+
 const { PrismaClient } = require('../prisma/generated/client');
 const prisma = new PrismaClient();
 
@@ -10,21 +11,50 @@ async function handler(req, res) {
         res.status(400).json({ error: 'Missing required fields' });
         return;
       }
+      
       // Si seul id+role sont fournis, update uniquement le rôle
       if (role && !email && !name) {
         const user = await prisma.user.update({ where: { id }, data: { role } });
+        console.log('[users.js] Rôle utilisateur mis à jour:', user);
         res.status(200).json(user);
         return;
       }
+      
       // Upsert: crée ou met à jour l'utilisateur
       const user = await prisma.user.upsert({
         where: { id },
-        update: { email, name, role: role || 'spectateur' },
-        create: { id, email, name, role: role || 'spectateur' },
+        update: { 
+          email: email || undefined, 
+          name: name || undefined, 
+          role: role || 'spectateur' 
+        },
+        create: { 
+          id, 
+          email: email || '', 
+          name: name || email || '', 
+          role: role || 'spectateur' 
+        },
       });
+      
+      console.log('[users.js] Utilisateur créé/mis à jour:', user);
       res.status(201).json(user);
     } catch (error) {
       console.error('[users.js] Erreur Prisma:', error);
+      
+      // Si l'utilisateur existe déjà, retourner une réponse positive
+      if (error.code === 'P2002') {
+        console.log('[users.js] Utilisateur déjà existant, récupération...');
+        try {
+          const existingUser = await prisma.user.findUnique({ where: { id } });
+          if (existingUser) {
+            res.status(200).json(existingUser);
+            return;
+          }
+        } catch (fetchError) {
+          console.error('[users.js] Erreur récupération utilisateur existant:', fetchError);
+        }
+      }
+      
       res.status(500).json({ error: error.message });
     }
   } else if (req.method === 'GET') {
@@ -33,13 +63,16 @@ async function handler(req, res) {
         // GET /api/users?id=...
         const user = await prisma.user.findUnique({ where: { id: req.query.id } });
         if (!user) {
+          console.log('[users.js] Utilisateur non trouvé:', req.query.id);
           res.status(404).json({ error: 'User not found' });
         } else {
+          console.log('[users.js] Utilisateur récupéré:', user);
           res.status(200).json(user);
         }
         return;
       }
       const users = await prisma.user.findMany({ include: { videos: true } });
+      console.log('[users.js] GET tous les utilisateurs:', users.length);
       res.status(200).json(users);
     } catch (error) {
       console.error('[users.js] Erreur GET:', error);
