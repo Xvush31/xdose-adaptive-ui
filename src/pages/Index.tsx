@@ -72,28 +72,59 @@ const Index = () => {
         if (typeof window !== 'undefined') {
           console.log('[DEBUG][Index.tsx] Début chargement des vidéos');
         }
-        const res = await fetch('/api/videos');
+        const res = await fetch('/api/videos', {
+          headers: {
+            'Cache-Control': 'no-cache',
+            Pragma: 'no-cache',
+          },
+        });
+
         if (typeof window !== 'undefined') {
           console.log('[DEBUG][Index.tsx] Réponse /api/videos:', {
             status: res.status,
             ok: res.ok,
+            statusText: res.statusText,
+            headers: Object.fromEntries(res.headers.entries()),
           });
         }
-        const videosData = await res.json();
-        if (typeof window !== 'undefined') {
-          console.log('[DEBUG][Index.tsx] Données vidéos brutes:', videosData);
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
         }
-        const filteredVideos = (videosData as Video[]).filter(
+
+        const text = await res.text(); // Get response as text first
+        if (typeof window !== 'undefined') {
+          console.log('[DEBUG][Index.tsx] Réponse brute:', text);
+        }
+
+        let videosData;
+        try {
+          videosData = JSON.parse(text);
+        } catch (e) {
+          console.error('[DEBUG][Index.tsx] Erreur parsing JSON:', e);
+          throw new Error('Invalid JSON response from server');
+        }
+
+        if (typeof window !== 'undefined') {
+          console.log('[DEBUG][Index.tsx] Données vidéos parsées:', videosData);
+        }
+
+        if (!Array.isArray(videosData)) {
+          console.error('[DEBUG][Index.tsx] Réponse non-array:', videosData);
+          throw new Error('Server response is not an array');
+        }
+
+        const filteredVideos = videosData.filter(
           (v) => v.status === 'ready' && v.visibility === 'public',
         );
+
         if (typeof window !== 'undefined') {
           console.log('[DEBUG][Index.tsx] Vidéos filtrées:', filteredVideos);
         }
+
         setVideos(filteredVideos);
       } catch (e) {
-        if (typeof window !== 'undefined') {
-          console.error('[DEBUG][Index.tsx] Erreur chargement des vidéos:', e);
-        }
+        console.error('[DEBUG][Index.tsx] Erreur chargement des vidéos:', e);
         setVideos([]);
       } finally {
         setLoading(false);
