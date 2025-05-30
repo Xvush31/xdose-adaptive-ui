@@ -177,9 +177,19 @@ const Upload = () => {
       const uploadedVideos: string[] = [];
 
       for (const file of files) {
-        uploadedVideos.push(file.title || 'fichier_sans_nom');
+        await fetch('/api/videos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: file.title || file.name,
+            description: file.description || '',
+            fileUrl: '', // You can update this with the real URL after Mux upload if needed
+            userId: user.id,
+            visibility: file.visibility || 'public',
+          }),
+        });
       }
-      setUploadSuccess(`${uploadedVideos.length} vidéo(s) ajoutée(s) avec succès !`);
+      setUploadSuccess(`${files.length} vidéo(s) ajoutée(s) avec succès !`);
       setFiles([]);
     } catch (e) {
       setUploadError(e instanceof Error ? e.message : 'Erreur inconnue');
