@@ -69,12 +69,31 @@ const Index = () => {
     };
     const loadVideos = async () => {
       try {
+        if (typeof window !== 'undefined') {
+          console.log('[DEBUG][Index.tsx] Début chargement des vidéos');
+        }
         const res = await fetch('/api/videos');
+        if (typeof window !== 'undefined') {
+          console.log('[DEBUG][Index.tsx] Réponse /api/videos:', {
+            status: res.status,
+            ok: res.ok,
+          });
+        }
         const videosData = await res.json();
-        setVideos(
-          (videosData as Video[]).filter((v) => v.status === 'ready' && v.visibility === 'public'),
+        if (typeof window !== 'undefined') {
+          console.log('[DEBUG][Index.tsx] Données vidéos brutes:', videosData);
+        }
+        const filteredVideos = (videosData as Video[]).filter(
+          (v) => v.status === 'ready' && v.visibility === 'public',
         );
+        if (typeof window !== 'undefined') {
+          console.log('[DEBUG][Index.tsx] Vidéos filtrées:', filteredVideos);
+        }
+        setVideos(filteredVideos);
       } catch (e) {
+        if (typeof window !== 'undefined') {
+          console.error('[DEBUG][Index.tsx] Erreur chargement des vidéos:', e);
+        }
         setVideos([]);
       } finally {
         setLoading(false);
