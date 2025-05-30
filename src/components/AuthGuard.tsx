@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
@@ -10,11 +9,11 @@ interface AuthGuardProps {
   redirectTo?: string;
 }
 
-export default function AuthGuard({ 
-  children, 
-  requireAuth = true, 
+export default function AuthGuard({
+  children,
+  requireAuth = true,
   requiredRole,
-  redirectTo = '/auth' 
+  redirectTo = '/auth',
 }: AuthGuardProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -23,45 +22,42 @@ export default function AuthGuard({
 
   useEffect(() => {
     // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Fetch user profile to get role
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-          
-          setUserRole(profile?.role || 'spectateur');
-        } else {
-          setUserRole(null);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        try {
+          const res = await fetch(`/api/users?id=${session.user.id}`);
+          if (res.ok) {
+            const prismaUser = await res.json();
+            setUserRole(prismaUser.role || 'spectateur');
+          } else {
+            setUserRole('spectateur');
+          }
+        } catch (e) {
+          setUserRole('spectateur');
         }
-        setLoading(false);
+      } else {
+        setUserRole(null);
       }
-    );
+      setLoading(false);
+    });
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
       if (session?.user) {
-        supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data: profile }) => {
-            setUserRole(profile?.role || 'spectateur');
-            setLoading(false);
-          });
+        fetch(`/api/users?id=${session.user.id}`)
+          .then((res) => (res.ok ? res.json() : null))
+          .then((prismaUser) => setUserRole(prismaUser?.role || 'spectateur'))
+          .catch(() => setUserRole('spectateur'));
       } else {
-        setLoading(false);
+        setUserRole(null);
       }
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();

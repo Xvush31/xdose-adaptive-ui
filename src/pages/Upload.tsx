@@ -35,16 +35,25 @@ const Upload = () => {
 
   useEffect(() => {
     const checkUserRole = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-        setUserRole(profile?.role || 'spectateur');
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          // Récupérer le user depuis Prisma
+          const res = await fetch(`/api/users?id=${user.id}`);
+          if (res.ok) {
+            const prismaUser = await res.json();
+            setUserRole(prismaUser.role || 'spectateur');
+          } else {
+            setUserRole('spectateur');
+          }
+        } else {
+          setUserRole(null);
+        }
+      } catch (e) {
+        console.error('[Upload.tsx] Erreur récupération rôle Prisma', e);
+        setUserRole('spectateur');
       }
     };
     checkUserRole();

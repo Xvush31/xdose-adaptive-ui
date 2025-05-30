@@ -42,29 +42,33 @@ const Parametres = () => {
     const fetchUserData = async () => {
       setCreatorRequestLoading(true);
       setCreatorRequestError(null);
-      
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         setCurrentUser(user);
-        
         if (user) {
-          // Get user role
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single();
-          
-          setUserRole(profile?.role || 'spectateur');
+          // Récupérer le user Prisma pour le rôle
+          try {
+            const res = await fetch(`/api/users?id=${user.id}`);
+            if (res.ok) {
+              const prismaUser = await res.json();
+              setUserRole(prismaUser.role || 'spectateur');
+            } else {
+              setUserRole('spectateur');
+            }
+          } catch {
+            setUserRole('spectateur');
+          }
 
           // Get role request status if not already a creator
-          if (profile?.role !== 'createur' && profile?.role !== 'admin') {
+          if (userRole !== 'createur' && userRole !== 'admin') {
             const { data, error } = await supabase
               .from('role_requests')
               .select('status')
               .eq('user_id', user.id)
               .maybeSingle();
-            
+
             if (error && error.code !== 'PGRST116') {
               setCreatorRequestError(error.message);
             } else {
@@ -78,16 +82,18 @@ const Parametres = () => {
         setCreatorRequestLoading(false);
       }
     };
-    
+
     fetchUserData();
-  }, []);
+  }, [userRole]);
 
   const handleBecomeCreator = async () => {
     setCreatorRequestLoading(true);
     setCreatorRequestError(null);
-    
+
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         setCreatorRequestError('Vous devez être connecté.');
         return;
@@ -99,7 +105,7 @@ const Parametres = () => {
         .select('id')
         .eq('user_id', user.id)
         .maybeSingle();
-      
+
       if (existing) {
         setCreatorRequestError('Demande déjà envoyée.');
         return;
@@ -157,16 +163,23 @@ const Parametres = () => {
                 <UserIcon className="h-5 w-5 mr-2" />
                 Profil
               </h3>
-              
+
               <div className="mb-6">
                 <p className="text-sm text-gray-600 mb-2">Rôle actuel:</p>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  userRole === 'admin' ? 'bg-red-100 text-red-800' :
-                  userRole === 'createur' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {userRole === 'admin' ? 'Administrateur' :
-                   userRole === 'createur' ? 'Créateur' : 'Spectateur'}
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    userRole === 'admin'
+                      ? 'bg-red-100 text-red-800'
+                      : userRole === 'createur'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
+                  {userRole === 'admin'
+                    ? 'Administrateur'
+                    : userRole === 'createur'
+                      ? 'Créateur'
+                      : 'Spectateur'}
                 </span>
               </div>
 
@@ -239,7 +252,11 @@ const Parametres = () => {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    {darkMode ? <Moon className="h-5 w-5 mr-2" /> : <Sun className="h-5 w-5 mr-2" />}
+                    {darkMode ? (
+                      <Moon className="h-5 w-5 mr-2" />
+                    ) : (
+                      <Sun className="h-5 w-5 mr-2" />
+                    )}
                     <span className="text-gray-700 font-medium">Mode sombre</span>
                   </div>
                   <button
@@ -288,7 +305,9 @@ const Parametres = () => {
                   <div className="text-sm text-gray-600">Dernière modification il y a 3 mois</div>
                 </button>
                 <button className="w-full text-left p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
-                  <div className="font-semibold text-gray-900">Authentification à deux facteurs</div>
+                  <div className="font-semibold text-gray-900">
+                    Authentification à deux facteurs
+                  </div>
                   <div className="text-sm text-gray-600">Sécurisez votre compte</div>
                 </button>
                 <button className="w-full text-left p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
