@@ -21,6 +21,9 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      if (typeof window !== 'undefined') {
+        console.log('[DEBUG][Auth.tsx] user from supabase.auth.getUser():', user);
+      }
       if (
         user &&
         (location.pathname === '/auth/login' ||

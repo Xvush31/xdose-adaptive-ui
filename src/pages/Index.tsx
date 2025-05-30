@@ -46,6 +46,9 @@ const Index = () => {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
+      if (typeof window !== 'undefined') {
+        console.log('[DEBUG][Index.tsx] user from supabase.auth.getUser():', user);
+      }
       if (user) {
         // Récupérer le user depuis Prisma
         try {
@@ -53,6 +56,9 @@ const Index = () => {
           if (res.ok) {
             const prismaUser = await res.json();
             setUserRole(prismaUser.role || 'spectateur');
+            if (typeof window !== 'undefined') {
+              console.log('[DEBUG][Index.tsx] userRole from Prisma:', prismaUser.role);
+            }
           } else {
             setUserRole('spectateur');
           }
