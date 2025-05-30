@@ -16,17 +16,22 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if user is already logged in
+    // Only redirect if user is logged in AND currently on /auth/login or /auth/register
     const checkAuth = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (user) {
+      if (
+        user &&
+        (location.pathname === '/auth/login' ||
+          location.pathname === '/auth/register' ||
+          location.pathname === '/auth')
+      ) {
         navigate('/');
       }
     };
     checkAuth();
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   useEffect(() => {
     if (initialMode && mode !== initialMode) {

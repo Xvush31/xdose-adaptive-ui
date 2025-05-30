@@ -144,6 +144,34 @@ const Index = () => {
       </div>
     );
   }
+  // If not logged in, show a login/register prompt
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
+          <XDoseLogo />
+          <h2 className="text-2xl font-bold mb-4">Bienvenue sur XDose</h2>
+          <p className="mb-6 text-gray-600">
+            Connectez-vous ou créez un compte pour accéder aux vidéos.
+          </p>
+          <div className="flex flex-col gap-4">
+            <Link
+              to="/auth/login"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200"
+            >
+              Se connecter
+            </Link>
+            <Link
+              to="/auth/register"
+              className="w-full border border-purple-500 text-purple-700 py-3 rounded-xl font-semibold hover:bg-purple-50 transition-all duration-200"
+            >
+              Créer un compte
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
