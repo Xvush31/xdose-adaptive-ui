@@ -1,25 +1,27 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
-  Play,
   User,
-  Calendar,
-  Eye,
+  Play,
   Heart,
-  MessageCircle,
   Share2,
   Upload,
-  Settings,
-  LogOut,
-  VideoIcon,
+  Home,
+  Search,
+  Bell,
   Menu,
   X,
   TrendingUp,
   Users,
+  Eye,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { XDoseLogo } from '@/components/XDoseLogo';
+import { TrendingContent } from '@/components/TrendingContent';
+import { HeroSection } from '@/components/HeroSection';
+
 interface Video {
-  id: string | number; // Prisma id is number
+  id: string | number;
   title: string;
   description?: string | null;
   createdAt?: string;
@@ -34,21 +36,150 @@ interface Video {
     email: string;
   };
 }
+
+interface User {
+  id: string;
+  email: string;
+  name?: string | null;
+  avatar_url?: string | null;
+}
+
+// Navigation Component
+const Navigation = ({ user, onLogout }: { user: User | null; onLogout: () => void }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navItems = [
+    { id: 'home', label: 'Accueil', icon: Home, href: '/' },
+    { id: 'explore', label: 'Explorer', icon: Search, href: '/explore' },
+    { id: 'upload', label: 'Upload', icon: Upload, href: '/upload' },
+  ];
+
+  return (
+    <nav className="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center h-16">
+          <XDoseLogo size="sm" className="header" />
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex space-x-8">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.id}
+                  to={item.href}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-full font-medium transition-colors text-gray-600 hover:text-pink-500"
+                >
+                  <Icon className="h-5 w-5" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Bouton Menu Mobile */}
+          <button className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
+
+        {/* Navigation Mobile */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden py-4 border-t">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.id}
+                  to={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center space-x-3 w-full px-4 py-3 text-left rounded-lg font-medium transition-colors text-gray-600 hover:bg-gray-100"
+                >
+                  <Icon className="h-5 w-5" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+            {user && (
+              <button
+                onClick={onLogout}
+                className="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg font-medium text-gray-600 hover:bg-gray-100 transition-colors mt-4"
+              >
+                Se déconnecter
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+// Featured Creators Section
+const FeaturedCreators = () => (
+  <div className="py-16 px-6 bg-white">
+    <div className="max-w-7xl mx-auto">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          LA SÉLECTION DES CRÉATEURS
+        </h2>
+        <div className="w-24 h-1 bg-gradient-to-r from-pink-500 to-purple-600 mx-auto"></div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          {
+            name: 'Sarah Martinez',
+            role: 'Créatrice Lifestyle & Mode',
+            gradient: 'from-pink-500 to-purple-600',
+          },
+          {
+            name: 'Alex Chen',
+            role: 'Expert Tech & Innovation',
+            gradient: 'from-blue-500 to-teal-500',
+          },
+          {
+            name: 'Maya Johnson',
+            role: 'Artiste & Créative',
+            gradient: 'from-amber-500 to-orange-500',
+          },
+        ].map((creator, index) => (
+          <div
+            key={index}
+            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-pink-100 to-purple-100 p-8 hover:shadow-2xl transition-all duration-500"
+          >
+            <div className="text-center">
+              <div
+                className={`w-24 h-24 bg-gradient-to-r ${creator.gradient} rounded-full mx-auto mb-4 flex items-center justify-center`}
+              >
+                <User className="h-12 w-12 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">{creator.name}</h3>
+              <p className="text-gray-600 mb-4">{creator.role}</p>
+              <button className="bg-gray-900 text-white px-6 py-2 rounded-full font-medium hover:bg-gray-800 transition-colors">
+                Suivre
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// Main Component
 const Index = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState<string>('spectateur');
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   useEffect(() => {
     const checkAuth = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
-      if (typeof window !== 'undefined') {
-        console.log('[DEBUG][Index.tsx] user from supabase.auth.getUser():', user);
-      }
       if (user) {
         // Récupérer le user depuis Prisma
         try {
@@ -56,9 +187,6 @@ const Index = () => {
           if (res.ok) {
             const prismaUser = await res.json();
             setUserRole(prismaUser.role || 'spectateur');
-            if (typeof window !== 'undefined') {
-              console.log('[DEBUG][Index.tsx] userRole from Prisma:', prismaUser.role);
-            }
           } else {
             setUserRole('spectateur');
           }
@@ -69,62 +197,17 @@ const Index = () => {
     };
     const loadVideos = async () => {
       try {
-        if (typeof window !== 'undefined') {
-          console.log('[DEBUG][Index.tsx] Début chargement des vidéos');
-        }
-        const res = await fetch('/api/videos', {
-          headers: {
-            'Cache-Control': 'no-cache',
-            Pragma: 'no-cache',
-          },
-        });
-
-        if (typeof window !== 'undefined') {
-          console.log('[DEBUG][Index.tsx] Réponse /api/videos:', {
-            status: res.status,
-            ok: res.ok,
-            statusText: res.statusText,
-            headers: Object.fromEntries(res.headers.entries()),
-          });
-        }
-
+        const res = await fetch('/api/videos');
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
-
-        const text = await res.text(); // Get response as text first
-        if (typeof window !== 'undefined') {
-          console.log('[DEBUG][Index.tsx] Réponse brute:', text);
-        }
-
-        let videosData;
-        try {
-          videosData = JSON.parse(text);
-        } catch (e) {
-          console.error('[DEBUG][Index.tsx] Erreur parsing JSON:', e);
-          throw new Error('Invalid JSON response from server');
-        }
-
-        if (typeof window !== 'undefined') {
-          console.log('[DEBUG][Index.tsx] Données vidéos parsées:', videosData);
-        }
-
-        if (!Array.isArray(videosData)) {
-          console.error('[DEBUG][Index.tsx] Réponse non-array:', videosData);
-          throw new Error('Server response is not an array');
-        }
-
+        const videosData = await res.json();
         const filteredVideos = videosData.filter(
           (v) => v.status === 'ready' && v.visibility === 'public',
         );
-
-        if (typeof window !== 'undefined') {
-          console.log('[DEBUG][Index.tsx] Vidéos filtrées:', filteredVideos);
-        }
-
         setVideos(filteredVideos);
       } catch (e) {
-        console.error('[DEBUG][Index.tsx] Erreur chargement des vidéos:', e);
+        console.error('Error loading videos:', e);
         setVideos([]);
       } finally {
         setLoading(false);
@@ -133,66 +216,13 @@ const Index = () => {
     checkAuth();
     loadVideos();
   }, []);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
     setUserRole('spectateur');
   };
-  const XDoseLogo = () => (
-    <div className="text-center mb-8">
-      <div className="inline-block">
-        <div className="text-5xl font-bold mt-2">
-          <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent animate-pulse">
-            X
-          </span>
-          <span className="text-slate-700">Dose</span>
-        </div>
-        <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2 animate-pulse" />
-      </div>
-    </div>
-  );
-  const VideoCard = ({ video }: { video: Video }) => (
-    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
-      <div className="aspect-video bg-gradient-to-br from-purple-400 to-pink-400 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <Play className="h-16 w-16 text-white" />
-        </div>
-        <div className="absolute top-4 right-4 bg-black bg-opacity-60 text-white px-2 py-1 rounded-lg text-sm">
-          5:45
-        </div>
-        <div className="absolute top-4 left-4">
-          <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-            Premium
-          </span>
-        </div>
-        <button className="absolute bottom-4 right-4 bg-white rounded-full p-2 shadow-lg">
-          <X className="h-4 w-4 text-gray-600" />
-        </button>
-      </div>
 
-      <div className="p-4">
-        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">{video.title}</h3>
-
-        <div className="flex items-center text-gray-600 mb-3">
-          <User className="h-4 w-4 mr-2" />
-          <span className="text-sm">{video.user?.name || video.user?.email}</span>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4 text-gray-500">
-            <div className="flex items-center">
-              <Eye className="h-4 w-4 mr-1" />
-              <span className="text-sm">1.2k</span>
-            </div>
-            <div className="flex items-center">
-              <Heart className="h-4 w-4 mr-1" />
-              <span className="text-sm">89</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -200,130 +230,59 @@ const Index = () => {
       </div>
     );
   }
-  // If not logged in, show a login/register prompt
+
+  // If not logged in, show the hero section
   if (!user) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
-          <XDoseLogo />
-          <h2 className="text-2xl font-bold mb-4">Bienvenue sur XDose</h2>
-          <p className="mb-6 text-gray-600">
-            Connectez-vous ou créez un compte pour accéder aux vidéos.
-          </p>
-          <div className="flex flex-col gap-4">
-            <Link
-              to="/auth/login"
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200"
-            >
-              Se connecter
-            </Link>
-            <Link
-              to="/auth/register"
-              className="w-full border border-purple-500 text-purple-700 py-3 rounded-xl font-semibold hover:bg-purple-50 transition-all duration-200"
-            >
-              Créer un compte
-            </Link>
-          </div>
-        </div>
+      <div>
+        <Navigation user={user} onLogout={handleLogout} />
+        <HeroSection onLogin={() => (window.location.href = '/auth/login')} />
       </div>
     );
   }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header */}
-      <header className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-50">
-        <div className="flex items-center justify-between px-4 py-3">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <Menu className="h-6 w-6 text-gray-600" />
-          </button>
+    <div className="min-h-screen bg-white">
+      <Navigation user={user} onLogout={handleLogout} />
+      <FeaturedCreators />
 
-          <div className="flex-1 max-w-md mx-4">
-            <input
-              type="text"
-              placeholder="Rechercher..."
-              className="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-            />
+      {/* Trending Videos Section */}
+      <div className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-2xl font-bold text-gray-900">Contenu Tendance</h3>
+            <button className="text-pink-500 hover:text-pink-600 font-medium flex items-center">
+              Voir tout
+              <span className="ml-2">→</span>
+            </button>
           </div>
-
-          <div className="flex items-center space-x-2">
-            {user && (
-              <Link
-                to="/upload"
-                className="p-2 text-gray-600 hover:text-purple-600 transition-colors"
-              >
-                <Upload className="h-5 w-5" />
-              </Link>
-            )}
-          </div>
+          <TrendingContent />
         </div>
-      </header>
+      </div>
 
-      {/* Sidebar */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-50 flex">
-          <div className="bg-black/50 flex-1" onClick={() => setSidebarOpen(false)} />
-          <div className="bg-white w-80 p-6 shadow-xl">
-            <div className="flex items-center justify-between mb-8">
-              <XDoseLogo />
-              <button onClick={() => setSidebarOpen(false)}>
-                <X className="h-6 w-6 text-gray-600" />
-              </button>
-            </div>
-
-            <nav className="space-y-2">
-              <Link
-                to="/"
-                onClick={() => setSidebarOpen(false)}
-                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
-              >
-                <Eye className="h-5 w-5" />
-                <span className="font-medium">Accueil</span>
-              </Link>
-
-              <Link
-                to="/tendances"
-                onClick={() => setSidebarOpen(false)}
-                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
-              >
-                <TrendingUp className="h-5 w-5" />
-                <span className="font-medium">Tendances</span>
-              </Link>
-
-              <Link
-                to="/createurs"
-                onClick={() => setSidebarOpen(false)}
-                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
-              >
-                <Users className="h-5 w-5" />
-                <span className="font-medium">Createurs</span>
-              </Link>
-            </nav>
-
-            <div className="mt-auto pt-6 border-t border-gray-200">
-              <p className="text-xs text-gray-500 mb-4">
-                {user ? 'Connecté en tant que ' + user.email : "Vous n'êtes pas connecté."}
-              </p>
-
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 transition-all duration-200"
-              >
-                <LogOut className="h-5 w-5" />
-                <span className="font-medium">Se déconnecter</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Video Grid */}
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <h2 className="text-2xl font-bold text-gray-900 mb-8">Vidéos Récentes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {videos.map((video) => (
-            <VideoCard key={video.id} video={video} />
+            <div
+              key={video.id}
+              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+            >
+              <div className="aspect-video bg-gradient-to-br from-purple-400 to-pink-400 relative overflow-hidden">
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Play className="h-16 w-16 text-white" />
+                </div>
+              </div>
+
+              <div className="p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">{video.title}</h3>
+                <div className="flex items-center text-gray-600 mb-3">
+                  <User className="h-4 w-4 mr-2" />
+                  <span className="text-sm">{video.user?.name || video.user?.email}</span>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
