@@ -55,6 +55,23 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
           setError(signUpError.message);
           return;
         }
+        // Synchronisation automatique vers Prisma après inscription
+        if (data.user) {
+          try {
+            await fetch('/api/users', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: data.user.id,
+                email: data.user.email,
+                name: data.user.user_metadata?.full_name || '',
+                role: data.user.user_metadata?.role || 'spectateur',
+              }),
+            });
+          } catch (e) {
+            // Optionally: log or show a warning, but don't block registration
+          }
+        }
         setSuccess('Inscription réussie ! Vérifiez votre email pour valider votre compte.');
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
