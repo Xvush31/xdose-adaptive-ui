@@ -23,5 +23,6 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "exclude": ["supabase/functions/sync-user-to-prisma"]
 }
