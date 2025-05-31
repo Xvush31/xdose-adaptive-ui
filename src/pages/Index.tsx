@@ -236,7 +236,7 @@ const Index = () => {
     return (
       <div>
         <Navigation user={user} onLogout={handleLogout} />
-        <HeroSection onLogin={() => (window.location.href = '/auth/login')} />
+        <HeroSection onLogin={() => navigate('/auth/login')} />
       </div>
     );
   }
