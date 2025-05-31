@@ -5,8 +5,11 @@
   ],
   "outputDirectory": "dist",
   "functions": {
-    "api/**/*": {
+    "src/pages/api/**/*": {
       "runtime": "@vercel/node@2.15.10"
     }
+  },
+  "env": {
+    "DATABASE_URL": "@database_url"
   }
 }

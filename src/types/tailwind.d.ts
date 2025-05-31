@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'tailwindcss' {
-  export default function tailwindcss(config?: any): any;
+  import type { Config } from 'tailwindcss/types/config';
+  export default function tailwindcss(config?: Config): unknown;
 }
 
 declare module 'tailwindcss-animate' {
-  const plugin: any;
+  import type { PluginCreator } from 'tailwindcss/types/config';
+  const plugin: PluginCreator;
   export default plugin;
 }
