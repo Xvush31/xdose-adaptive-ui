@@ -1,9 +1,17 @@
+
 import { PrismaClient } from '@prisma/client';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
+  console.log('[users.ts] API called', {
+    method: req.method,
+    url: req.url,
+    query: req.query,
+    headers: Object.fromEntries(Object.entries(req.headers).filter(([key]) => !key.toLowerCase().includes('authorization')))
+  });
+
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
@@ -17,12 +25,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   try {
     if (req.method === 'PUT') {
       const { email, role } = req.body;
-      // Update user role based on email
       const user = await prisma.user.update({
         where: { email },
         data: { role },
       });
-      console.log('[users.js] Role mis à jour pour:', email, 'nouveau role:', role);
+      console.log('[users.ts] Role updated for:', email, 'new role:', role);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json(user);
       return;
     }
@@ -30,14 +38,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     if (req.method === 'POST') {
       const { id, email, name, role } = req.body;
       if (!id) {
-        console.error('[users.js] Champs requis manquants', req.body);
+        console.error('[users.ts] Missing required fields', req.body);
+        res.setHeader('Content-Type', 'application/json');
         res.status(400).json({ error: 'Missing required fields' });
         return;
       }
 
       if (role && !email && !name) {
         const user = await prisma.user.update({ where: { id }, data: { role } });
-        console.log('[users.js] Rôle utilisateur mis à jour:', user);
+        console.log('[users.ts] User role updated:', user);
+        res.setHeader('Content-Type', 'application/json');
         res.status(200).json(user);
         return;
       }
@@ -57,32 +67,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         },
       });
 
-      console.log('[users.js] Utilisateur créé/mis à jour:', user);
+      console.log('[users.ts] User created/updated:', user);
+      res.setHeader('Content-Type', 'application/json');
       res.status(201).json(user);
       return;
     }
 
     if (req.method === 'GET') {
       if (req.query && req.query.id) {
-        const user = await prisma.user.findUnique({ where: { id: req.query.id as string } });
+        const userId = req.query.id as string;
+        console.log('[users.ts] GET user by ID:', userId);
+        
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        
         if (!user) {
-          console.log('[users.js] Utilisateur non trouvé:', req.query.id);
+          console.log('[users.ts] User not found:', userId);
+          res.setHeader('Content-Type', 'application/json');
           res.status(404).json({ error: 'User not found' });
         } else {
-          console.log('[users.js] Utilisateur récupéré:', user);
+          console.log('[users.ts] User retrieved:', user);
+          res.setHeader('Content-Type', 'application/json');
           res.status(200).json(user);
         }
         return;
       }
+      
       const users = await prisma.user.findMany({ include: { videos: true } });
-      console.log('[users.js] GET tous les utilisateurs:', users.length);
+      console.log('[users.ts] GET all users:', users.length);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json(users);
       return;
     }
 
     res.status(405).end();
   } catch (error) {
-    console.error('[users.js] Erreur:', error);
+    console.error('[users.ts] Error:', error);
+    res.setHeader('Content-Type', 'application/json');
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
     } else {
