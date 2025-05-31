@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
@@ -17,7 +16,6 @@ export default function AuthGuard({
   redirectTo = '/auth',
 }: AuthGuardProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,11 +23,9 @@ export default function AuthGuard({
     // Set up auth state listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state change:', { event, session: !!session });
-      setSession(session);
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         try {
           console.log('Fetching user role for:', session.user.id);
@@ -55,9 +51,8 @@ export default function AuthGuard({
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Initial session check:', !!session);
-      setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         console.log('Fetching role for existing session user:', session.user.id);
         fetch(`/api/users?id=${session.user.id}`)

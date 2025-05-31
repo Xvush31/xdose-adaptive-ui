@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import type { User } from '@supabase/supabase-js';
 import {
   Play,
   Search,
-  User,
+  User as UserIcon,
   Heart,
   MessageCircle,
   Share2,
@@ -16,22 +17,23 @@ import {
   Bell,
   Menu,
   X,
-  Filter,
-  Clock,
   Eye,
   Volume2,
   Brain,
-  Palette,
   Sun,
   Moon,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
+type CircadianPeriod = 'morning' | 'afternoon' | 'evening' | 'night';
+type CognitiveProfile = 'visual' | 'analytical' | 'balanced' | 'immersive';
+type LogoSize = 'sm' | 'md' | 'lg' | 'xl';
+
 // Hook neuro-esthétique (version simplifiée intégrée)
-const useNeuroAesthetics = (initialProfile = 'balanced') => {
-  const [cognitiveProfile, setCognitiveProfile] = useState(initialProfile);
-  const [circadianPeriod, setCircadianPeriod] = useState(() => {
+const useNeuroAesthetics = (initialProfile: CognitiveProfile = 'balanced') => {
+  const [cognitiveProfile, setCognitiveProfile] = useState<CognitiveProfile>(initialProfile);
+  const [circadianPeriod, setCircadianPeriod] = useState<CircadianPeriod>(() => {
     const hour = new Date().getHours();
     if (hour >= 6 && hour < 12) return 'morning';
     if (hour >= 12 && hour < 18) return 'afternoon';
@@ -41,14 +43,13 @@ const useNeuroAesthetics = (initialProfile = 'balanced') => {
   const [focusMode, setFocusMode] = useState(false);
   const [microRewardActive, setMicroRewardActive] = useState(false);
 
-  const profiles = {
+  const profiles: Record<CognitiveProfile, { animationSpeed: number; colorIntensity: number }> = {
     visual: { animationSpeed: 1.2, colorIntensity: 1.1 },
     analytical: { animationSpeed: 0.8, colorIntensity: 0.9 },
     balanced: { animationSpeed: 1.0, colorIntensity: 1.0 },
     immersive: { animationSpeed: 1.4, colorIntensity: 1.3 },
   };
-
-  const themes = {
+  const themes: Record<CircadianPeriod, { primary: string; mood: string }> = {
     morning: { primary: 'from-blue-500 to-purple-600', mood: 'energetic' },
     afternoon: { primary: 'from-blue-500 to-purple-600', mood: 'productive' },
     evening: { primary: 'from-blue-500 to-purple-600', mood: 'relaxed' },
@@ -78,13 +79,9 @@ const useNeuroAesthetics = (initialProfile = 'balanced') => {
     currentTheme: themes[circadianPeriod],
     currentProfile: profiles[cognitiveProfile],
   };
-};
-
-// XDose Logo Component
-const XDoseLogo = ({ size = 'lg', className = '', animated = true, neuroStyles }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const sizes = {
+}; // XDose Logo Component
+const XDoseLogo = ({ size = 'lg', className = '' }: { size?: LogoSize; className?: string }) => {
+  const sizes: Record<LogoSize, string> = {
     sm: 'text-xl',
     md: 'text-3xl',
     lg: 'text-5xl',
@@ -92,11 +89,7 @@ const XDoseLogo = ({ size = 'lg', className = '', animated = true, neuroStyles }
   };
 
   return (
-    <div
-      className={`inline-block ${className}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className={`inline-block ${className}`}>
       <div className={`font-bold ${sizes[size]} transition-all duration-500`}>
         <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
           X
@@ -111,10 +104,9 @@ const XDoseLogo = ({ size = 'lg', className = '', animated = true, neuroStyles }
 
 const XDoseApp = () => {
   const neuro = useNeuroAesthetics('balanced');
-  const [activeTab, setActiveTab] = useState('home');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showNeuroSettings, setShowNeuroSettings] = useState(false);
   const navigate = useNavigate();
@@ -204,11 +196,11 @@ const XDoseApp = () => {
               {['visual', 'analytical', 'balanced', 'immersive'].map((profile) => (
                 <button
                   key={profile}
-                  onClick={() => neuro.setCognitiveProfile(profile)}
-                  className={`p-3 rounded-lg text-sm font-medium transition-colors ${
+                  onClick={() => neuro.setCognitiveProfile(profile as CognitiveProfile)}
+                  className={`px-3 py-2 rounded-lg font-medium transition-all duration-200 ${
                     neuro.cognitiveProfile === profile
-                      ? `bg-gradient-to-r ${adaptiveStyles.colors.primary} text-white`
-                      : 'bg-gray-100 hover:bg-gray-200'
+                      ? 'bg-purple-500 text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   {profile.charAt(0).toUpperCase() + profile.slice(1)}
@@ -263,9 +255,20 @@ const XDoseApp = () => {
     </div>
   );
 
+  interface Video {
+    id: number;
+    title: string;
+    thumbnail: string;
+    duration: string;
+    views: string;
+    creator: string;
+    premium?: boolean;
+    vip?: boolean;
+  }
+
   // Video Card Component
-  const VideoCard = ({ video, featured = false }) => {
-    const handleInteraction = (type) => {
+  const VideoCard = ({ video, featured = false }: { video: Video; featured?: boolean }) => {
+    const handleInteraction = (type: string) => {
       neuro.triggerMicroReward(type);
     };
 
@@ -437,7 +440,7 @@ const XDoseApp = () => {
           <div className="bg-black/50 flex-1" onClick={() => setSidebarOpen(false)} />
           <div className="bg-white w-80 p-6 shadow-xl">
             <div className="flex items-center justify-between mb-8">
-              <XDoseLogo size="md" animated={!neuro.focusMode} neuroStyles={adaptiveStyles} />
+              <XDoseLogo size="md" />
               <button onClick={() => setSidebarOpen(false)}>
                 <X className="h-6 w-6 text-gray-600" />
               </button>
@@ -475,12 +478,7 @@ const XDoseApp = () => {
         {!user ? (
           <div className="px-4 py-16">
             <div className="text-center mb-16">
-              <XDoseLogo
-                size="xl"
-                className="mb-8"
-                animated={!neuro.focusMode}
-                neuroStyles={adaptiveStyles}
-              />
+              <XDoseLogo size="xl" className="mb-8" />
 
               <div className="space-y-6">
                 <button
@@ -499,7 +497,7 @@ const XDoseApp = () => {
                   }}
                   className="text-gray-600 px-6 py-2 rounded-xl border-0 hover:text-gray-800 transition-colors flex items-center justify-center mx-auto"
                 >
-                  <User className="h-4 w-4 mr-2" />
+                  <UserIcon className="h-4 w-4 mr-2" />
                   Create account
                 </button>
               </div>

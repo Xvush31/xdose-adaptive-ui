@@ -28,7 +28,6 @@ interface VideoData {
 
 export default function AdminBackoffice() {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
   const [roleRequests, setRoleRequests] = useState<RoleRequest[]>([]);
   const [videos, setVideos] = useState<VideoData[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -40,22 +39,21 @@ export default function AdminBackoffice() {
     const checkAdmin = async () => {
       setLoading(true);
       const {
-        data: { user },
-        error,
+        data: { user: currentUser },
+        error: authError,
       } = await supabase.auth.getUser();
-      if (error || !user) {
+      if (authError || !currentUser) {
         navigate('/');
         return;
       }
       try {
-        const res = await fetch(`/api/users?id=${user.id}`);
+        const res = await fetch(`/api/users?id=${currentUser.id}`);
         if (res.ok) {
           const prismaUser = await res.json();
           if (prismaUser.role !== 'admin') {
             navigate('/');
             return;
           }
-          setUser(user);
         } else {
           navigate('/');
           return;
@@ -89,7 +87,13 @@ export default function AdminBackoffice() {
       if (reqError) {
         setError(reqError.message);
       } else {
-        setRoleRequests(requests || []);
+        setRoleRequests(
+          (requests || []).map((r) => ({
+            ...r,
+            status: r.status ?? '',
+            created_at: r.created_at ?? '',
+          })),
+        );
       }
 
       // Load videos with separate profile queries
@@ -127,6 +131,9 @@ export default function AdminBackoffice() {
         const profile = profilesData?.find((p) => p.id === video.user_id);
         return {
           ...video,
+          description: video.description ?? '',
+          status: video.status ?? '',
+          created_at: video.created_at ?? '',
           profiles: profile
             ? {
                 full_name: profile.full_name || profile.email || '',

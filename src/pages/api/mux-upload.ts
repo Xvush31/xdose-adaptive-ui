@@ -9,7 +9,7 @@ const mux = new Mux({
   tokenSecret: process.env.MUX_TOKEN_SECRET,
 });
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   if (req.method === 'POST') {
     const { title, description, userId, visibility } = req.body;
     try {

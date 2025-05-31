@@ -3,7 +3,25 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const prisma = new PrismaClient();
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+type VideoType = {
+  id: string;
+  title: string;
+  description: string;
+  userId: string;
+  fileUrl: string;
+  muxAssetId: string;
+  muxUploadId: string;
+  status: string;
+  visibility: string;
+  createdAt: Date;
+  user?: {
+    id: string;
+    name?: string | null;
+    email: string;
+  };
+};
+
+export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   console.log('[DEBUG][videos.js] API appelée', {
     method: req.method,
     url: req.url,
@@ -34,7 +52,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log('[DEBUG][videos.js] Videos trouvées:', videos.length);
 
       // Clean up undefined/null values for JSON serialization
-      const cleanedVideos = videos.map((video) => ({
+      const cleanedVideos = videos.map((video: VideoType) => ({
         ...video,
         user: video.user
           ? {

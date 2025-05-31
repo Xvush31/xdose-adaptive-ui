@@ -4,12 +4,21 @@ import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
+import type { AcceptedPlugin } from 'postcss';
+import type { PluginOption } from 'vite';
 
-export default defineConfig(async ({ mode }) => {
-  let tagger;
-  if (mode === 'development') {
-    tagger = (await import('lovable-tagger')).componentTagger;
+// Import lovable-tagger only in dev mode
+let tagger: (() => PluginOption) | undefined = undefined;
+if (process.env.NODE_ENV === 'development') {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+    tagger = require('lovable-tagger').componentTagger;
+  } catch {
+    // ignore if not available
   }
+}
+
+export default defineConfig(({ mode }) => {
   return {
     server: {
       host: '::',
@@ -17,15 +26,12 @@ export default defineConfig(async ({ mode }) => {
     },
     plugins: [
       react(),
-      mode === 'development' && tagger && tagger(),
-      mode === 'analyze' && visualizer({ open: false }),
-    ].filter(Boolean),
+      mode === 'development' && tagger ? tagger() : undefined,
+      mode === 'analyze' ? visualizer({ open: false }) : undefined,
+    ].filter(Boolean) as PluginOption[],
     css: {
       postcss: {
-        plugins: [
-          tailwindcss(),
-          autoprefixer(),
-        ],
+        plugins: [tailwindcss(), autoprefixer()] as AcceptedPlugin[],
       },
     },
     resolve: {
