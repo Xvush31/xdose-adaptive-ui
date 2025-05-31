@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 
 export default defineConfig(async ({ mode }) => {
   let tagger;
@@ -18,6 +20,14 @@ export default defineConfig(async ({ mode }) => {
       mode === 'development' && tagger && tagger(),
       mode === 'analyze' && visualizer({ open: false }),
     ].filter(Boolean),
+    css: {
+      postcss: {
+        plugins: [
+          tailwindcss(),
+          autoprefixer(),
+        ],
+      },
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),

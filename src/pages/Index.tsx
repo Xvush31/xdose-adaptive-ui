@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 import {
   User,
   Play,
@@ -169,6 +170,7 @@ const FeaturedCreators = () => (
 
 // Main Component
 const Index = () => {
+  const navigate = useNavigate();
   const [videos, setVideos] = useState<Video[]>([]);
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState<string>('spectateur');
@@ -233,8 +235,7 @@ const Index = () => {
 
   // If not logged in, show the hero section
   if (!user) {
-    return (
-      <div>
+    return (        <div>
         <Navigation user={user} onLogout={handleLogout} />
         <HeroSection onLogin={() => navigate('/auth/login')} />
       </div>
