@@ -1,4 +1,6 @@
 
+/// <reference types="https://deno.land/types@1.32.0/index.d.ts" />
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
