@@ -14,12 +14,33 @@ import type { User } from '@supabase/supabase-js';
 import { Link } from 'react-router-dom';
 import AuthGuard from '@/components/AuthGuard';
 
-interface RoleRequest {
+import { supabase } from '@/integrations/supabase/client';
+import React, { useState, useEffect, FormEvent } from 'react'; // Added FormEvent
+import {
+  Settings,
+  User as UserIcon,
+  Bell,
+  Shield,
+  Palette,
+  Volume2,
+  Moon,
+  Sun,
+  Send, // Added Send icon
+  AlertTriangle, // Added AlertTriangle
+  CheckCircle, // Added CheckCircle
+} from 'lucide-react';
+import type { User } from '@supabase/supabase-js';
+import { Link } from 'react-router-dom';
+import AuthGuard from '@/components/AuthGuard';
+
+// Interface for CreatorApplication (can be moved to a types file later)
+interface CreatorApplication {
   id: string;
-  user_id: string;
-  user_email: string;
-  status: string;
-  created_at: string;
+  userId: string;
+  reason?: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+  updatedAt: string;
 }
 
 const Parametres = () => {
@@ -32,100 +53,126 @@ const Parametres = () => {
 
   const [darkMode, setDarkMode] = useState(false);
   const [volume, setVolume] = useState<number>(75);
-  const [creatorRequestStatus, setCreatorRequestStatus] = useState<string | null>(null);
-  const [creatorRequestLoading, setCreatorRequestLoading] = useState(false);
-  const [creatorRequestError, setCreatorRequestError] = useState<string | null>(null);
+
+  // State for new creator application system
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<string>('spectateur');
+  const [creatorApplication, setCreatorApplication] = useState<CreatorApplication | null>(null);
+  const [applicationReason, setApplicationReason] = useState('');
+  const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
+  const [applicationMessage, setApplicationMessage] = useState<{type: 'success' | 'error' | 'info', text: string} | null>(null);
+  const [isLoadingUserData, setIsLoadingUserData] = useState(true);
+
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      setCreatorRequestLoading(true);
-      setCreatorRequestError(null);
+    const fetchUserDataAndApplication = async () => {
+      setIsLoadingUserData(true);
+      setApplicationMessage(null);
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          setCurrentUser(null);
+          setUserRole('spectateur');
+          setCreatorApplication(null);
+          setIsLoadingUserData(false);
+          return;
+        }
+        const user = session.user;
         setCurrentUser(user);
+
         if (user) {
-          // Récupérer le user Prisma pour le rôle
+          // 1. Fetch Prisma User Role
           try {
-            const res = await fetch(`/api/users?id=${user.id}`);
-            if (res.ok) {
-              const prismaUser = await res.json();
+            const userRes = await fetch(`/api/users?id=${user.id}`, {
+              headers: { Authorization: `Bearer ${session.access_token}` },
+            });
+            if (userRes.ok) {
+              const prismaUser = await userRes.json();
               setUserRole(prismaUser.role || 'spectateur');
             } else {
+              console.error('Failed to fetch user role, defaulting to spectateur');
               setUserRole('spectateur');
             }
-          } catch {
+          } catch (e) {
+            console.error('Error fetching user role:', e);
             setUserRole('spectateur');
           }
 
-          // Get role request status if not already a creator
-          if (userRole !== 'createur' && userRole !== 'admin') {
-            const { data, error } = await supabase
-              .from('role_requests')
-              .select('status')
-              .eq('user_id', user.id)
-              .maybeSingle();
-
-            if (error && error.code !== 'PGRST116') {
-              setCreatorRequestError(error.message);
+          // 2. Fetch Creator Application Status (only if user is spectateur)
+          // Role might not be updated immediately after application, so we fetch application regardless of initial role for now.
+          // We will use application status primarily to gate the form.
+          try {
+            const appRes = await fetch(`/api/creator-applications?userId=${user.id}`, {
+              headers: { Authorization: `Bearer ${session.access_token}` },
+            });
+            if (appRes.ok) {
+              const applicationData = await appRes.json();
+              setCreatorApplication(applicationData);
+            } else if (appRes.status === 404) {
+              setCreatorApplication(null); // No application found
             } else {
-              setCreatorRequestStatus(data?.status || null);
+              const errorData = await appRes.json();
+              console.error('Failed to fetch creator application:', errorData.error);
+              setApplicationMessage({type: 'error', text: `Erreur récupération statut candidature: ${errorData.error}`});
             }
+          } catch (e) {
+            console.error('Error fetching creator application:', e);
+            setApplicationMessage({type: 'error', text: 'Impossible de vérifier le statut de votre candidature.'});
           }
         }
       } catch (e) {
-        setCreatorRequestError(e instanceof Error ? e.message : 'Erreur inconnue');
+        console.error('Error fetching session or user data:', e);
+        setApplicationMessage({type: 'error', text: 'Erreur chargement données utilisateur.'});
       } finally {
-        setCreatorRequestLoading(false);
+        setIsLoadingUserData(false);
       }
     };
 
-    fetchUserData();
-  }, [userRole]);
+    fetchUserDataAndApplication();
+  }, []); // Run once on mount
 
-  const handleBecomeCreator = async () => {
-    setCreatorRequestLoading(true);
-    setCreatorRequestError(null);
+  const handleApplicationSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) {
+      setApplicationMessage({type: 'error', text: 'Vous devez être connecté.'});
+      return;
+    }
+    setIsSubmittingApplication(true);
+    setApplicationMessage(null);
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        setCreatorRequestError('Vous devez être connecté.');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setApplicationMessage({type: 'error', text: 'Session expirée. Veuillez vous reconnecter.'});
+        setIsSubmittingApplication(false);
         return;
       }
 
-      // Check if request already exists
-      const { data: existing } = await supabase
-        .from('role_requests')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (existing) {
-        setCreatorRequestError('Demande déjà envoyée.');
-        return;
-      }
-
-      const { error } = await supabase.from('role_requests').insert({
-        user_id: user.id,
-        user_email: user.email || '',
-        status: 'pending',
+      const response = await fetch('/api/creator-applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ userId: currentUser.id, reason: applicationReason }),
       });
 
-      if (error) {
-        setCreatorRequestError(error.message);
+      const responseData = await response.json();
+
+      if (response.status === 201) {
+        setCreatorApplication(responseData);
+        setApplicationMessage({type: 'success', text: 'Candidature envoyée ! Vous serez notifié après examen.'});
+      } else if (response.status === 409) {
+        setCreatorApplication(responseData.application); // Store existing application
+        setApplicationMessage({type: 'info', text: 'Vous avez déjà une candidature en cours.'});
       } else {
-        setCreatorRequestStatus('pending');
+        setApplicationMessage({type: 'error', text: responseData.error || 'Erreur lors de l\'envoi de la candidature.'});
       }
-    } catch (e) {
-      setCreatorRequestError(e instanceof Error ? e.message : 'Erreur inconnue');
+    } catch (error: any) {
+      console.error('Erreur soumission candidature:', error);
+      setApplicationMessage({type: 'error', text: error.message || 'Une erreur inconnue est survenue.'});
     } finally {
-      setCreatorRequestLoading(false);
+      setIsSubmittingApplication(false);
     }
   };
 
@@ -183,32 +230,77 @@ const Parametres = () => {
                 </span>
               </div>
 
-              {/* Interface Devenir créateur */}
-              {userRole === 'spectateur' && (
-                <div className="mt-8 p-4 bg-purple-50 rounded-xl">
-                  <h4 className="text-lg font-semibold mb-2">Devenir créateur</h4>
-                  {creatorRequestStatus === 'pending' ? (
-                    <div className="text-yellow-600 font-medium">
-                      Votre demande est en attente de validation.
-                    </div>
-                  ) : creatorRequestStatus === 'accepted' ? (
-                    <div className="text-green-600 font-medium">Votre demande a été acceptée !</div>
-                  ) : creatorRequestStatus === 'refused' ? (
-                    <div className="text-red-600 font-medium">Votre demande a été refusée.</div>
-                  ) : (
-                    <button
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200"
-                      onClick={handleBecomeCreator}
-                      disabled={creatorRequestLoading}
+              {/* Interface Devenir créateur - Nouvelle version */}
+              {isLoadingUserData && <p>Chargement des informations utilisateur...</p>}
+
+              {!isLoadingUserData && currentUser && userRole === 'spectateur' && (
+                <div className="mt-8 p-6 bg-purple-50 rounded-2xl shadow">
+                  <h4 className="text-xl font-semibold mb-4 text-purple-700">Devenir Créateur</h4>
+                  {applicationMessage && (
+                    <div className={`p-3 rounded-md mb-4 text-sm ${
+                      applicationMessage.type === 'success' ? 'bg-green-100 text-green-700' :
+                      applicationMessage.type === 'error' ? 'bg-red-100 text-red-700' :
+                      'bg-blue-100 text-blue-700'
+                    } flex items-center`}
                     >
-                      {creatorRequestLoading ? 'Envoi...' : 'Demander à devenir créateur'}
-                    </button>
+                      {applicationMessage.type === 'success' && <CheckCircle className="h-5 w-5 mr-2" />}
+                      {applicationMessage.type === 'error' && <AlertTriangle className="h-5 w-5 mr-2" />}
+                      {applicationMessage.text}
+                    </div>
                   )}
-                  {creatorRequestError && (
-                    <div className="text-red-600 text-sm mt-2">{creatorRequestError}</div>
+
+                  {creatorApplication && creatorApplication.status === 'pending' && (
+                    <div className="p-3 rounded-md bg-yellow-100 text-yellow-700">
+                      <p className="font-medium">Votre candidature est en cours d'examen.</p>
+                      <p className="text-sm">Vous serez notifié une fois qu'elle aura été traitée.</p>
+                    </div>
+                  )}
+
+                  {creatorApplication && creatorApplication.status === 'approved' && (
+                    <div className="p-3 rounded-md bg-green-100 text-green-700">
+                      <p className="font-medium">Félicitations ! Votre candidature a été approuvée.</p>
+                      <p className="text-sm">Vous avez maintenant accès aux fonctionnalités de créateur. Votre rôle sera mis à jour sous peu.</p>
+                    </div>
+                  )}
+
+                  {creatorApplication && creatorApplication.status === 'rejected' && (
+                     <div className="p-3 rounded-md bg-red-100 text-red-700">
+                      <p className="font-medium">Votre candidature a été rejetée.</p>
+                      {/* Optionally, provide a way to re-apply or contact support */}
+                    </div>
+                  )}
+
+                  {(!creatorApplication || creatorApplication.status === 'rejected') && // Show form if no application or if rejected (allowing re-application)
+                    !(creatorApplication && (creatorApplication.status === 'pending' || creatorApplication.status === 'approved')) && // Hide if pending or approved
+                    !applicationMessage?.type || (applicationMessage.type !== 'success' && applicationMessage.type !== 'info' && !(creatorApplication && creatorApplication.status === 'pending')) && // Also hide form on success/info messages or if status became pending
+                    (
+                    <form onSubmit={handleApplicationSubmit}>
+                      <div className="mb-4">
+                        <label htmlFor="applicationReason" className="block text-sm font-medium text-gray-700 mb-1">
+                          Pourquoi souhaitez-vous devenir créateur ? (Optionnel)
+                        </label>
+                        <textarea
+                          id="applicationReason"
+                          value={applicationReason}
+                          onChange={(e) => setApplicationReason(e.target.value)}
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500"
+                          placeholder="Partagez vos motivations, le type de contenu que vous souhaitez créer, etc."
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={isSubmittingApplication}
+                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-xl transition-all duration-200 disabled:opacity-70 flex items-center justify-center"
+                      >
+                        <Send className="h-5 w-5 mr-2" />
+                        {isSubmittingApplication ? 'Envoi en cours...' : 'Envoyer ma Candidature'}
+                      </button>
+                    </form>
                   )}
                 </div>
               )}
+              {/* Fin Interface Devenir créateur */}
             </div>
 
             {/* Notifications */}

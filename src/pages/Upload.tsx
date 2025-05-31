@@ -183,25 +183,88 @@ const Upload = () => {
       });
 
       const userId = user.id;
-      const uploadedVideos: string[] = [];
+      let videoUploadCount = 0;
+      let generalError = null;
 
       for (const file of files) {
-        await fetch('/api/videos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: file.title || file.name,
-            description: file.description || '',
-            fileUrl: '', // You can update this with the real URL after Mux upload if needed
-            userId: user.id,
-            visibility: file.visibility || 'public',
-          }),
-        });
+        // Only process video files with Mux
+        if (!file.type.startsWith('video/')) {
+          console.log(`Skipping non-video file: ${file.name}`);
+          continue;
+        }
+
+        try {
+          // 1. Get Mux Upload URL
+          const muxUploadApiResponse = await fetch('/api/mux-upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: file.title || file.name,
+              description: file.description || '',
+              userId: userId,
+              visibility: file.visibility || 'public',
+            }),
+          });
+
+          if (!muxUploadApiResponse.ok) {
+            const errorData = await muxUploadApiResponse.json();
+            throw new Error(
+              `Erreur lors de la création de l'upload Mux pour ${file.name}: ${
+                errorData.error || muxUploadApiResponse.statusText
+              }`,
+            );
+          }
+
+          const { uploadUrl, id: videoId } = await muxUploadApiResponse.json();
+
+          if (!uploadUrl) {
+            throw new Error(`Aucune URL d'upload reçue de Mux pour ${file.name}.`);
+          }
+
+          // 2. Upload file to Mux URL
+          const uploadToMuxResponse = await fetch(uploadUrl, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': file.type,
+            },
+            body: file,
+          });
+
+          if (!uploadToMuxResponse.ok) {
+            throw new Error(
+              `Erreur lors de l'upload du fichier ${file.name} vers Mux: ${uploadToMuxResponse.statusText}`,
+            );
+          }
+          videoUploadCount++;
+        } catch (uploadError: any) {
+          console.error(`Erreur pour le fichier ${file.name}:`, uploadError);
+          generalError =
+            uploadError.message || `Une erreur est survenue lors de l'upload de ${file.name}.`;
+          // Stop on first error or collect errors? For now, stopping.
+          break;
+        }
       }
-      setUploadSuccess(`${files.length} vidéo(s) ajoutée(s) avec succès !`);
-      setFiles([]);
+
+      if (generalError) {
+        setUploadError(generalError);
+        // Keep files in list if some failed, so user can retry or adjust.
+      } else if (videoUploadCount > 0) {
+        setUploadSuccess(
+          `${videoUploadCount} vidéo(s) envoyée(s) pour traitement. Elles apparaîtront bientôt.`,
+        );
+        setFiles([]); // Clear files only if all selected videos were successfully initiated
+      } else if (files.some(f => !f.type.startsWith('video/')) && videoUploadCount === 0) {
+        // Only non-video files were selected
+        setUploadError("Aucun fichier vidéo n'a été sélectionné pour l'upload.");
+        // Do not clear files as they were not processed.
+      } else {
+        // No files processed, potentially all were skipped or files array was empty initially
+        // (though button is disabled for empty files).
+        setUploadError("Aucun fichier n'a été traité.");
+      }
     } catch (e) {
-      setUploadError(e instanceof Error ? e.message : 'Erreur inconnue');
+      // This catch is for errors like Supabase user fetching or Prisma user sync
+      setUploadError(e instanceof Error ? e.message : 'Erreur générale inconnue.');
     } finally {
       setUploading(false);
     }

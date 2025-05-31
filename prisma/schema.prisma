@@ -12,12 +12,23 @@ generator client {
 }
 
 model User {
-  id        String   @id // Supabase Auth UUID
+  id                 String              @id // Supabase Auth UUID
+  createdAt          DateTime            @default(now())
+  email              String              @unique
+  name               String?
+  role               String              @default("spectateur")
+  videos             Video[]
+  creatorApplication CreatorApplication?
+}
+
+model CreatorApplication {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  reason    String?
+  status    String   @default("pending") // pending, approved, rejected
   createdAt DateTime @default(now())
-  email     String   @unique
-  name      String?
-  role      String   @default("spectateur")
-  videos    Video[]
+  updatedAt DateTime @updatedAt
 }
 
 model Video {
@@ -31,5 +42,5 @@ model Video {
   status      String   @default("pending")
   visibility  String   @default("public")
   user        User     @relation(fields: [userId], references: [id])
-  userId      String   // Now a String, matches Supabase UUID
+  userId      String // Now a String, matches Supabase UUID
 }

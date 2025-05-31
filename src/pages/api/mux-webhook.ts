@@ -25,7 +25,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       data: {
         muxAssetId: assetId,
         fileUrl: `https://stream.mux.com/${playbackId}.m3u8`,
-        status: 'ready',
+        status: 'awaiting-validation',
       },
     });
   }
