@@ -1,17 +1,10 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { User } from '@supabase/supabase-js';
 import AuthGuard from '@/components/AuthGuard';
-import { CheckCircle, XCircle, Clock, Users, Video, Settings } from 'lucide-react';
-
-interface RoleRequest {
-  id: string;
-  user_id: string;
-  user_email: string;
-  status: string;
-  created_at: string;
-}
+import { CheckCircle, XCircle, Video, Settings, Users } from 'lucide-react';
 
 interface VideoData {
   id: string;
@@ -26,13 +19,21 @@ interface VideoData {
   } | null;
 }
 
+interface PrismaUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  createdAt: string;
+}
+
 export default function AdminBackoffice() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [roleRequests, setRoleRequests] = useState<RoleRequest[]>([]);
   const [videos, setVideos] = useState<VideoData[]>([]);
+  const [users, setUsers] = useState<PrismaUser[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'requests' | 'videos'>('requests');
+  const [activeTab, setActiveTab] = useState<'users' | 'videos'>('users');
   const navigate = useNavigate();
 
   // Authentification et rôle admin via Prisma
@@ -71,28 +72,17 @@ export default function AdminBackoffice() {
     checkAdmin();
   }, [navigate]);
 
-  // Chargement des vidéos et des demandes de rôle (depuis Prisma uniquement si migration totale)
+  // Chargement des utilisateurs et vidéos
   const loadData = async () => {
     try {
-      // TODO: remplacer par un appel à l'API Prisma si migration totale
-      // const res = await fetch('/api/videos');
-      // const videosData = await res.json();
-      // setVideos(videosData);
-      // ...
-
-      // Load role requests
-      const { data: requests, error: reqError } = await supabase
-        .from('role_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (reqError) {
-        setError(reqError.message);
-      } else {
-        setRoleRequests(requests || []);
+      // Charger tous les utilisateurs depuis Prisma
+      const usersRes = await fetch('/api/users');
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        setUsers(usersData || []);
       }
 
-      // Load videos with separate profile queries
+      // Charger les vidéos avec les profils
       const { data: videosData, error: videoError } = await supabase
         .from('videos')
         .select('id, title, description, user_id, status, created_at')
@@ -142,32 +132,29 @@ export default function AdminBackoffice() {
     }
   };
 
-  // Mise à jour du rôle créateur via Prisma
-  const handleUpdateRoleStatus = async (
-    id: string,
-    status: 'accepted' | 'refused',
-    email?: string,
-  ) => {
+  // Mettre à jour le rôle d'un utilisateur
+  const handleUpdateUserRole = async (userId: string, newRole: string) => {
     try {
-      if (status === 'accepted') {
-        // Update Prisma user role
-        await fetch(`/api/users`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, role: 'createur' }),
-        });
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: userId, role: newRole }),
+      });
+      
+      if (res.ok) {
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
+        console.log(`Rôle utilisateur ${userId} mis à jour vers: ${newRole}`);
+      } else {
+        setError('Erreur lors de la mise à jour du rôle');
       }
-      // ...update role_requests table si besoin...
-      setRoleRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
     } catch (e) {
-      setError('Erreur lors de la mise à jour');
+      setError('Erreur lors de la mise à jour du rôle');
     }
   };
 
   const handleUpdateVideoStatus = async (id: string, status: 'approved' | 'rejected') => {
     try {
       await supabase.from('videos').update({ status }).eq('id', id);
-
       setVideos((prev) => prev.map((v) => (v.id === id ? { ...v, status } : v)));
     } catch (e) {
       setError('Erreur lors de la mise à jour');
@@ -185,6 +172,20 @@ export default function AdminBackoffice() {
       case 'refused':
       case 'rejected':
         return `${baseClasses} bg-red-100 text-red-800`;
+      default:
+        return `${baseClasses} bg-gray-100 text-gray-800`;
+    }
+  };
+
+  const getRoleBadge = (role: string) => {
+    const baseClasses = 'px-3 py-1 rounded-full text-sm font-medium';
+    switch (role) {
+      case 'admin':
+        return `${baseClasses} bg-red-100 text-red-800`;
+      case 'createur':
+        return `${baseClasses} bg-blue-100 text-blue-800`;
+      case 'spectateur':
+        return `${baseClasses} bg-gray-100 text-gray-800`;
       default:
         return `${baseClasses} bg-gray-100 text-gray-800`;
     }
@@ -222,15 +223,15 @@ export default function AdminBackoffice() {
           <div className="max-w-6xl mx-auto">
             <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-8">
               <button
-                onClick={() => setActiveTab('requests')}
+                onClick={() => setActiveTab('users')}
                 className={`flex items-center px-4 py-2 rounded-md font-medium transition-colors ${
-                  activeTab === 'requests'
+                  activeTab === 'users'
                     ? 'bg-white text-purple-600 shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 <Users className="h-5 w-5 mr-2" />
-                Demandes créateurs ({roleRequests.filter((r) => r.status === 'pending').length})
+                Utilisateurs ({users.length})
               </button>
               <button
                 onClick={() => setActiveTab('videos')}
@@ -245,14 +246,15 @@ export default function AdminBackoffice() {
               </button>
             </div>
 
-            {/* Role Requests Tab */}
-            {activeTab === 'requests' && (
+            {/* Users Tab */}
+            {activeTab === 'users' && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100">
-                  <h2 className="text-xl font-semibold text-gray-900">Demandes créateurs</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">Gestion des utilisateurs</h2>
+                  <p className="text-sm text-gray-600 mt-1">Modifier les rôles des utilisateurs</p>
                 </div>
-                {roleRequests.length === 0 ? (
-                  <div className="p-8 text-center text-gray-500">Aucune demande en attente.</div>
+                {users.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">Aucun utilisateur trouvé.</div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -262,10 +264,13 @@ export default function AdminBackoffice() {
                             Email
                           </th>
                           <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                            Date
+                            Nom
                           </th>
                           <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                            Statut
+                            Rôle actuel
+                          </th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                            Inscription
                           </th>
                           <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
                             Actions
@@ -273,43 +278,29 @@ export default function AdminBackoffice() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
-                        {roleRequests.map((req) => (
-                          <tr key={req.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 text-sm text-gray-900">{req.user_email}</td>
-                            <td className="px-6 py-4 text-sm text-gray-500">
-                              {new Date(req.created_at).toLocaleDateString('fr-FR')}
-                            </td>
+                        {users.map((user) => (
+                          <tr key={user.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 text-sm text-gray-900">{user.email}</td>
+                            <td className="px-6 py-4 text-sm text-gray-900">{user.name}</td>
                             <td className="px-6 py-4">
-                              <span className={getStatusBadge(req.status)}>
-                                {req.status === 'pending'
-                                  ? 'En attente'
-                                  : req.status === 'accepted'
-                                    ? 'Accepté'
-                                    : 'Refusé'}
+                              <span className={getRoleBadge(user.role)}>
+                                {user.role}
                               </span>
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-500">
+                              {new Date(user.createdAt).toLocaleDateString('fr-FR')}
                             </td>
                             <td className="px-6 py-4">
                               <div className="flex space-x-2">
-                                <button
-                                  className="flex items-center px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50 text-sm"
-                                  disabled={req.status === 'accepted'}
-                                  onClick={() =>
-                                    handleUpdateRoleStatus(req.id, 'accepted', req.user_email)
-                                  }
+                                <select
+                                  value={user.role}
+                                  onChange={(e) => handleUpdateUserRole(user.id, e.target.value)}
+                                  className="text-sm border border-gray-200 rounded px-2 py-1"
                                 >
-                                  <CheckCircle className="h-4 w-4 mr-1" />
-                                  Accepter
-                                </button>
-                                <button
-                                  className="flex items-center px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:opacity-50 text-sm"
-                                  disabled={req.status === 'refused'}
-                                  onClick={() =>
-                                    handleUpdateRoleStatus(req.id, 'refused', req.user_email)
-                                  }
-                                >
-                                  <XCircle className="h-4 w-4 mr-1" />
-                                  Refuser
-                                </button>
+                                  <option value="spectateur">Spectateur</option>
+                                  <option value="createur">Créateur</option>
+                                  <option value="admin">Admin</option>
+                                </select>
                               </div>
                             </td>
                           </tr>

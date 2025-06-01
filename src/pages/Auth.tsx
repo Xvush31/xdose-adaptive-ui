@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -10,7 +11,6 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [selectedRole, setSelectedRole] = useState<'spectateur' | 'createur'>('spectateur');
-  const [userRole, setUserRole] = useState<'spectateur' | 'createur' | 'admin'>('spectateur');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -63,7 +63,8 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
           setError(signUpError.message);
           return;
         }
-        // Synchronisation automatique vers Prisma après inscription
+        
+        // Synchronisation automatique vers Prisma après inscription avec le rôle directement appliqué
         if (data.user) {
           try {
             await fetch('/api/users', {
@@ -73,11 +74,12 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
                 id: data.user.id,
                 email: data.user.email,
                 name: data.user.user_metadata?.full_name || '',
-                role: data.user.user_metadata?.role || 'spectateur',
+                role: selectedRole, // Rôle appliqué directement
               }),
             });
+            console.log(`[Auth] Utilisateur créé avec le rôle: ${selectedRole}`);
           } catch (e) {
-            // Optionally: log or show a warning, but don't block registration
+            console.error('[Auth] Erreur synchronisation Prisma:', e);
           }
         }
         setSuccess('Inscription réussie ! Vérifiez votre email pour valider votre compte.');
@@ -178,6 +180,9 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
                     </div>
                   </button>
                 </div>
+                <p className="text-sm text-green-600 mt-2">
+                  ✅ Votre rôle sera appliqué immédiatement après inscription
+                </p>
               </div>
             </>
           )}
