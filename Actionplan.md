@@ -63,10 +63,10 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 
 ## Phase 6 – Découverte, recherche & feed
 
-- [ ] Moteur de recherche (tags, titres, créateurs)
-- [ ] Page tendances, recommandations simples
-- [ ] Build content feed/grid view
-- [ ] Add content filtering and search
+- [x] Moteur de recherche (tags, titres, créateurs)
+- [x] Page tendances, recommandations simples
+- [x] Build content feed/grid view
+- [x] Add content filtering and search
 
 ## Phase 7 – Notifications & emails
 
