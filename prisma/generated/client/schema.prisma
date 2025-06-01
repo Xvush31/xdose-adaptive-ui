@@ -12,12 +12,15 @@ generator client {
 }
 
 model User {
-  id        String   @id // Supabase Auth UUID
-  createdAt DateTime @default(now())
-  email     String   @unique
+  id        String    @id // Supabase Auth UUID
+  createdAt DateTime  @default(now())
+  email     String    @unique
   name      String?
-  role      String   @default("spectateur")
+  role      String    @default("spectateur")
   videos    Video[]
+  // Relations pour le follow system
+  followers Follows[] @relation("Followed")
+  following Follows[] @relation("Follower")
 }
 
 model Video {
@@ -33,4 +36,16 @@ model Video {
   user         User     @relation(fields: [userId], references: [id])
   userId       String // Now a String, matches Supabase UUID
   thumbnailUrl String? // URL de la miniature Mux
+}
+
+model Follows {
+  followerId String
+  followedId String
+  createdAt  DateTime @default(now())
+
+  follower User @relation("Follower", fields: [followerId], references: [id])
+  followed User @relation("Followed", fields: [followedId], references: [id])
+
+  @@id([followerId, followedId])
+  @@index([followedId])
 }

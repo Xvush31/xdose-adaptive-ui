@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 async function handler(req, res) {
   if (req.method === 'POST') {
-    const { id, email, name, role } = req.body; // id = Supabase UUID
+    const { id, email, name, role, bio } = req.body; // id = Supabase UUID
     try {
       if (!id) {
         console.error('[users.js] Champs requis manquants', req.body);
@@ -12,26 +12,28 @@ async function handler(req, res) {
       }
       
       // Si seul id+role sont fournis, update uniquement le rôle
-      if (role && !email && !name) {
+      if (role && !email && !name && !bio) {
         const user = await prisma.user.update({ where: { id }, data: { role } });
         console.log('[users.js] Rôle utilisateur mis à jour:', user);
         res.status(200).json(user);
         return;
       }
       
-      // Upsert: crée ou met à jour l'utilisateur
+      // Upsert: crée ou met à jour l'utilisateur (ajout bio)
       const user = await prisma.user.upsert({
         where: { id },
-        update: { 
-          email: email || undefined, 
-          name: name || undefined, 
-          role: role || 'spectateur' 
+        update: {
+          email: email || undefined,
+          name: name || undefined,
+          role: role || undefined,
+          bio: bio || undefined,
         },
-        create: { 
-          id, 
-          email: email || '', 
-          name: name || email || '', 
-          role: role || 'spectateur' 
+        create: {
+          id,
+          email: email || '',
+          name: name || email || '',
+          role: role || 'spectateur',
+          bio: bio || '',
         },
       });
       

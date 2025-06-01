@@ -142,6 +142,12 @@ exports.Prisma.VideoScalarFieldEnum = {
   thumbnailUrl: 'thumbnailUrl'
 };
 
+exports.Prisma.FollowsScalarFieldEnum = {
+  followerId: 'followerId',
+  followedId: 'followedId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -160,7 +166,8 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Video: 'Video'
+  Video: 'Video',
+  Follows: 'Follows'
 };
 
 /**

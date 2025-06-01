@@ -114,6 +114,12 @@ exports.Prisma.VideoScalarFieldEnum = {
   thumbnailUrl: 'thumbnailUrl'
 };
 
+exports.Prisma.FollowsScalarFieldEnum = {
+  followerId: 'followerId',
+  followedId: 'followedId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -132,7 +138,8 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Video: 'Video'
+  Video: 'Video',
+  Follows: 'Follows'
 };
 /**
  * Create the Client
@@ -183,13 +190,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// prisma/schema.prisma\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider        = \"prisma-client-js\"\n  previewFeatures = [\"driverAdapters\"]\n  output          = \"./generated/client\"\n}\n\nmodel User {\n  id        String   @id // Supabase Auth UUID\n  createdAt DateTime @default(now())\n  email     String   @unique\n  name      String?\n  role      String   @default(\"spectateur\")\n  videos    Video[]\n}\n\nmodel Video {\n  id           Int      @id @default(autoincrement())\n  createdAt    DateTime @default(now())\n  title        String\n  description  String?\n  fileUrl      String\n  muxAssetId   String?\n  muxUploadId  String?\n  status       String   @default(\"pending\")\n  visibility   String   @default(\"public\")\n  user         User     @relation(fields: [userId], references: [id])\n  userId       String // Now a String, matches Supabase UUID\n  thumbnailUrl String? // URL de la miniature Mux\n}\n",
-  "inlineSchemaHash": "35fe1a91a0679e8a654c07733e0694f9cb7d0ad898c35d213d8c36be8bde9b21",
+  "inlineSchema": "// prisma/schema.prisma\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider        = \"prisma-client-js\"\n  previewFeatures = [\"driverAdapters\"]\n  output          = \"./generated/client\"\n}\n\nmodel User {\n  id        String    @id // Supabase Auth UUID\n  createdAt DateTime  @default(now())\n  email     String    @unique\n  name      String?\n  role      String    @default(\"spectateur\")\n  videos    Video[]\n  // Relations pour le follow system\n  followers Follows[] @relation(\"Followed\")\n  following Follows[] @relation(\"Follower\")\n}\n\nmodel Video {\n  id           Int      @id @default(autoincrement())\n  createdAt    DateTime @default(now())\n  title        String\n  description  String?\n  fileUrl      String\n  muxAssetId   String?\n  muxUploadId  String?\n  status       String   @default(\"pending\")\n  visibility   String   @default(\"public\")\n  user         User     @relation(fields: [userId], references: [id])\n  userId       String // Now a String, matches Supabase UUID\n  thumbnailUrl String? // URL de la miniature Mux\n}\n\nmodel Follows {\n  followerId String\n  followedId String\n  createdAt  DateTime @default(now())\n\n  follower User @relation(\"Follower\", fields: [followerId], references: [id])\n  followed User @relation(\"Followed\", fields: [followedId], references: [id])\n\n  @@id([followerId, followedId])\n  @@index([followedId])\n}\n",
+  "inlineSchemaHash": "bd987e4a8fb48882cf3ab0d602afef8ff98e7e02f36cdbd7c76f0326224fabd6",
   "copyEngine": false
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"videos\",\"kind\":\"object\",\"type\":\"Video\",\"relationName\":\"UserToVideo\"}],\"dbName\":null},\"Video\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fileUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"muxAssetId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"muxUploadId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"visibility\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToVideo\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"thumbnailUrl\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"videos\",\"kind\":\"object\",\"type\":\"Video\",\"relationName\":\"UserToVideo\"},{\"name\":\"followers\",\"kind\":\"object\",\"type\":\"Follows\",\"relationName\":\"Followed\"},{\"name\":\"following\",\"kind\":\"object\",\"type\":\"Follows\",\"relationName\":\"Follower\"}],\"dbName\":null},\"Video\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fileUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"muxAssetId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"muxUploadId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"visibility\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToVideo\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"thumbnailUrl\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"Follows\":{\"fields\":[{\"name\":\"followerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"followedId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"follower\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"Follower\"},{\"name\":\"followed\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"Followed\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = undefined
 config.compilerWasm = undefined
