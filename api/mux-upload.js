@@ -15,7 +15,7 @@ async function handler(req, res) {
       // 1. Créer un upload direct Mux
       const upload = await mux.video.uploads.create({
         new_asset_settings: { playback_policy: ['public'] },
-        cors_origin: '*',
+        cors_origin: 'https://xdose-adaptive-ui.vercel.app',
       });
       // 2. Créer la vidéo en base avec status 'pending' et l'ID d'upload Mux
       const video = await prisma.video.create({
