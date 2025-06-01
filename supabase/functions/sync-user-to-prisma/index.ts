@@ -1,4 +1,3 @@
-
 // Simple Edge Function without problematic type references
 interface UserData {
   id: string;
@@ -13,7 +12,7 @@ const corsHeaders = {
 }
 
 async function syncUserToPrisma(userData: UserData, retries = 3): Promise<boolean> {
-  const backendUrl = 'https://your-backend-url.com'; // Update this with your actual backend URL
+  const backendUrl = 'https://xdose-adaptive-ui.vercel.app'; // Update this with your actual backend URL
   
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
