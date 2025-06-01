@@ -8,5 +8,6 @@
       "runtime": "@vercel/node@2.15.10"
     }
   },
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "installCommand": "npm install --prefer-offline --no-audit --progress=false"
 }
