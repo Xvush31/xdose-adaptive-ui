@@ -32,9 +32,11 @@ export const TrendingContent: React.FC = () => {
             {video.fileUrl ? (
               <video
                 src={video.fileUrl}
-                controls={false}
+                controls
                 className="w-full h-full object-cover rounded-xl"
                 poster={video.thumbnail || undefined}
+                preload="metadata"
+                style={{ background: '#000' }}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-white">Aperçu indisponible</div>
