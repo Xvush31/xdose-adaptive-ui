@@ -31,6 +31,8 @@ const Upload = () => {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [pendingVideos, setPendingVideos] = useState<string[]>([]);
+  const [polling, setPolling] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -151,26 +153,44 @@ const Upload = () => {
     setFiles((prev) => [...prev, ...selectedFiles]);
   };
 
+  const pollVideoStatus = async (videoIds: string[]) => {
+    setPolling(true);
+    let attempts = 0;
+    const maxAttempts = 20; // ~2 minutes
+    const delay = 6000;
+    while (attempts < maxAttempts) {
+      const res = await fetch('/api/videos');
+      const allVideos = await res.json();
+      const readyIds = allVideos.filter((v: any) => videoIds.includes(v.id.toString()) && v.status === 'ready');
+      if (readyIds.length === videoIds.length) {
+        setPolling(false);
+        setUploadSuccess(`${videoIds.length} vidéo(s) prêtes et publiées !`);
+        setPendingVideos([]);
+        setFiles([]);
+        return;
+      }
+      attempts++;
+      await new Promise(r => setTimeout(r, delay));
+    }
+    setPolling(false);
+    setUploadError("Certaines vidéos ne sont pas prêtes après 2 minutes. Elles seront publiées dès que Mux aura fini le traitement.");
+  };
+
   const handleUpload = async () => {
     if (userRole !== 'createur' && userRole !== 'admin') {
       setUploadError('Seuls les créateurs peuvent uploader des vidéos.');
       return;
     }
-
     setUploading(true);
     setUploadError(null);
     setUploadSuccess(null);
-
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setUploadError('Vous devez être connecté pour uploader.');
         setUploading(false);
         return;
       }
-      // 1. Sync user to Prisma before upload
       await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -181,25 +201,34 @@ const Upload = () => {
           role: user.user_metadata?.role || 'spectateur',
         }),
       });
-
       const userId = user.id;
-      const uploadedVideos: string[] = [];
-
+      const uploadedVideoIds: string[] = [];
       for (const file of files) {
-        await fetch('/api/videos', {
+        // Appel à l'API Mux pour chaque vidéo
+        const res = await fetch('/api/mux-upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             title: file.title || file.name,
             description: file.description || '',
-            fileUrl: '', // You can update this with the real URL after Mux upload if needed
             userId: user.id,
             visibility: file.visibility || 'public',
           }),
         });
+        if (!res.ok) throw new Error('Erreur lors de la création de la vidéo sur Mux');
+        const { videoId, uploadUrl } = await res.json();
+        uploadedVideoIds.push(videoId);
+        // Upload direct du fichier sur l'URL Mux
+        const uploadRes = await fetch(uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': file.type },
+          body: file,
+        });
+        if (!uploadRes.ok) throw new Error('Erreur lors de l’upload du fichier sur Mux');
       }
-      setUploadSuccess(`${files.length} vidéo(s) ajoutée(s) avec succès !`);
-      setFiles([]);
+      setPendingVideos(uploadedVideoIds);
+      setUploadSuccess('Traitement en cours... Vos vidéos seront publiées dès qu’elles sont prêtes.');
+      pollVideoStatus(uploadedVideoIds);
     } catch (e) {
       setUploadError(e instanceof Error ? e.message : 'Erreur inconnue');
     } finally {
@@ -376,6 +405,11 @@ const Upload = () => {
                     role="alert"
                   >
                     {uploadSuccess}
+                  </div>
+                )}
+                {pendingVideos.length > 0 && polling && (
+                  <div className="text-blue-600 text-center mt-4 bg-blue-50 p-3 rounded-lg" role="status">
+                    Traitement Mux en cours... Vos vidéos seront publiées automatiquement dès qu’elles sont prêtes.
                   </div>
                 )}
               </div>
