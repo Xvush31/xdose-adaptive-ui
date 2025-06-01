@@ -218,6 +218,12 @@ const Upload = () => {
         if (!res.ok) throw new Error('Erreur lors de la création de la vidéo sur Mux');
         const { videoId, uploadUrl } = await res.json();
         uploadedVideoIds.push(videoId);
+        // Log pour debug upload Mux
+        console.log('[DEBUG][Upload.tsx] Upload Mux:', {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        });
         // Upload direct du fichier sur l'URL Mux
         const uploadRes = await fetch(uploadUrl, {
           method: 'PUT',
