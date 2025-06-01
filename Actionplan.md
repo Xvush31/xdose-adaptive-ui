@@ -12,6 +12,8 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 - [x] Interface “Devenir créateur” dans le profil
 - [x] Backoffice admin pour valider/refuser les demandes créateur
 - [x] Notification email lors de la validation/refus
+- [ ] Build user profile pages
+- [ ] Add creator profile editing
 
 ## Phase 2 – Upload & Gestion de vidéos
 
@@ -24,10 +26,13 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 - [x] Affichage dynamique des vidéos publiques/ready dans l’UI
 - [x] Lecteur vidéo moderne (HLS.js, overlay, responsive, UX)
 - [x] Gestion des erreurs Mux (webhook, statut error, description)
-- [ ] Génération miniatures, conversion, formats modernes (à faire)
+- [x] Génération miniatures auto Mux
+- [ ] Génération miniatures avancée, conversion, formats modernes
 - [ ] Workflow de validation vidéo (admin)
 - [ ] Backoffice admin pour valider/refuser les vidéos
 - [ ] Notification email lors de la validation/refus vidéo
+- [ ] Implement content privacy settings
+- [ ] Add content categories/tags
 
 ## Phase 3 – Paiement & Abonnement
 
@@ -35,14 +40,19 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 - [ ] Attribution automatique des droits d’accès après paiement
 - [ ] Gestion des accès privés/publics côté backend
 - [ ] Interface d’achat/abonnement côté spectateur
+- [ ] Revenue tracking
 
-## Phase 4 – Commentaires & Modération
+## Phase 4 – Commentaires, Engagement & Modération
 
 - [ ] Système de commentaires sur vidéos gratuites
 - [ ] Intégration modération IA (Perspective API ou HuggingFace)
 - [ ] File d’attente pour validation manuelle si doute
 - [ ] Interface créateur pour modérer ses propres commentaires
 - [ ] Interface admin pour modérer tous les commentaires
+- [ ] Implement like/reaction system
+- [ ] Implement follow/unfollow functionality
+- [ ] Build messaging interface
+- [ ] Add content sharing features
 
 ## Phase 5 – Lecteur vidéo & expérience utilisateur
 
@@ -51,11 +61,12 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 - [ ] Accessibilité (clavier, ARIA, contrastes)
 - [x] Responsive design (web + mobile)
 
-## Phase 6 – Découverte, recherche & analytics
+## Phase 6 – Découverte, recherche & feed
 
 - [ ] Moteur de recherche (tags, titres, créateurs)
 - [ ] Page tendances, recommandations simples
-- [ ] Dashboard analytics pour créateurs
+- [ ] Build content feed/grid view
+- [ ] Add content filtering and search
 
 ## Phase 7 – Notifications & emails
 
@@ -68,7 +79,14 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 - [ ] Synchronisation des fonctionnalités principales (auth, upload, paiement, lecture)
 - [ ] Préparer la base pour PWA (V2)
 
-## Phase 9 – Qualité, CI/CD, sécurité
+## Phase 9 – Dashboard & Analytics
+
+- [ ] Creator analytics dashboard
+- [ ] Dashboard analytics pour créateurs
+- [ ] Follower insights
+- [ ] Revenue tracking
+
+## Phase 10 – Qualité, CI/CD, sécurité
 
 - [ ] Tests unitaires et e2e sur tous les modules critiques
 - [ ] Audit sécurité (auth, paiement, accès vidéos)
