@@ -18,6 +18,7 @@ const AuthLogin = lazy(() => import('./pages/AuthLogin'));
 const AuthRegister = lazy(() => import('./pages/AuthRegister'));
 const Admin = lazy(() => import('./pages/Admin'));
 const CreatorProfile = lazy(() => import('./pages/CreatorProfile'));
+const Feed = lazy(() => import('./pages/Feed'));
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/parametres" element={<Parametres />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/createur/:id" element={<CreatorProfile />} />
+            <Route path="/feed" element={<Feed />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

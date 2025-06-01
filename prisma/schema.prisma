@@ -36,6 +36,8 @@ model Video {
   user        User     @relation(fields: [userId], references: [id])
   userId      String   // Now a String, matches Supabase UUID
   thumbnailUrl String? // URL de la miniature Mux
+  categories  String[] // Catégories de la vidéo
+  tags        String[] // Tags de la vidéo
 }
 
 model Follows {

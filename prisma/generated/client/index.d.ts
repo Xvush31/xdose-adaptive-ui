@@ -2289,6 +2289,8 @@ export namespace Prisma {
     visibility: number
     userId: number
     thumbnailUrl: number
+    categories: number
+    tags: number
     _all: number
   }
 
@@ -2341,6 +2343,8 @@ export namespace Prisma {
     visibility?: true
     userId?: true
     thumbnailUrl?: true
+    categories?: true
+    tags?: true
     _all?: true
   }
 
@@ -2442,6 +2446,8 @@ export namespace Prisma {
     visibility: string
     userId: string
     thumbnailUrl: string | null
+    categories: string[]
+    tags: string[]
     _count: VideoCountAggregateOutputType | null
     _avg: VideoAvgAggregateOutputType | null
     _sum: VideoSumAggregateOutputType | null
@@ -2475,6 +2481,8 @@ export namespace Prisma {
     visibility?: boolean
     userId?: boolean
     thumbnailUrl?: boolean
+    categories?: boolean
+    tags?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["video"]>
 
@@ -2490,6 +2498,8 @@ export namespace Prisma {
     visibility?: boolean
     userId?: boolean
     thumbnailUrl?: boolean
+    categories?: boolean
+    tags?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["video"]>
 
@@ -2505,6 +2515,8 @@ export namespace Prisma {
     visibility?: boolean
     userId?: boolean
     thumbnailUrl?: boolean
+    categories?: boolean
+    tags?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["video"]>
 
@@ -2520,9 +2532,11 @@ export namespace Prisma {
     visibility?: boolean
     userId?: boolean
     thumbnailUrl?: boolean
+    categories?: boolean
+    tags?: boolean
   }
 
-  export type VideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "description" | "fileUrl" | "muxAssetId" | "muxUploadId" | "status" | "visibility" | "userId" | "thumbnailUrl", ExtArgs["result"]["video"]>
+  export type VideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "description" | "fileUrl" | "muxAssetId" | "muxUploadId" | "status" | "visibility" | "userId" | "thumbnailUrl" | "categories" | "tags", ExtArgs["result"]["video"]>
   export type VideoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2550,6 +2564,8 @@ export namespace Prisma {
       visibility: string
       userId: string
       thumbnailUrl: string | null
+      categories: string[]
+      tags: string[]
     }, ExtArgs["result"]["video"]>
     composites: {}
   }
@@ -2985,6 +3001,8 @@ export namespace Prisma {
     readonly visibility: FieldRef<"Video", 'String'>
     readonly userId: FieldRef<"Video", 'String'>
     readonly thumbnailUrl: FieldRef<"Video", 'String'>
+    readonly categories: FieldRef<"Video", 'String[]'>
+    readonly tags: FieldRef<"Video", 'String[]'>
   }
     
 
@@ -4475,7 +4493,9 @@ export namespace Prisma {
     status: 'status',
     visibility: 'visibility',
     userId: 'userId',
-    thumbnailUrl: 'thumbnailUrl'
+    thumbnailUrl: 'thumbnailUrl',
+    categories: 'categories',
+    tags: 'tags'
   };
 
   export type VideoScalarFieldEnum = (typeof VideoScalarFieldEnum)[keyof typeof VideoScalarFieldEnum]
@@ -4654,6 +4674,8 @@ export namespace Prisma {
     visibility?: StringFilter<"Video"> | string
     userId?: StringFilter<"Video"> | string
     thumbnailUrl?: StringNullableFilter<"Video"> | string | null
+    categories?: StringNullableListFilter<"Video">
+    tags?: StringNullableListFilter<"Video">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -4669,6 +4691,8 @@ export namespace Prisma {
     visibility?: SortOrder
     userId?: SortOrder
     thumbnailUrl?: SortOrderInput | SortOrder
+    categories?: SortOrder
+    tags?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -4687,6 +4711,8 @@ export namespace Prisma {
     visibility?: StringFilter<"Video"> | string
     userId?: StringFilter<"Video"> | string
     thumbnailUrl?: StringNullableFilter<"Video"> | string | null
+    categories?: StringNullableListFilter<"Video">
+    tags?: StringNullableListFilter<"Video">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -4702,6 +4728,8 @@ export namespace Prisma {
     visibility?: SortOrder
     userId?: SortOrder
     thumbnailUrl?: SortOrderInput | SortOrder
+    categories?: SortOrder
+    tags?: SortOrder
     _count?: VideoCountOrderByAggregateInput
     _avg?: VideoAvgOrderByAggregateInput
     _max?: VideoMaxOrderByAggregateInput
@@ -4724,6 +4752,8 @@ export namespace Prisma {
     visibility?: StringWithAggregatesFilter<"Video"> | string
     userId?: StringWithAggregatesFilter<"Video"> | string
     thumbnailUrl?: StringNullableWithAggregatesFilter<"Video"> | string | null
+    categories?: StringNullableListFilter<"Video">
+    tags?: StringNullableListFilter<"Video">
   }
 
   export type FollowsWhereInput = {
@@ -4853,6 +4883,8 @@ export namespace Prisma {
     status?: string
     visibility?: string
     thumbnailUrl?: string | null
+    categories?: VideoCreatecategoriesInput | string[]
+    tags?: VideoCreatetagsInput | string[]
     user: UserCreateNestedOneWithoutVideosInput
   }
 
@@ -4868,6 +4900,8 @@ export namespace Prisma {
     visibility?: string
     userId: string
     thumbnailUrl?: string | null
+    categories?: VideoCreatecategoriesInput | string[]
+    tags?: VideoCreatetagsInput | string[]
   }
 
   export type VideoUpdateInput = {
@@ -4880,6 +4914,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    categories?: VideoUpdatecategoriesInput | string[]
+    tags?: VideoUpdatetagsInput | string[]
     user?: UserUpdateOneRequiredWithoutVideosNestedInput
   }
 
@@ -4895,6 +4931,8 @@ export namespace Prisma {
     visibility?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    categories?: VideoUpdatecategoriesInput | string[]
+    tags?: VideoUpdatetagsInput | string[]
   }
 
   export type VideoCreateManyInput = {
@@ -4909,6 +4947,8 @@ export namespace Prisma {
     visibility?: string
     userId: string
     thumbnailUrl?: string | null
+    categories?: VideoCreatecategoriesInput | string[]
+    tags?: VideoCreatetagsInput | string[]
   }
 
   export type VideoUpdateManyMutationInput = {
@@ -4921,6 +4961,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    categories?: VideoUpdatecategoriesInput | string[]
+    tags?: VideoUpdatetagsInput | string[]
   }
 
   export type VideoUncheckedUpdateManyInput = {
@@ -4935,6 +4977,8 @@ export namespace Prisma {
     visibility?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    categories?: VideoUpdatecategoriesInput | string[]
+    tags?: VideoUpdatetagsInput | string[]
   }
 
   export type FollowsCreateInput = {
@@ -5128,6 +5172,14 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -5145,6 +5197,8 @@ export namespace Prisma {
     visibility?: SortOrder
     userId?: SortOrder
     thumbnailUrl?: SortOrder
+    categories?: SortOrder
+    tags?: SortOrder
   }
 
   export type VideoAvgOrderByAggregateInput = {
@@ -5360,10 +5414,28 @@ export namespace Prisma {
     deleteMany?: FollowsScalarWhereInput | FollowsScalarWhereInput[]
   }
 
+  export type VideoCreatecategoriesInput = {
+    set: string[]
+  }
+
+  export type VideoCreatetagsInput = {
+    set: string[]
+  }
+
   export type UserCreateNestedOneWithoutVideosInput = {
     create?: XOR<UserCreateWithoutVideosInput, UserUncheckedCreateWithoutVideosInput>
     connectOrCreate?: UserCreateOrConnectWithoutVideosInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type VideoUpdatecategoriesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type VideoUpdatetagsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type UserUpdateOneRequiredWithoutVideosNestedInput = {
@@ -5556,6 +5628,8 @@ export namespace Prisma {
     status?: string
     visibility?: string
     thumbnailUrl?: string | null
+    categories?: VideoCreatecategoriesInput | string[]
+    tags?: VideoCreatetagsInput | string[]
   }
 
   export type VideoUncheckedCreateWithoutUserInput = {
@@ -5569,6 +5643,8 @@ export namespace Prisma {
     status?: string
     visibility?: string
     thumbnailUrl?: string | null
+    categories?: VideoCreatecategoriesInput | string[]
+    tags?: VideoCreatetagsInput | string[]
   }
 
   export type VideoCreateOrConnectWithoutUserInput = {
@@ -5652,6 +5728,8 @@ export namespace Prisma {
     visibility?: StringFilter<"Video"> | string
     userId?: StringFilter<"Video"> | string
     thumbnailUrl?: StringNullableFilter<"Video"> | string | null
+    categories?: StringNullableListFilter<"Video">
+    tags?: StringNullableListFilter<"Video">
   }
 
   export type FollowsUpsertWithWhereUniqueWithoutFollowedInput = {
@@ -5874,6 +5952,8 @@ export namespace Prisma {
     status?: string
     visibility?: string
     thumbnailUrl?: string | null
+    categories?: VideoCreatecategoriesInput | string[]
+    tags?: VideoCreatetagsInput | string[]
   }
 
   export type FollowsCreateManyFollowedInput = {
@@ -5896,6 +5976,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    categories?: VideoUpdatecategoriesInput | string[]
+    tags?: VideoUpdatetagsInput | string[]
   }
 
   export type VideoUncheckedUpdateWithoutUserInput = {
@@ -5909,6 +5991,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    categories?: VideoUpdatecategoriesInput | string[]
+    tags?: VideoUpdatetagsInput | string[]
   }
 
   export type VideoUncheckedUpdateManyWithoutUserInput = {
@@ -5922,6 +6006,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    categories?: VideoUpdatecategoriesInput | string[]
+    tags?: VideoUpdatetagsInput | string[]
   }
 
   export type FollowsUpdateWithoutFollowedInput = {

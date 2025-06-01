@@ -22,8 +22,50 @@ async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
+      // Recommandations personnalisées ou trending
+      if (req.query && req.query.recommendations) {
+        // Exemple simple : vidéos les plus vues (ou aléatoires si pas de stats)
+        const recommended = await prisma.video.findMany({
+          where: { status: 'ready', visibility: 'public' },
+          orderBy: { id: 'desc' }, // Remplacer par 'views' si dispo
+          take: 8,
+          include: { user: true },
+        });
+        const cleaned = recommended.map((video) => ({
+          ...video,
+          user: video.user
+            ? {
+                name: video.user.name || null,
+                email: video.user.email,
+              }
+            : null,
+        }));
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(cleaned);
+        return;
+      }
+
       console.log('[DEBUG][videos.js] Début requête GET');
+      // Filtres avancés : catégories, popularité, tags, créateur
+      const { category, tag, creator, sort } = req.query;
+      const where = {};
+      if (category) {
+        where.categories = { has: category };
+      }
+      if (tag) {
+        where.tags = { has: tag };
+      }
+      if (creator) {
+        where.userId = creator;
+      }
+      // Popularité : tri par vues (desc) si demandé
+      let orderBy = { createdAt: 'desc' };
+      if (sort === 'popular') {
+        orderBy = { views: 'desc' };
+      }
       const videos = await prisma.video.findMany({
+        where,
+        orderBy,
         include: {
           user: true,
         },
@@ -59,14 +101,14 @@ async function handler(req, res) {
     }
     return;
   } else if (req.method === 'POST') {
-    const { title, description, fileUrl, userId, visibility } = req.body;
+    // Ajout des champs categories et tags
+    const { title, description, fileUrl, userId, visibility, categories, tags } = req.body;
     try {
       if (!title || !userId) {
         console.error('[videos.js] Champs requis manquants', req.body);
         res.status(400).json({ error: 'Missing required fields' });
         return;
       }
-      // fileUrl peut être vide ou undefined (pour Mux)
       const video = await prisma.video.create({
         data: {
           title,
@@ -74,6 +116,8 @@ async function handler(req, res) {
           fileUrl: fileUrl || '',
           userId,
           visibility,
+          categories: categories || [],
+          tags: tags || [],
         },
       });
       console.log('[videos.js] Vidéo créée', video);

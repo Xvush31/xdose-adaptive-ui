@@ -18,6 +18,15 @@ interface Video {
   status: string;
 }
 
+const PRIMARY_GRADIENT = "bg-gradient-to-br from-purple-900 via-neutral-950 to-black";
+const CARD_BG = "bg-neutral-900 border border-neutral-800";
+const ACCENT = "text-purple-500";
+const BUTTON_GRADIENT = "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700";
+const BUTTON_DISABLED = "bg-neutral-700 text-neutral-400";
+const TEXT_MAIN = "text-neutral-100";
+const TEXT_SECONDARY = "text-neutral-400";
+const SHADOW = "shadow-xl";
+
 const CreatorProfile: React.FC = () => {
   const { id } = useParams();
   const [creator, setCreator] = useState<Creator | null>(null);
@@ -110,45 +119,45 @@ const CreatorProfile: React.FC = () => {
   if (!creator) return <div className="min-h-screen flex items-center justify-center text-neutral-400">Créateur introuvable</div>;
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col items-center py-12">
+    <div className={`min-h-screen w-full ${PRIMARY_GRADIENT} ${TEXT_MAIN} flex flex-col items-center py-12`}>
       <div className="w-full max-w-4xl flex flex-col md:flex-row items-center md:items-start gap-8">
         {/* Profile Sidebar */}
-        <aside className="w-full md:w-1/3 flex flex-col items-center bg-neutral-900 rounded-xl p-6 shadow-lg">
-          <div className="w-32 h-32 rounded-full bg-neutral-800 mb-4 border-4 border-neutral-700 overflow-hidden">
+        <aside className={`w-full md:w-1/3 flex flex-col items-center ${CARD_BG} rounded-2xl p-8 ${SHADOW}`}>
+          <div className="w-32 h-32 rounded-full bg-neutral-800 mb-4 border-4 border-purple-700 overflow-hidden">
             <img src={creator.avatar} alt="Profile" className="w-full h-full object-cover" />
           </div>
           {editing ? (
             <>
               <input
-                className="mb-2 w-full rounded-lg px-3 py-2 bg-neutral-800 text-neutral-100 border border-neutral-700"
+                className="mb-2 w-full rounded-lg px-3 py-2 bg-neutral-800 text-neutral-100 border border-neutral-700 focus:ring-2 focus:ring-purple-600"
                 value={editName}
                 onChange={e => setEditName(e.target.value)}
                 disabled={saving}
               />
               <textarea
-                className="mb-2 w-full rounded-lg px-3 py-2 bg-neutral-800 text-neutral-100 border border-neutral-700"
+                className="mb-2 w-full rounded-lg px-3 py-2 bg-neutral-800 text-neutral-100 border border-neutral-700 focus:ring-2 focus:ring-purple-600"
                 value={editBio}
                 onChange={e => setEditBio(e.target.value)}
                 rows={3}
                 disabled={saving}
               />
               <div className="flex gap-2 w-full">
-                <button className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-4 rounded-full flex-1" onClick={handleSave} disabled={saving}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
-                <button className="bg-neutral-700 text-neutral-300 font-semibold py-2 px-4 rounded-full flex-1" onClick={() => setEditing(false)} disabled={saving}>Annuler</button>
+                <button className={`${BUTTON_GRADIENT} text-white font-semibold py-2 px-4 rounded-full flex-1`} onClick={handleSave} disabled={saving}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
+                <button className={`${BUTTON_DISABLED} font-semibold py-2 px-4 rounded-full flex-1`} onClick={() => setEditing(false)} disabled={saving}>Annuler</button>
               </div>
             </>
           ) : (
             <>
               <h1 className="text-2xl font-bold mb-2">{creator.name}</h1>
-              <p className="text-neutral-400 mb-4 text-center">{creator.bio || 'Ce créateur n’a pas encore renseigné sa bio.'}</p>
+              <p className={`${TEXT_SECONDARY} mb-4 text-center`}>{creator.bio || 'Ce créateur n’a pas encore renseigné sa bio.'}</p>
               {isOwnProfile ? (
-                <button className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-6 rounded-full transition mb-2 w-full" onClick={handleEdit}>Éditer le profil</button>
+                <button className={`${BUTTON_GRADIENT} text-white font-semibold py-2 px-6 rounded-full transition mb-2 w-full`} onClick={handleEdit}>Éditer le profil</button>
               ) : (
-                <button className={`bg-${followed ? 'neutral-700' : 'primary-600'} hover:bg-primary-700 text-white font-semibold py-2 px-6 rounded-full transition mb-2 w-full`} onClick={handleFollow} disabled={followLoading}>
+                <button className={`${followed ? BUTTON_DISABLED : BUTTON_GRADIENT} text-white font-semibold py-2 px-6 rounded-full transition mb-2 w-full`} onClick={handleFollow} disabled={followLoading}>
                   {followLoading ? (followed ? 'Désabonnement…' : 'Abonnement…') : (followed ? 'Abonné' : 'S’abonner')}
                 </button>
               )}
-              <span className="text-sm text-neutral-400">{creator.followers ?? 0} abonnés</span>
+              <span className={`${TEXT_SECONDARY} text-sm`}>{creator.followers ?? 0} abonnés</span>
             </>
           )}
         </aside>
@@ -168,7 +177,7 @@ const CreatorProfile: React.FC = () => {
                   href={video.fileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="aspect-video bg-neutral-800 rounded-lg overflow-hidden flex items-center justify-center group hover:ring-2 hover:ring-primary-600 transition"
+                  className="aspect-video bg-neutral-800 rounded-xl overflow-hidden flex items-center justify-center group hover:ring-2 hover:ring-purple-600 transition"
                 >
                   {video.thumbnailUrl ? (
                     <img src={video.thumbnailUrl} alt={video.title} className="object-cover w-full h-full group-hover:scale-105 transition" />

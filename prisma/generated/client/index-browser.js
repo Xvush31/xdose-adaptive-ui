@@ -139,7 +139,9 @@ exports.Prisma.VideoScalarFieldEnum = {
   status: 'status',
   visibility: 'visibility',
   userId: 'userId',
-  thumbnailUrl: 'thumbnailUrl'
+  thumbnailUrl: 'thumbnailUrl',
+  categories: 'categories',
+  tags: 'tags'
 };
 
 exports.Prisma.FollowsScalarFieldEnum = {
