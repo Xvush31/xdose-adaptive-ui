@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -67,7 +66,7 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
         // Synchronisation automatique vers Prisma après inscription avec le rôle directement appliqué
         if (data.user) {
           try {
-            await fetch('/api/users', {
+            const response = await fetch('/api/users', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -77,7 +76,13 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
                 role: selectedRole, // Rôle appliqué directement
               }),
             });
-            console.log(`[Auth] Utilisateur créé avec le rôle: ${selectedRole}`);
+            
+            if (response.ok) {
+              const prismaUser = await response.json();
+              console.log(`[Auth] Utilisateur créé avec le rôle: ${prismaUser.role}`);
+            } else {
+              console.error('[Auth] Erreur synchronisation Prisma:', await response.text());
+            }
           } catch (e) {
             console.error('[Auth] Erreur synchronisation Prisma:', e);
           }
@@ -92,27 +97,54 @@ export default function AuthPage({ mode: initialMode }: { mode?: 'login' | 'regi
           setError(signInError.message);
           return;
         }
+        
         // Récupérer le user Prisma pour la redirection
         const {
           data: { user },
         } = await supabase.auth.getUser();
         if (user) {
           try {
-            const res = await fetch(`/api/users?id=${user.id}`);
-            if (res.ok) {
-              const prismaUser = await res.json();
-              const userRole = prismaUser.role || 'spectateur';
-              if (userRole === 'admin') {
-                navigate('/admin');
-              } else if (userRole === 'createur') {
-                navigate('/upload');
+            // S'assurer que l'utilisateur existe dans Prisma
+            let res = await fetch(`/api/users?id=${user.id}`);
+            let prismaUser;
+            
+            if (!res.ok) {
+              // Si l'utilisateur n'existe pas, le créer
+              console.log('[Auth] Utilisateur inexistant dans Prisma, création...');
+              const createRes = await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  id: user.id,
+                  email: user.email || '',
+                  name: user.user_metadata?.full_name || user.email || '',
+                  role: user.user_metadata?.role || 'spectateur',
+                }),
+              });
+              
+              if (createRes.ok) {
+                prismaUser = await createRes.json();
               } else {
+                console.error('[Auth] Erreur création utilisateur Prisma');
                 navigate('/');
+                return;
               }
+            } else {
+              prismaUser = await res.json();
+            }
+            
+            const userRole = prismaUser.role || 'spectateur';
+            console.log('[Auth] Rôle utilisateur lors de la connexion:', userRole);
+            
+            if (userRole === 'admin') {
+              navigate('/admin');
+            } else if (userRole === 'createur') {
+              navigate('/upload');
             } else {
               navigate('/');
             }
-          } catch {
+          } catch (fetchError) {
+            console.error('[Auth] Erreur lors de la récupération des données utilisateur:', fetchError);
             navigate('/');
           }
         }

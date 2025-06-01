@@ -61,16 +61,35 @@ async function handler(req, res) {
     try {
       if (req.query && req.query.id) {
         // GET /api/users?id=...
-        const user = await prisma.user.findUnique({ where: { id: req.query.id } });
+        let user = await prisma.user.findUnique({ where: { id: req.query.id } });
+        
+        // Si l'utilisateur n'existe pas dans Prisma, essayer de le créer automatiquement
         if (!user) {
-          console.log('[users.js] Utilisateur non trouvé:', req.query.id);
-          res.status(404).json({ error: 'User not found' });
-        } else {
-          console.log('[users.js] Utilisateur récupéré:', user);
-          res.status(200).json(user);
+          console.log('[users.js] Utilisateur non trouvé dans Prisma, tentative de création automatique pour:', req.query.id);
+          
+          // Créer l'utilisateur avec des valeurs par défaut
+          try {
+            user = await prisma.user.create({
+              data: {
+                id: req.query.id,
+                email: `user-${req.query.id}@temp.com`, // Email temporaire
+                name: 'Utilisateur',
+                role: 'spectateur' // Rôle par défaut
+              }
+            });
+            console.log('[users.js] Utilisateur créé automatiquement:', user);
+          } catch (createError) {
+            console.error('[users.js] Erreur création automatique:', createError);
+            res.status(404).json({ error: 'User not found and could not be created' });
+            return;
+          }
         }
+        
+        console.log('[users.js] Utilisateur récupéré:', user);
+        res.status(200).json(user);
         return;
       }
+      
       const users = await prisma.user.findMany({ include: { videos: true } });
       console.log('[users.js] GET tous les utilisateurs:', users.length);
       res.status(200).json(users);
