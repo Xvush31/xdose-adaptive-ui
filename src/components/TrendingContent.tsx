@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Play } from 'lucide-react';
+import Hls from 'hls.js';
 
 interface Video {
   id: number;
@@ -30,14 +31,7 @@ export const TrendingContent: React.FC = () => {
         <div key={video.id} className="group cursor-pointer">
           <div className="aspect-[16/9] bg-black rounded-xl relative overflow-hidden mb-3 hover:scale-105 transition-transform duration-300 flex items-center justify-center">
             {video.fileUrl ? (
-              <video
-                src={video.fileUrl}
-                controls
-                className="w-full h-full object-cover rounded-xl"
-                poster={video.thumbnail || undefined}
-                preload="metadata"
-                style={{ background: '#000' }}
-              />
+              <VideoPlayer fileUrl={video.fileUrl} poster={video.thumbnail || undefined} />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-white">Aperçu indisponible</div>
             )}
@@ -56,5 +50,36 @@ export const TrendingContent: React.FC = () => {
         </div>
       ))}
     </div>
+  );
+};
+
+// Composant VideoPlayer pour supporter HLS sur tous navigateurs
+const VideoPlayer: React.FC<{ fileUrl: string; poster?: string }> = ({ fileUrl, poster }) => {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  React.useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = fileUrl;
+    } else if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(fileUrl);
+      hls.attachMedia(video);
+      return () => {
+        hls.destroy();
+      };
+    }
+  }, [fileUrl]);
+
+  return (
+    <video
+      ref={videoRef}
+      controls
+      className="w-full h-full object-cover rounded-xl"
+      poster={poster}
+      preload="metadata"
+      style={{ background: '#000' }}
+    />
   );
 };
