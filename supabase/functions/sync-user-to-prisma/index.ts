@@ -1,11 +1,5 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
+// Simple Edge Function without problematic type references
 interface UserData {
   id: string;
   email: string;
@@ -13,8 +7,13 @@ interface UserData {
   role?: string;
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 async function syncUserToPrisma(userData: UserData, retries = 3): Promise<boolean> {
-  const backendUrl = Deno.env.get('BACKEND_URL') || 'https://your-backend-url.com';
+  const backendUrl = 'https://your-backend-url.com'; // Update this with your actual backend URL
   
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -63,7 +62,7 @@ async function syncUserToPrisma(userData: UserData, retries = 3): Promise<boolea
   return false;
 }
 
-serve(async (req) => {
+export default async function handler(req: Request) {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -139,7 +138,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: 'Erreur interne',
-        details: error.message 
+        details: (error as Error).message 
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -147,4 +146,4 @@ serve(async (req) => {
       }
     );
   }
-});
+}
