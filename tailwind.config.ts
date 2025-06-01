@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss/types/config';
+import type { Config } from 'tailwindcss';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
 export default {
@@ -152,7 +152,7 @@ export default {
         'scale-in': 'scale-in 0.3s ease-out',
         'slide-up': 'slide-up 0.4s ease-out',
         'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
-        gradient: 'gradient-shift 3s ease infinite',
+        'gradient': 'gradient-shift 3s ease infinite',
         'scroll-pulse': 'scroll-pulse 2s ease-in-out infinite',
         'bounce-slow': 'bounce 2s ease-in-out infinite',
       },

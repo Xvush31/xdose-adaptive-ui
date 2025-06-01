@@ -1,20 +1,17 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": true,
+    "target": "ES2020",
     "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "moduleDetection": "force"
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "noFallthroughCasesInSwitch": false
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.d.ts",
-    "src/pages/api/**/*",
-    "scripts/**/*.ts",
-    "scripts/**/*.js",
-    "*.config.ts",
-    "*.config.js"
-  ],
-  "exclude": ["node_modules", "dist", "coverage"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"]
 }

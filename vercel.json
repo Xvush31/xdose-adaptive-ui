@@ -1,15 +1,12 @@
-
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/src/pages/api/$1" }
+    { "source": "/api/:path*", "destination": "/api/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "outputDirectory": "dist",
   "functions": {
-    "src/pages/api/**/*.ts": {
+    "api/**/*": {
       "runtime": "@vercel/node@2.15.10"
     }
-  },
-  "env": {
-    "DATABASE_URL": "@database_url"
   }
 }

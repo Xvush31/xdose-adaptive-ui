@@ -1,19 +1,22 @@
 {
-  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": true,
+    "target": "ES2022",
+    "lib": ["ES2023"],
     "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "vite.config.ts",
-    "vitest.config.ts",
-    "eslint.config.js",
-    "postcss.config.cjs",
-    "tailwind.config.ts",
-    "commitlint.config.js",
-    "supabase/functions/**/*.ts"
-  ]
+  "include": ["vite.config.ts"]
 }

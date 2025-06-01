@@ -1,5 +1,5 @@
 
-/// <reference types="https://deno.land/types@1.32.0/index.d.ts" />
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -63,15 +63,14 @@ async function syncUserToPrisma(userData: UserData, retries = 3): Promise<boolea
   return false;
 }
 
-Deno.serve(async (req: Request) => {
+serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const body = await req.json();
-    const { type, table, record } = body;
+    const { type, table, record, old_record } = await req.json();
 
     console.log(`[sync-user-to-prisma] Événement reçu:`, { type, table });
 
@@ -137,11 +136,10 @@ Deno.serve(async (req: Request) => {
 
   } catch (error) {
     console.error('[sync-user-to-prisma] Erreur globale:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ 
         error: 'Erreur interne',
-        details: errorMessage 
+        details: error.message 
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

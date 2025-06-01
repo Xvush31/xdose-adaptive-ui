@@ -1,22 +1,31 @@
+
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { User, Search, Menu, X, Home, TrendingUp, Users, Upload, Settings } from 'lucide-react';
+import {
+  User,
+  Search,
+  Menu,
+  X,
+  Home,
+  TrendingUp,
+  Users,
+  Upload,
+  Settings,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { XDoseLogo } from '@/components/XDoseLogo';
 import { TrendingContent } from '@/components/TrendingContent';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
+
+interface User {
+  id: string;
+  email: string;
+  name?: string | null;
+  avatar_url?: string | null;
+}
 
 // Navigation Component
-const Navigation = ({
-  user,
-  userRole,
-  onLogout,
-}: {
-  user: SupabaseUser | null;
-  userRole: string;
-  onLogout: () => void;
-}) => {
+const Navigation = ({ user, userRole, onLogout }: { user: User | null; userRole: string; onLogout: () => void }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -40,7 +49,10 @@ const Navigation = ({
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center h-16">
           {/* Mobile Menu Button */}
-          <button className="md:hidden p-2" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          <button
+            className="md:hidden p-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
 
@@ -117,14 +129,14 @@ const Navigation = ({
 };
 
 // Hero Section with Logo and Auth Buttons
-const HeroSection = ({ user }: { user: SupabaseUser | null }) => {
+const HeroSection = ({ user }: { user: User | null }) => {
   const navigate = useNavigate();
 
   return (
     <div className="bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100 py-16">
       <div className="max-w-4xl mx-auto text-center px-6">
         <XDoseLogo size="lg" className="mb-8 mx-auto" animated={true} />
-
+        
         {!user && (
           <div className="space-y-4">
             <button
@@ -171,13 +183,7 @@ const TrendingSection = () => (
 const BottomNavigation = ({ userRole }: { userRole: string }) => {
   const navItems = [
     { id: 'home', label: 'Home', icon: Home, href: '/', color: 'text-purple-500' },
-    {
-      id: 'trending',
-      label: 'Trending',
-      icon: TrendingUp,
-      href: '/tendances',
-      color: 'text-gray-500',
-    },
+    { id: 'trending', label: 'Trending', icon: TrendingUp, href: '/tendances', color: 'text-gray-500' },
     { id: 'creators', label: 'Creators', icon: Users, href: '/createurs', color: 'text-gray-500' },
   ];
 
@@ -204,7 +210,7 @@ const BottomNavigation = ({ userRole }: { userRole: string }) => {
 
 // Main Component
 const Index = () => {
-  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState<string>('spectateur');
   const [loading, setLoading] = useState(true);
 
@@ -213,8 +219,8 @@ const Index = () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      setUser(user ? { ...user, email: user.email ?? '' } : null);
-
+      setUser(user);
+      
       if (user) {
         try {
           const res = await fetch(`/api/users?id=${user.id}`);

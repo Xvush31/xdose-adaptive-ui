@@ -17,60 +17,35 @@ export default function AuthGuard({
   redirectTo = '/auth',
 }: AuthGuardProps) {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const fetchUserRole = async (userId: string) => {
-    try {
-      console.log('Fetching user role for:', userId);
-      const apiUrl = `/api/users?id=${userId}`;
-      console.log('API URL:', apiUrl);
-      
-      const res = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      console.log('API Response status:', res.status);
-      console.log('API Response headers:', Object.fromEntries(res.headers.entries()));
-      
-      if (!res.ok) {
-        console.error('API response not ok:', res.status, res.statusText);
-        const text = await res.text();
-        console.error('Response text:', text.substring(0, 500));
-        setUserRole('spectateur');
-        return;
-      }
-
-      const contentType = res.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        console.error('Response is not JSON, content-type:', contentType);
-        const text = await res.text();
-        console.error('Response text:', text.substring(0, 500));
-        setUserRole('spectateur');
-        return;
-      }
-
-      const prismaUser = await res.json();
-      console.log('Prisma user data:', prismaUser);
-      setUserRole(prismaUser.role || 'spectateur');
-    } catch (e) {
-      console.error('Error fetching user role:', e);
-      setUserRole('spectateur');
-    }
-  };
 
   useEffect(() => {
     // Set up auth state listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change:', { event, session: !!session });
+      setSession(session);
       setUser(session?.user ?? null);
-
+      
       if (session?.user) {
-        await fetchUserRole(session.user.id);
+        try {
+          console.log('Fetching user role for:', session.user.id);
+          const res = await fetch(`/api/users?id=${session.user.id}`);
+          if (res.ok) {
+            const prismaUser = await res.json();
+            console.log('Prisma user data:', prismaUser);
+            setUserRole(prismaUser.role || 'spectateur');
+          } else {
+            console.log('API response not ok:', res.status, res.statusText);
+            setUserRole('spectateur');
+          }
+        } catch (e) {
+          console.error('Error fetching user role:', e);
+          setUserRole('spectateur');
+        }
       } else {
         setUserRole(null);
       }
@@ -78,13 +53,28 @@ export default function AuthGuard({
     });
 
     // Check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Initial session check:', !!session);
+      setSession(session);
       setUser(session?.user ?? null);
-
+      
       if (session?.user) {
         console.log('Fetching role for existing session user:', session.user.id);
-        await fetchUserRole(session.user.id);
+        fetch(`/api/users?id=${session.user.id}`)
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            }
+            throw new Error(`API error: ${res.status}`);
+          })
+          .then((prismaUser) => {
+            console.log('Initial session - Prisma user data:', prismaUser);
+            setUserRole(prismaUser?.role || 'spectateur');
+          })
+          .catch((e) => {
+            console.error('Error in initial session role fetch:', e);
+            setUserRole('spectateur');
+          });
       } else {
         setUserRole(null);
       }
