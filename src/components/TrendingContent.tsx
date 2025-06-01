@@ -110,7 +110,7 @@ const ModernVideoPlayer: React.FC<{ video: any }> = ({ video }) => {
         <video
           ref={videoRef}
           className="w-full h-full object-cover rounded-xl"
-          poster={video.thumbnail || undefined}
+          poster={video.thumbnailUrl || video.thumbnail || undefined}
           preload="metadata"
           tabIndex={-1}
           style={{ background: '#000' }}

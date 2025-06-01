@@ -32,4 +32,5 @@ model Video {
   visibility  String   @default("public")
   user        User     @relation(fields: [userId], references: [id])
   userId      String   // Now a String, matches Supabase UUID
+  thumbnailUrl String? // URL de la miniature Mux
 }

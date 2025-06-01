@@ -15,6 +15,9 @@ async function handler(req, res) {
     const assetId = event.data.id;
     const playbackId = event.data.playback_ids?.[0]?.id || '';
     const uploadId = event.data.upload_id;
+    // Génération de l'URL de miniature Mux (auto, 1s)
+    const thumbnailUrl = playbackId
+      ? `https://image.mux.com/${playbackId}/thumbnail.jpg?time=1` : null;
     if (!uploadId) {
       res.status(400).json({ error: 'No upload_id in webhook' });
       return;
@@ -24,6 +27,7 @@ async function handler(req, res) {
       data: {
         muxAssetId: assetId,
         fileUrl: `https://stream.mux.com/${playbackId}.m3u8`,
+        thumbnailUrl,
         status: 'ready',
       },
     });

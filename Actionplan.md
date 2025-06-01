@@ -15,10 +15,16 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 
 ## Phase 2 – Upload & Gestion de vidéos
 
-- [ ] Composant upload drag & drop (créateur)
-- [ ] Stockage vidéo Supabase Storage + Cloudflare Stream
-- [ ] Génération miniatures, conversion, formats modernes
-- [ ] Formulaire métadonnées (titre, description, tags, public/privé)
+- [x] Composant upload (créateur) avec gestion drag & drop et File natif
+- [x] Stockage vidéo sur Mux (upload direct, playbackId, gestion CORS)
+- [x] Synchronisation utilisateurs Supabase <-> Prisma
+- [x] Création vidéo en base Prisma avec statut, playbackId, etc.
+- [x] Webhook Mux pour update status/URL dans Prisma
+- [x] Formulaire métadonnées (titre, description, public/privé)
+- [x] Affichage dynamique des vidéos publiques/ready dans l’UI
+- [x] Lecteur vidéo moderne (HLS.js, overlay, responsive, UX)
+- [x] Gestion des erreurs Mux (webhook, statut error, description)
+- [ ] Génération miniatures, conversion, formats modernes (à faire)
 - [ ] Workflow de validation vidéo (admin)
 - [ ] Backoffice admin pour valider/refuser les vidéos
 - [ ] Notification email lors de la validation/refus vidéo
@@ -40,10 +46,10 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 
 ## Phase 5 – Lecteur vidéo & expérience utilisateur
 
-- [ ] Intégration lecteur adaptatif (DASH/HLS, Video.js ou équivalent)
+- [x] Intégration lecteur adaptatif (HLS.js, overlay, responsive)
 - [ ] Support sous-titres, miniatures timeline
 - [ ] Accessibilité (clavier, ARIA, contrastes)
-- [ ] Responsive design (web + mobile)
+- [x] Responsive design (web + mobile)
 
 ## Phase 6 – Découverte, recherche & analytics
 
@@ -66,7 +72,7 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 
 - [ ] Tests unitaires et e2e sur tous les modules critiques
 - [ ] Audit sécurité (auth, paiement, accès vidéos)
-- [ ] CI/CD complète (lint, test, build, déploiement)
+- [x] CI/CD complète (lint, test, build, déploiement)
 - [ ] Documentation technique et onboarding
 
 ---

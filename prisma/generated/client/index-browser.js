@@ -138,7 +138,8 @@ exports.Prisma.VideoScalarFieldEnum = {
   muxUploadId: 'muxUploadId',
   status: 'status',
   visibility: 'visibility',
-  userId: 'userId'
+  userId: 'userId',
+  thumbnailUrl: 'thumbnailUrl'
 };
 
 exports.Prisma.SortOrder = {

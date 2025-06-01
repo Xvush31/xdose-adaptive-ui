@@ -2095,6 +2095,7 @@ export namespace Prisma {
     status: string | null
     visibility: string | null
     userId: string | null
+    thumbnailUrl: string | null
   }
 
   export type VideoMaxAggregateOutputType = {
@@ -2108,6 +2109,7 @@ export namespace Prisma {
     status: string | null
     visibility: string | null
     userId: string | null
+    thumbnailUrl: string | null
   }
 
   export type VideoCountAggregateOutputType = {
@@ -2121,6 +2123,7 @@ export namespace Prisma {
     status: number
     visibility: number
     userId: number
+    thumbnailUrl: number
     _all: number
   }
 
@@ -2144,6 +2147,7 @@ export namespace Prisma {
     status?: true
     visibility?: true
     userId?: true
+    thumbnailUrl?: true
   }
 
   export type VideoMaxAggregateInputType = {
@@ -2157,6 +2161,7 @@ export namespace Prisma {
     status?: true
     visibility?: true
     userId?: true
+    thumbnailUrl?: true
   }
 
   export type VideoCountAggregateInputType = {
@@ -2170,6 +2175,7 @@ export namespace Prisma {
     status?: true
     visibility?: true
     userId?: true
+    thumbnailUrl?: true
     _all?: true
   }
 
@@ -2270,6 +2276,7 @@ export namespace Prisma {
     status: string
     visibility: string
     userId: string
+    thumbnailUrl: string | null
     _count: VideoCountAggregateOutputType | null
     _avg: VideoAvgAggregateOutputType | null
     _sum: VideoSumAggregateOutputType | null
@@ -2302,6 +2309,7 @@ export namespace Prisma {
     status?: boolean
     visibility?: boolean
     userId?: boolean
+    thumbnailUrl?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["video"]>
 
@@ -2316,6 +2324,7 @@ export namespace Prisma {
     status?: boolean
     visibility?: boolean
     userId?: boolean
+    thumbnailUrl?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["video"]>
 
@@ -2330,6 +2339,7 @@ export namespace Prisma {
     status?: boolean
     visibility?: boolean
     userId?: boolean
+    thumbnailUrl?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["video"]>
 
@@ -2344,9 +2354,10 @@ export namespace Prisma {
     status?: boolean
     visibility?: boolean
     userId?: boolean
+    thumbnailUrl?: boolean
   }
 
-  export type VideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "description" | "fileUrl" | "muxAssetId" | "muxUploadId" | "status" | "visibility" | "userId", ExtArgs["result"]["video"]>
+  export type VideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "title" | "description" | "fileUrl" | "muxAssetId" | "muxUploadId" | "status" | "visibility" | "userId" | "thumbnailUrl", ExtArgs["result"]["video"]>
   export type VideoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2373,6 +2384,7 @@ export namespace Prisma {
       status: string
       visibility: string
       userId: string
+      thumbnailUrl: string | null
     }, ExtArgs["result"]["video"]>
     composites: {}
   }
@@ -2807,6 +2819,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Video", 'String'>
     readonly visibility: FieldRef<"Video", 'String'>
     readonly userId: FieldRef<"Video", 'String'>
+    readonly thumbnailUrl: FieldRef<"Video", 'String'>
   }
     
 
@@ -3256,7 +3269,8 @@ export namespace Prisma {
     muxUploadId: 'muxUploadId',
     status: 'status',
     visibility: 'visibility',
-    userId: 'userId'
+    userId: 'userId',
+    thumbnailUrl: 'thumbnailUrl'
   };
 
   export type VideoScalarFieldEnum = (typeof VideoScalarFieldEnum)[keyof typeof VideoScalarFieldEnum]
@@ -3419,6 +3433,7 @@ export namespace Prisma {
     status?: StringFilter<"Video"> | string
     visibility?: StringFilter<"Video"> | string
     userId?: StringFilter<"Video"> | string
+    thumbnailUrl?: StringNullableFilter<"Video"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -3433,6 +3448,7 @@ export namespace Prisma {
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -3450,6 +3466,7 @@ export namespace Prisma {
     status?: StringFilter<"Video"> | string
     visibility?: StringFilter<"Video"> | string
     userId?: StringFilter<"Video"> | string
+    thumbnailUrl?: StringNullableFilter<"Video"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -3464,6 +3481,7 @@ export namespace Prisma {
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
     _count?: VideoCountOrderByAggregateInput
     _avg?: VideoAvgOrderByAggregateInput
     _max?: VideoMaxOrderByAggregateInput
@@ -3485,6 +3503,7 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"Video"> | string
     visibility?: StringWithAggregatesFilter<"Video"> | string
     userId?: StringWithAggregatesFilter<"Video"> | string
+    thumbnailUrl?: StringNullableWithAggregatesFilter<"Video"> | string | null
   }
 
   export type UserCreateInput = {
@@ -3556,6 +3575,7 @@ export namespace Prisma {
     muxUploadId?: string | null
     status?: string
     visibility?: string
+    thumbnailUrl?: string | null
     user: UserCreateNestedOneWithoutVideosInput
   }
 
@@ -3570,6 +3590,7 @@ export namespace Prisma {
     status?: string
     visibility?: string
     userId: string
+    thumbnailUrl?: string | null
   }
 
   export type VideoUpdateInput = {
@@ -3581,6 +3602,7 @@ export namespace Prisma {
     muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutVideosNestedInput
   }
 
@@ -3595,6 +3617,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type VideoCreateManyInput = {
@@ -3608,6 +3631,7 @@ export namespace Prisma {
     status?: string
     visibility?: string
     userId: string
+    thumbnailUrl?: string | null
   }
 
   export type VideoUpdateManyMutationInput = {
@@ -3619,6 +3643,7 @@ export namespace Prisma {
     muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type VideoUncheckedUpdateManyInput = {
@@ -3632,6 +3657,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -3791,6 +3817,7 @@ export namespace Prisma {
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
+    thumbnailUrl?: SortOrder
   }
 
   export type VideoAvgOrderByAggregateInput = {
@@ -3808,6 +3835,7 @@ export namespace Prisma {
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
+    thumbnailUrl?: SortOrder
   }
 
   export type VideoMinOrderByAggregateInput = {
@@ -3821,6 +3849,7 @@ export namespace Prisma {
     status?: SortOrder
     visibility?: SortOrder
     userId?: SortOrder
+    thumbnailUrl?: SortOrder
   }
 
   export type VideoSumOrderByAggregateInput = {
@@ -4064,6 +4093,7 @@ export namespace Prisma {
     muxUploadId?: string | null
     status?: string
     visibility?: string
+    thumbnailUrl?: string | null
   }
 
   export type VideoUncheckedCreateWithoutUserInput = {
@@ -4076,6 +4106,7 @@ export namespace Prisma {
     muxUploadId?: string | null
     status?: string
     visibility?: string
+    thumbnailUrl?: string | null
   }
 
   export type VideoCreateOrConnectWithoutUserInput = {
@@ -4118,6 +4149,7 @@ export namespace Prisma {
     status?: StringFilter<"Video"> | string
     visibility?: StringFilter<"Video"> | string
     userId?: StringFilter<"Video"> | string
+    thumbnailUrl?: StringNullableFilter<"Video"> | string | null
   }
 
   export type UserCreateWithoutVideosInput = {
@@ -4178,6 +4210,7 @@ export namespace Prisma {
     muxUploadId?: string | null
     status?: string
     visibility?: string
+    thumbnailUrl?: string | null
   }
 
   export type VideoUpdateWithoutUserInput = {
@@ -4189,6 +4222,7 @@ export namespace Prisma {
     muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type VideoUncheckedUpdateWithoutUserInput = {
@@ -4201,6 +4235,7 @@ export namespace Prisma {
     muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type VideoUncheckedUpdateManyWithoutUserInput = {
@@ -4213,6 +4248,7 @@ export namespace Prisma {
     muxUploadId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     visibility?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

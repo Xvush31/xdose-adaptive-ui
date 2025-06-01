@@ -21,15 +21,16 @@ model User {
 }
 
 model Video {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  title       String
-  description String?
-  fileUrl     String
-  muxAssetId  String?
-  muxUploadId String?
-  status      String   @default("pending")
-  visibility  String   @default("public")
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String // Now a String, matches Supabase UUID
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  title        String
+  description  String?
+  fileUrl      String
+  muxAssetId   String?
+  muxUploadId  String?
+  status       String   @default("pending")
+  visibility   String   @default("public")
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String // Now a String, matches Supabase UUID
+  thumbnailUrl String? // URL de la miniature Mux
 }
