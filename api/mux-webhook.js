@@ -1,4 +1,4 @@
-const { PrismaClient } = require('../prisma/generated/client');
+import { PrismaClient } from '../prisma/generated/client/index.js';
 const prisma = new PrismaClient();
 
 async function handler(req, res) {
@@ -30,4 +30,4 @@ async function handler(req, res) {
   res.status(200).json({ received: true });
 }
 
-module.exports = handler;
+export default handler;
