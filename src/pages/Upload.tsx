@@ -17,8 +17,9 @@ function sanitizeFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, '_');
 }
 
-interface VideoFile extends File {
+interface VideoFileMeta {
   id: string;
+  file: File;
   title?: string;
   description?: string;
   visibility?: 'public' | 'private' | 'unlisted';
@@ -26,7 +27,7 @@ interface VideoFile extends File {
 
 const Upload = () => {
   const [dragActive, setDragActive] = useState(false);
-  const [files, setFiles] = useState<VideoFile[]>([]);
+  const [files, setFiles] = useState<VideoFileMeta[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
@@ -82,23 +83,13 @@ const Upload = () => {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const newFiles = Array.from(e.dataTransfer.files)
         .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
-        .map((file: File) => {
-          let title = 'fichier_sans_nom';
-          if (file && typeof file.name === 'string') {
-            try {
-              title = file.name.replace(/\.[^/.]+$/, '');
-            } catch {
-              // fallback déjà prévu
-            }
-          }
-          return {
-            ...file,
-            id: Math.random().toString(36).substr(2, 9),
-            title,
-            description: '',
-            visibility: 'public' as const,
-          };
-        });
+        .map((file: File) => ({
+          id: Math.random().toString(36).substr(2, 9),
+          file, // référence au vrai File natif
+          title: file.name.replace(/\.[^/.]+$/, ''),
+          description: '',
+          visibility: 'public' as const,
+        }));
 
       if (newFiles.length === 0) {
         setUploadError('Format de fichier non supporté.');
@@ -113,7 +104,7 @@ const Upload = () => {
   };
 
   const updateFileMetadata = (index: number, field: string, value: string) => {
-    setFiles((prev) => prev.map((file, i) => (i === index ? { ...file, [field]: value } : file)));
+    setFiles((prev) => prev.map((f, i) => (i === index ? { ...f, [field]: value } : f)));
   };
 
   const getFileIcon = (type: string | undefined) => {
@@ -128,23 +119,13 @@ const Upload = () => {
 
     const selectedFiles = Array.from(e.target.files)
       .filter((file: File) => ACCEPTED_TYPES.includes(file.type))
-      .map((file: File) => {
-        let title = 'fichier_sans_nom';
-        if (file && typeof file.name === 'string') {
-          try {
-            title = file.name.replace(/\.[^/.]+$/, '');
-          } catch {
-            // fallback déjà prévu
-          }
-        }
-        return {
-          ...file,
-          id: Math.random().toString(36).substr(2, 9),
-          title,
-          description: '',
-          visibility: 'public' as const,
-        };
-      });
+      .map((file: File) => ({
+        id: Math.random().toString(36).substr(2, 9),
+        file,
+        title: file.name.replace(/\.[^/.]+$/, ''),
+        description: '',
+        visibility: 'public' as const,
+      }));
 
     if (selectedFiles.length === 0) {
       setUploadError('Format de fichier non supporté.');
@@ -203,16 +184,16 @@ const Upload = () => {
       });
       const userId = user.id;
       const uploadedVideoIds: string[] = [];
-      for (const file of files) {
+      for (const fileMeta of files) {
         // Appel à l'API Mux pour chaque vidéo
         const res = await fetch('/api/mux-upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            title: file.title || file.name,
-            description: file.description || '',
+            title: fileMeta.title || fileMeta.file.name,
+            description: fileMeta.description || '',
             userId: user.id,
-            visibility: file.visibility || 'public',
+            visibility: fileMeta.visibility || 'public',
           }),
         });
         if (!res.ok) throw new Error('Erreur lors de la création de la vidéo sur Mux');
@@ -220,15 +201,15 @@ const Upload = () => {
         uploadedVideoIds.push(videoId);
         // Log pour debug upload Mux
         console.log('[DEBUG][Upload.tsx] Upload Mux:', {
-          name: file.name,
-          type: file.type,
-          size: file.size,
+          name: fileMeta.file.name,
+          type: fileMeta.file.type,
+          size: fileMeta.file.size,
         });
         // Upload direct du fichier sur l'URL Mux
         const uploadRes = await fetch(uploadUrl, {
           method: 'PUT',
-          headers: { 'Content-Type': file.type },
-          body: file,
+          headers: { 'Content-Type': fileMeta.file.type },
+          body: fileMeta.file,
         });
         if (!uploadRes.ok) throw new Error('Erreur lors de l’upload du fichier sur Mux');
       }
@@ -308,20 +289,20 @@ const Upload = () => {
                   Fichiers sélectionnés ({files.length})
                 </h3>
                 <div className="space-y-6">
-                  {files.map((file, index) => {
-                    const FileIcon = getFileIcon(file.type);
+                  {files.map((fileMeta, index) => {
+                    const FileIcon = getFileIcon(fileMeta.file.type);
                     return (
                       <div
-                        key={file.id}
+                        key={fileMeta.id}
                         className="bg-white rounded-lg p-6 shadow-md border border-gray-100"
                       >
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center">
                             <FileIcon className="h-8 w-8 text-purple-500 mr-3" />
                             <div>
-                              <p className="font-medium text-gray-800">{file.name}</p>
+                              <p className="font-medium text-gray-800">{fileMeta.file.name}</p>
                               <p className="text-sm text-gray-500">
-                                {(file.size / 1024 / 1024).toFixed(2)} MB
+                                {(fileMeta.file.size / 1024 / 1024).toFixed(2)} MB
                               </p>
                             </div>
                           </div>
@@ -340,7 +321,7 @@ const Upload = () => {
                             </label>
                             <input
                               type="text"
-                              value={file.title || ''}
+                              value={fileMeta.title || ''}
                               onChange={(e) => updateFileMetadata(index, 'title', e.target.value)}
                               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                               placeholder="Titre de la vidéo"
@@ -352,7 +333,7 @@ const Upload = () => {
                               Visibilité
                             </label>
                             <select
-                              value={file.visibility || 'public'}
+                              value={fileMeta.visibility || 'public'}
                               onChange={(e) =>
                                 updateFileMetadata(index, 'visibility', e.target.value)
                               }
@@ -370,7 +351,7 @@ const Upload = () => {
                             Description
                           </label>
                           <textarea
-                            value={file.description || ''}
+                            value={fileMeta.description || ''}
                             onChange={(e) =>
                               updateFileMetadata(index, 'description', e.target.value)
                             }
