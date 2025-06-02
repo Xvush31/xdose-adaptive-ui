@@ -93,6 +93,47 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 - [x] CI/CD complète (lint, test, build, déploiement)
 - [ ] Documentation technique et onboarding
 
+## Phase 11 – Roadmap avancée (prochaines étapes)
+
+1. **Enhance Layout & Navigation**
+   - Développer un composant Header global et responsive.
+   - Peupler la Sidebar avec des liens de navigation spécifiques aux créateurs (ex : Dashboard, Content, Monetization, Analytics).
+
+2. **Revamp Content Feed System**
+   - Implémenter une interface à onglets dans Feed.tsx pour les fils "Following", "For You" et "Trending".
+   - "Following" feed : Afficher le contenu des utilisateurs suivis par l'utilisateur actuel.
+   - "Trending" feed : Intégrer Tendances.tsx ou sa logique dans un onglet.
+   - Ajouter des éléments interactifs aux cartes de contenu (boutons like/réaction, compteurs de commentaires, options de sauvegarde/bookmark).
+   - Définir des modèles Prisma pour Like, Comment, et Bookmark, et créer les endpoints API correspondants.
+
+3. **Develop Creator Dashboard**
+   - Intégrer des sources de données réelles pour Analytics.tsx (vues de vidéos, engagement utilisateur via les nouvelles tables Like/Comment).
+   - Connecter Monetisation.tsx aux données de revenus réelles une fois les fonctionnalités de monétisation implémentées.
+   - Afficher les métriques d'abonnés (ex : à partir de la table Follows ou d'une nouvelle table UserSubscription).
+
+4. **Implement Full Monetization System**
+   - **Subscription Tiers** :
+     - Définir les modèles SubscriptionTier et UserSubscription dans prisma/schema.prisma.
+     - Créer une interface pour que les créateurs définissent des paliers d'abonnement et que les utilisateurs s'y abonnent.
+     - Intégrer un fournisseur de paiement (ex : Stripe) pour gérer les abonnements.
+   - **Premium Content** :
+     - Permettre aux créateurs de marquer du contenu comme "premium" et de le lier à des paliers d'abonnement spécifiques.
+     - Implémenter une logique de contrôle d'accès basée sur les abonnements utilisateurs.
+   - **Tipping** :
+     - Définir un modèle Tip dans prisma/schema.prisma.
+     - Créer une interface pour envoyer des pourboires aux créateurs.
+     - Intégrer un fournisseur de paiement pour les pourboires.
+   - **Revenue Tracking** :
+     - Enregistrer et agréger tous les événements de monétisation (abonnements, pourboires, ventes de contenu premium) pour les afficher dans Monetisation.tsx.
+
+5. **Expand Content Management**
+   - Concevoir une interface pour créer et gérer des posts textuels (ex : nouveau modèle TextPost ou modèle Post polymorphe dans Prisma).
+   - Appliquer des paramètres de confidentialité aux posts textuels.
+
+6. **Augment User Profiles**
+   - Afficher les paliers d'abonnement sur les profils des créateurs.
+   - Permettre aux utilisateurs de s'abonner directement depuis les profils.
+
 ---
 
 **À cocher au fil de l’avancement. Découper chaque phase en issues/tickets si besoin.**
