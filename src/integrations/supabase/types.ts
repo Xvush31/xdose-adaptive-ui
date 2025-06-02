@@ -9,6 +9,83 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bookmarks: {
+        Row: {
+          created_at: string | null
+          id: string
+          user_id: string
+          video_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user_id: string
+          video_id: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user_id?: string
+          video_id?: number
+        }
+        Relationships: []
+      }
+      comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          parent_id: string | null
+          user_id: string
+          video_id: number
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          parent_id?: string | null
+          user_id: string
+          video_id: number
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          parent_id?: string | null
+          user_id?: string
+          video_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          user_id: string
+          video_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user_id: string
+          video_id: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user_id?: string
+          video_id?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -60,50 +137,192 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_tiers: {
+        Row: {
+          created_at: string | null
+          creator_id: string
+          features: string[] | null
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          created_at?: string | null
+          creator_id: string
+          features?: string[] | null
+          id?: string
+          name: string
+          price: number
+        }
+        Update: {
+          created_at?: string | null
+          creator_id?: string
+          features?: string[] | null
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: []
+      }
+      text_posts: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          images: string[] | null
+          user_id: string
+          visibility: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          images?: string[] | null
+          user_id: string
+          visibility?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          images?: string[] | null
+          user_id?: string
+          visibility?: string | null
+        }
+        Relationships: []
+      }
+      tips: {
+        Row: {
+          amount: number
+          created_at: string | null
+          from_user_id: string
+          id: string
+          message: string | null
+          to_user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          from_user_id: string
+          id?: string
+          message?: string | null
+          to_user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          from_user_id?: string
+          id?: string
+          message?: string | null
+          to_user_id?: string
+        }
+        Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          created_at: string | null
+          end_date: string | null
+          id: string
+          start_date: string | null
+          status: string | null
+          tier_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string | null
+          status?: string | null
+          tier_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string | null
+          status?: string | null
+          tier_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       videos: {
         Row: {
+          comments_count: number | null
           created_at: string | null
           description: string | null
           duration: number | null
           file_path: string
           file_size: number | null
           id: string
+          is_premium: boolean | null
+          likes_count: number | null
+          required_tier_id: string | null
           status: string | null
           thumbnail_path: string | null
           title: string
           updated_at: string | null
           user_id: string
+          views_count: number | null
           visibility: string | null
         }
         Insert: {
+          comments_count?: number | null
           created_at?: string | null
           description?: string | null
           duration?: number | null
           file_path: string
           file_size?: number | null
           id?: string
+          is_premium?: boolean | null
+          likes_count?: number | null
+          required_tier_id?: string | null
           status?: string | null
           thumbnail_path?: string | null
           title: string
           updated_at?: string | null
           user_id: string
+          views_count?: number | null
           visibility?: string | null
         }
         Update: {
+          comments_count?: number | null
           created_at?: string | null
           description?: string | null
           duration?: number | null
           file_path?: string
           file_size?: number | null
           id?: string
+          is_premium?: boolean | null
+          likes_count?: number | null
+          required_tier_id?: string | null
           status?: string | null
           thumbnail_path?: string | null
           title?: string
           updated_at?: string | null
           user_id?: string
+          views_count?: number | null
           visibility?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "videos_required_tier_id_fkey"
+            columns: ["required_tier_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
