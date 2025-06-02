@@ -13,7 +13,7 @@ interface Video {
 export const TrendingContent: React.FC = () => {
   const [videos, setVideos] = useState<any[]>([]);
   useEffect(() => {
-    fetch('/api/videos')
+    fetch('/api/content?type=video')
       .then((res) => res.json())
       .then((data) => {
         setVideos(data.filter((v: any) => v.visibility === 'public' && v.status === 'ready'));

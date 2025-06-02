@@ -49,7 +49,7 @@ const CreatorProfile: React.FC = () => {
     // Fetch creator info and videos in parallel
     Promise.all([
       fetch(`/api/users?id=${id}`).then(r => r.ok ? r.json() : Promise.reject('Utilisateur non trouvé')),
-      fetch(`/api/videos?userId=${id}&status=ready`).then(r => r.ok ? r.json() : [])
+      fetch(`/api/content?type=video&creator=${id}&status=ready`).then(r => r.ok ? r.json() : [])
     ])
       .then(([user, vids]) => {
         setCreator({

@@ -140,7 +140,7 @@ const Upload = () => {
     const maxAttempts = 20; // ~2 minutes
     const delay = 6000;
     while (attempts < maxAttempts) {
-      const res = await fetch('/api/videos');
+      const res = await fetch('/api/content?type=video');
       const allVideos = await res.json();
       const readyIds = allVideos.filter((v: any) => videoIds.includes(v.id.toString()) && v.status === 'ready');
       if (readyIds.length === videoIds.length) {
