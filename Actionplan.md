@@ -95,45 +95,152 @@ Ce plan d’action est découpé en phases et micro-tâches actionnables pour fi
 
 ## Phase 11 – Roadmap avancée (prochaines étapes)
 
-1. **Enhance Layout & Navigation**
-   - Développer un composant Header global et responsive.
-   - Peupler la Sidebar avec des liens de navigation spécifiques aux créateurs (ex : Dashboard, Content, Monetization, Analytics).
+### Phase 1: Amélioration de l'Architecture de Base
 
-2. **Revamp Content Feed System**
-   - Implémenter une interface à onglets dans Feed.tsx pour les fils "Following", "For You" et "Trending".
-   - "Following" feed : Afficher le contenu des utilisateurs suivis par l'utilisateur actuel.
-   - "Trending" feed : Intégrer Tendances.tsx ou sa logique dans un onglet.
-   - Ajouter des éléments interactifs aux cartes de contenu (boutons like/réaction, compteurs de commentaires, options de sauvegarde/bookmark).
-   - Définir des modèles Prisma pour Like, Comment, et Bookmark, et créer les endpoints API correspondants.
+- [x] Header Global :
+  - [x] Header responsive avec recherche intégrée
+  - [x] Badges de rôle visuels (Créateur, Spectateur, Admin)
+  - [x] Menu utilisateur contextuel selon le rôle
+  - [x] Notifications et profil utilisateur
+- [x] Sidebar Améliorée :
+  - [x] Navigation organisée par sections
+  - [x] Liens spécifiques aux créateurs (Analytics, Monétisation, Upload)
+  - [x] Navigation contextuelle selon le rôle utilisateur
+  - [x] Optimisation mobile avec overlay
+- [x] Layout Unifié :
+  - [x] Composant Layout réutilisable
+  - [x] Gestion responsive de la sidebar
+  - [x] Intégration avec le nouveau XDoseApp
+- [x] APIs d'Engagement :
+  - [x] API Likes : Toggle like/unlike avec compteurs
+  - [x] API Comments : CRUD commentaires avec réponses hiérarchiques
+  - [x] API Bookmarks : Système de favoris
+- [x] Architecture modulaire avec composants réutilisables
+- [x] Navigation contextuelle selon le rôle utilisateur
+- [x] Système de badges pour identifier visuellement les rôles
+- [x] APIs prêtes pour les fonctionnalités d'engagement
+- [x] Design responsive optimisé pour mobile et desktop
 
-3. **Develop Creator Dashboard**
-   - Intégrer des sources de données réelles pour Analytics.tsx (vues de vidéos, engagement utilisateur via les nouvelles tables Like/Comment).
-   - Connecter Monetisation.tsx aux données de revenus réelles une fois les fonctionnalités de monétisation implémentées.
-   - Afficher les métriques d'abonnés (ex : à partir de la table Follows ou d'une nouvelle table UserSubscription).
+1.2 Extension du Schéma Prisma
+- [x] Like (userId, videoId, createdAt)
+- [x] Comment (id, userId, videoId, content, createdAt, parentId pour les réponses)
+- [x] Bookmark (userId, videoId, createdAt)
+- [x] SubscriptionTier (id, name, price, features, creatorId)
+- [x] UserSubscription (id, userId, tierId, status, startDate, endDate)
+- [x] Tip (id, fromUserId, toUserId, amount, message, createdAt)
+- [x] TextPost (id, userId, content, images, visibility, createdAt)
 
-4. **Implement Full Monetization System**
-   - **Subscription Tiers** :
-     - Définir les modèles SubscriptionTier et UserSubscription dans prisma/schema.prisma.
-     - Créer une interface pour que les créateurs définissent des paliers d'abonnement et que les utilisateurs s'y abonnent.
-     - Intégrer un fournisseur de paiement (ex : Stripe) pour gérer les abonnements.
-   - **Premium Content** :
-     - Permettre aux créateurs de marquer du contenu comme "premium" et de le lier à des paliers d'abonnement spécifiques.
-     - Implémenter une logique de contrôle d'accès basée sur les abonnements utilisateurs.
-   - **Tipping** :
-     - Définir un modèle Tip dans prisma/schema.prisma.
-     - Créer une interface pour envoyer des pourboires aux créateurs.
-     - Intégrer un fournisseur de paiement pour les pourboires.
-   - **Revenue Tracking** :
-     - Enregistrer et agréger tous les événements de monétisation (abonnements, pourboires, ventes de contenu premium) pour les afficher dans Monetisation.tsx.
+### Phase 2: Système de Feed Avancé
+2.1 Revamp Feed.tsx
+- [x] Interface à onglets : "Following", "For You", "Trending"
+- [x] Feed "Following" : Contenu des utilisateurs suivis (vidéos + posts textuels)
+- [x] Feed "For You" : Algorithme de recommandation basé sur les likes/commentaires
+- [x] Feed "Trending" : Intégration de la logique de Tendances.tsx
+- [x] Cartes de contenu interactives : Boutons like/réaction, compteurs, options de sauvegarde
 
-5. **Expand Content Management**
-   - Concevoir une interface pour créer et gérer des posts textuels (ex : nouveau modèle TextPost ou modèle Post polymorphe dans Prisma).
-   - Appliquer des paramètres de confidentialité aux posts textuels.
+2.2 APIs de Support
+- [x] /api/likes - Gérer les likes/unlikes
+- [x] /api/comments - CRUD pour les commentaires
+- [x] /api/bookmarks - Gérer les signets
+- [x] /api/feed - Endpoints spécialisés pour chaque type de feed
 
-6. **Augment User Profiles**
-   - Afficher les paliers d'abonnement sur les profils des créateurs.
-   - Permettre aux utilisateurs de s'abonner directement depuis les profils.
+### Phase 3: Dashboard Créateur Enrichi
+3.1 Analytics.tsx - Données Réelles
+- Métriques de vues : Intégration avec la base de données de vidéos
+- Engagement utilisateur : Données des nouvelles tables Like/Comment
+- Croissance des abonnés : Évolution basée sur la table Follows
+- Revenus : Une fois la monétisation implémentée
 
----
+3.2 Monetisation.tsx - Système Complet
+- Gestion des tiers d'abonnement : Interface pour créer/modifier les paliers
+- Tracking des revenus : Abonnements, pourboires, ventes premium
+- Intégration NowPayments : Pour les paiements récurrents et ponctuels
 
-**À cocher au fil de l’avancement. Découper chaque phase en issues/tickets si besoin.**
+### Phase 4: Système de Monétisation Complet
+4.1 Subscription Tiers
+- Modèles Prisma : SubscriptionTier et UserSubscription
+- Interface créateur : Définir des paliers (Basic, Premium, VIP)
+- Interface utilisateur : S'abonner aux créateurs
+- Logique de contrôle d'accès : Contenu premium basé sur l'abonnement
+
+4.2 Premium Content
+- Marquage de contenu premium : Extension du modèle Video
+- Contrôle d'accès : Middleware pour vérifier les abonnements
+- Aperçus pour non-abonnés : Teasers de contenu premium
+
+4.3 Système de Pourboires
+- Modèle Tip : Transactions de pourboires
+- Interface de don : Modal pour envoyer des pourboires
+- Notifications : Alertes pour les créateurs
+
+4.4 Revenue Tracking
+- Dashboard revenus : Agrégation de toutes les sources
+- Analyses détaillées : Tendances, top supporters, etc.
+
+### Phase 5: Extension de la Gestion de Contenu
+5.1 Posts Textuels
+- Nouveau modèle TextPost : Contenu textuel avec images optionnelles
+- Interface de création : Éditeur riche pour les posts
+- Paramètres de confidentialité : Public, abonnés uniquement, premium
+
+5.2 Système de Catégories Avancé
+- Modèle Category : Remplacer les arrays par des relations
+- Tags populaires : Système de trending tags
+- Filtres avancés : Multiple sélections, recherche
+
+### Phase 6: Profils Utilisateurs Enrichis
+6.1 Creator Profiles Améliorés
+- Affichage des tiers d'abonnement : Paliers disponibles sur le profil
+- Bouton d'abonnement direct : Workflow simplifié
+- Métriques publiques : Nombre d'abonnés, contenu créé
+- Galerie de contenu organisée : Onglets pour différents types de contenu
+
+6.2 Profils Spectateurs
+- Historique de visionnage : Vidéos regardées
+- Contenu sauvegardé : Bookmarks organisés
+- Abonnements : Liste des créateurs suivis
+
+### Phase 7: Fonctionnalités Sociales Avancées
+7.1 Système de Commentaires
+- Commentaires hiérarchiques : Réponses aux commentaires
+- Modération : Outils pour les créateurs
+- Notifications : Réponses et mentions
+
+7.2 Interactions Sociales
+- Système de réactions : Au-delà du simple like
+- Partage social : Intégration réseaux sociaux
+- Collaborations : Invitations entre créateurs
+
+### Phase 8: Optimisations et Performance
+8.1 Caching et Performance
+- Cache des requêtes fréquentes : Redis ou cache en mémoire (optionnel)
+- Optimisation des images : Compression et formats modernes
+- Lazy loading : Chargement progressif du contenu
+
+8.2 SEO et Découverte
+- Meta tags dynamiques : Pour chaque profil/vidéo
+- Sitemap automatique : Indexation des contenus publics
+- Schema markup : Données structurées
+
+### Technologies et Intégrations Nécessaires
+- NowPayments : Paiements et abonnements
+- Redis : Cache (optionnel)
+- Cloudinary/AWS S3 : Stockage d'images optimisé
+- WebSockets : Notifications temps réel (optionnel)
+- Analytics service : Tracking détaillé des métriques
+
+### Ordre d'Implémentation Recommandé
+1. Extension du schéma Prisma (foundation)
+2. Header/Navigation globaux (UX improvement)
+3. Système de likes/comments (engagement)
+4. Feed avancé avec onglets (core feature)
+5. Système d'abonnements de base (monetization start)
+6. Dashboard créateur enrichi (creator tools)
+7. Posts textuels (content diversity)
+8. Système de pourboires (monetization complete)
+9. Profils enrichis (user experience)
+10. Optimisations finales (performance)
+
+Ce plan transformera l'application en une plateforme de contenu complète et moderne, avec un système de monétisation robuste et une expérience utilisateur exceptionnelle. Chaque phase peut être implémentée de manière incrémentale, permettant de tester et valider les fonctionnalités au fur et à mesure.
+
+L'approche privilégie d'abord les fondations (base de données, navigation) puis les fonctionnalités à forte valeur ajoutée (engagement, monétisation) avant de peaufiner l'expérience utilisateur.

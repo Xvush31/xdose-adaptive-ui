@@ -1,173 +1,155 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-interface Video {
+interface FeedItemBase {
   id: number;
+  createdAt: string;
+  user?: { name?: string; email?: string };
+  type: 'video' | 'text';
+}
+interface VideoItem extends FeedItemBase {
+  type: 'video';
   title: string;
   thumbnailUrl?: string;
   fileUrl: string;
-  user?: { id: string; name?: string };
   categories?: string[];
   tags?: string[];
   views?: number;
 }
+interface TextPostItem extends FeedItemBase {
+  type: 'text';
+  content: string;
+  images?: string[];
+  visibility?: string;
+}
+type FeedItem = VideoItem | TextPostItem;
+
+const TABS = [
+  { key: 'foryou', label: 'For You' },
+  { key: 'following', label: 'Following' },
+  { key: 'trending', label: 'Trending' },
+];
 
 const Feed: React.FC = () => {
-  const [videos, setVideos] = useState<Video[]>([]);
+  const [tab, setTab] = useState<'foryou' | 'following' | 'trending'>('foryou');
+  const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('');
-  const [tag, setTag] = useState('');
-  const [sort, setSort] = useState('recent');
-  const [creator, setCreator] = useState('');
-  const [allCategories, setAllCategories] = useState<string[]>([]);
-  const [allTags, setAllTags] = useState<string[]>([]);
-  const [allCreators, setAllCreators] = useState<{id: string, name: string}[]>([]);
-  const [recommendations, setRecommendations] = useState<Video[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  // TODO: Replace with real userId from auth context
+  const userId = undefined;
 
-  // Récupérer toutes les catégories/tags/créateurs pour les filtres
-  useEffect(() => {
-    fetch('/api/videos')
-      .then((r) => r.ok ? r.json() : [])
-      .then((data) => {
-        setVideos(Array.isArray(data) ? data : []);
-        // Extraire toutes les catégories/tags/créateurs uniques
-        const cats = new Set<string>();
-        const tags = new Set<string>();
-        const creators = new Map<string, string>();
-        data.forEach((v: Video) => {
-          v.categories?.forEach((c) => cats.add(c));
-          v.tags?.forEach((t) => tags.add(t));
-          if (v.user?.id) creators.set(v.user.id, v.user.name || v.user.id);
-        });
-        setAllCategories(Array.from(cats));
-        setAllTags(Array.from(tags));
-        setAllCreators(Array.from(creators.entries()).map(([id, name]) => ({id, name})));
-      });
-  }, []);
-
-  // Récupérer recommandations au chargement
-  useEffect(() => {
-    fetch('/api/videos?recommendations=1')
-      .then((r) => r.ok ? r.json() : [])
-      .then((data) => setRecommendations(Array.isArray(data) ? data : []));
-  }, []);
-
-  // Fetch vidéos filtrées
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (category) params.append('category', category);
-    if (tag) params.append('tag', tag);
-    if (creator) params.append('creator', creator);
-    if (sort === 'popular') params.append('sort', 'popular');
-    fetch(`/api/videos?${params.toString()}`)
-      .then((r) => r.ok ? r.json() : Promise.reject('Erreur API'))
-      .then((data) => setVideos(Array.isArray(data) ? data : []))
+    setError(null);
+    let url = `/api/feed?type=${tab}`;
+    if (userId && tab === 'following') url += `&userId=${userId}`;
+    fetch(url)
+      .then(r => r.ok ? r.json() : Promise.reject('Erreur API'))
+      .then(data => {
+        setItems(Array.isArray(data.items) ? data.items : []);
+        setNextCursor(data.nextCursor || null);
+      })
       .catch(() => setError('Erreur lors du chargement'))
       .finally(() => setLoading(false));
-  }, [category, tag, creator, sort]);
+  }, [tab]);
 
-  // Recherche avancée (titre, tags, créateur)
-  const filtered = videos.filter(v =>
-    v.title.toLowerCase().includes(search.toLowerCase()) ||
-    (v.tags && v.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))) ||
-    (v.user?.name && v.user.name.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filtered = items.filter(item => {
+    if (item.type === 'video') {
+      return (
+        item.title.toLowerCase().includes(search.toLowerCase()) ||
+        (item.tags && item.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))) ||
+        (item.user?.name && item.user.name.toLowerCase().includes(search.toLowerCase()))
+      );
+    } else if (item.type === 'text') {
+      return (
+        item.content.toLowerCase().includes(search.toLowerCase()) ||
+        (item.user?.name && item.user.name.toLowerCase().includes(search.toLowerCase()))
+      );
+    }
+    return false;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-50 py-10">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Section recommandations */}
-        {recommendations.length > 0 && (
-          <div className="mb-10">
-            <h2 className="text-2xl font-bold mb-4 text-purple-700">Suggestions pour vous</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {recommendations.map((video) => (
-                <Link
-                  key={video.id}
-                  to={video.fileUrl}
-                  target="_blank"
-                  className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden group flex flex-col"
-                >
-                  <div className="aspect-video bg-neutral-200 flex items-center justify-center">
-                    {video.thumbnailUrl ? (
-                      <img src={video.thumbnailUrl} alt={video.title} className="object-cover w-full h-full group-hover:scale-105 transition" />
-                    ) : (
-                      <div className="text-neutral-400">Miniature indisponible</div>
-                    )}
-                  </div>
-                  <div className="p-3 flex-1 flex flex-col">
-                    <h3 className="font-semibold text-base text-gray-900 mb-1 truncate">{video.title}</h3>
-                    <span className="text-xs text-gray-500">{video.user?.name || 'Créateur inconnu'}</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Tabs */}
+        <div className="flex gap-2 mb-8">
+          {TABS.map(t => (
+            <button
+              key={t.key}
+              className={`px-5 py-2 rounded-full font-semibold transition-all text-sm ${tab === t.key ? 'bg-purple-600 text-white shadow-lg' : 'bg-white text-purple-700 border border-purple-200 hover:bg-purple-50'}`}
+              onClick={() => setTab(t.key as any)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        {/* Search */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <h1 className="text-3xl font-bold text-gray-900">Feed</h1>
           <input
             type="text"
-            placeholder="Recherche titre, tag ou créateur..."
+            placeholder="Recherche titre, tag, créateur ou contenu..."
             className="w-full md:w-80 px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
-        </div>
-        {/* Filtres avancés */}
-        <div className="flex flex-wrap gap-4 mb-8">
-          <select value={category} onChange={e => setCategory(e.target.value)} className="px-4 py-2 rounded-xl border border-gray-200">
-            <option value="">Toutes catégories</option>
-            {allCategories.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <select value={tag} onChange={e => setTag(e.target.value)} className="px-4 py-2 rounded-xl border border-gray-200">
-            <option value="">Tous tags</option>
-            {allTags.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <select value={creator} onChange={e => setCreator(e.target.value)} className="px-4 py-2 rounded-xl border border-gray-200">
-            <option value="">Tous créateurs</option>
-            {allCreators.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-          <select value={sort} onChange={e => setSort(e.target.value)} className="px-4 py-2 rounded-xl border border-gray-200">
-            <option value="recent">Plus récentes</option>
-            <option value="popular">Populaires</option>
-          </select>
         </div>
         {loading ? (
           <div className="text-center text-gray-500 py-12">Chargement…</div>
         ) : error ? (
           <div className="text-center text-red-500 py-12">{error}</div>
         ) : filtered.length === 0 ? (
-          <div className="text-center text-gray-500 py-12">Aucune vidéo trouvée.</div>
+          <div className="text-center text-gray-500 py-12">Aucun contenu trouvé.</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filtered.map((video) => (
-              <Link
-                key={video.id}
-                to={video.fileUrl}
-                target="_blank"
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col"
-              >
-                <div className="aspect-video bg-neutral-200 flex items-center justify-center">
-                  {video.thumbnailUrl ? (
-                    <img src={video.thumbnailUrl} alt={video.title} className="object-cover w-full h-full group-hover:scale-105 transition" />
-                  ) : (
-                    <div className="text-neutral-400">Miniature indisponible</div>
-                  )}
-                </div>
-                <div className="p-4 flex-1 flex flex-col">
-                  <h2 className="font-semibold text-lg text-gray-900 mb-1 truncate">{video.title}</h2>
-                  <span className="text-xs text-gray-500">{video.user?.name || 'Créateur inconnu'}</span>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {video.categories?.map((c) => <span key={c} className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">{c}</span>)}
-                    {video.tags?.map((t) => <span key={t} className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded text-xs">#{t}</span>)}
+            {filtered.map(item =>
+              item.type === 'video' ? (
+                <Link
+                  key={`video-${item.id}`}
+                  to={item.fileUrl}
+                  target="_blank"
+                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col"
+                >
+                  <div className="aspect-video bg-neutral-200 flex items-center justify-center">
+                    {item.thumbnailUrl ? (
+                      <img src={item.thumbnailUrl} alt={item.title} className="object-cover w-full h-full group-hover:scale-105 transition" />
+                    ) : (
+                      <div className="text-neutral-400">Miniature indisponible</div>
+                    )}
                   </div>
+                  <div className="p-4 flex-1 flex flex-col">
+                    <h2 className="font-semibold text-lg text-gray-900 mb-1 truncate">{item.title}</h2>
+                    <span className="text-xs text-gray-500">{item.user?.name || 'Créateur inconnu'}</span>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {item.categories?.map((c) => <span key={c} className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">{c}</span>)}
+                      {item.tags?.map((t) => <span key={t} className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded text-xs">#{t}</span>)}
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <div
+                  key={`text-${item.id}`}
+                  className="bg-white rounded-2xl shadow-lg p-5 flex flex-col justify-between min-h-[180px] border border-purple-50"
+                >
+                  <div className="mb-2">
+                    <span className="text-xs text-purple-500 font-semibold">Post</span>
+                    <div className="font-semibold text-gray-900 text-base mb-1 mt-1 truncate">{item.user?.name || 'Auteur inconnu'}</div>
+                    <div className="text-gray-700 text-sm whitespace-pre-line mb-2">{item.content}</div>
+                    {item.images && item.images.length > 0 && (
+                      <div className="flex gap-2 mt-2">
+                        {item.images.map((img, i) => (
+                          <img key={i} src={img} alt="img" className="w-16 h-16 object-cover rounded" />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-xs text-gray-400 mt-auto">{new Date(item.createdAt).toLocaleString()}</div>
                 </div>
-              </Link>
-            ))}
+              )
+            )}
           </div>
         )}
       </div>

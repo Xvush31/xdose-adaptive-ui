@@ -21,6 +21,15 @@ model User {
   // Relations pour le follow system
   followers Follows[] @relation("Followed")
   following Follows[] @relation("Follower")
+  // Relations d'engagement et monétisation
+  likes     Like[]
+  comments  Comment[]
+  bookmarks Bookmark[]
+  subscriptionTiers SubscriptionTier[] @relation("UserTiers")
+  userSubscriptions UserSubscription[]
+  tipsSent  Tip[] @relation("TipFrom")
+  tipsReceived Tip[] @relation("TipTo")
+  textPosts TextPost[]
 }
 
 model Video {
@@ -38,6 +47,15 @@ model Video {
   thumbnailUrl String? // URL de la miniature Mux
   categories  String[] // Catégories de la vidéo
   tags        String[] // Tags de la vidéo
+  isPremium      Boolean   @default(false)
+  requiredTierId String?   // Pour contenu premium
+  requiredTier   SubscriptionTier? @relation("TierVideos", fields: [requiredTierId], references: [id])
+  likesCount     Int       @default(0)
+  commentsCount  Int       @default(0)
+  viewsCount     Int       @default(0)
+  likes     Like[]
+  comments  Comment[]
+  bookmarks Bookmark[]
 }
 
 model Follows {
@@ -50,4 +68,82 @@ model Follows {
 
   @@id([followerId, followedId])
   @@index([followedId])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  userId    String
+  videoId   Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  video     Video    @relation(fields: [videoId], references: [id])
+  @@unique([userId, videoId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  userId    String
+  videoId   Int
+  content   String
+  parentId  String?  // Pour les réponses
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  video     Video    @relation(fields: [videoId], references: [id])
+  parent    Comment? @relation("CommentParent", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentParent")
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  userId    String
+  videoId   Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  video     Video    @relation(fields: [videoId], references: [id])
+  @@unique([userId, videoId])
+}
+
+model SubscriptionTier {
+  id        String   @id @default(uuid())
+  creatorId String
+  name      String
+  price     Float
+  features  String[]
+  createdAt DateTime @default(now())
+  creator   User     @relation("UserTiers", fields: [creatorId], references: [id])
+  subscriptions UserSubscription[]
+  videos    Video[]  @relation("TierVideos")
+}
+
+model UserSubscription {
+  id        String   @id @default(uuid())
+  userId    String
+  tierId    String
+  status    String   @default("active")
+  startDate DateTime @default(now())
+  endDate   DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  tier      SubscriptionTier @relation(fields: [tierId], references: [id])
+}
+
+model Tip {
+  id         String   @id @default(uuid())
+  fromUserId String
+  toUserId   String
+  amount     Float
+  message    String?
+  createdAt  DateTime @default(now())
+  fromUser   User     @relation("TipFrom", fields: [fromUserId], references: [id])
+  toUser     User     @relation("TipTo", fields: [toUserId], references: [id])
+}
+
+model TextPost {
+  id         String   @id @default(uuid())
+  userId     String
+  content    String
+  images     String[]
+  visibility String   @default("public")
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
 }
